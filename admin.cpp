@@ -7,5 +7,7 @@ using namespace std;
 bool adminlogin()
 {
     string id, pass;
+
+
     
 }
