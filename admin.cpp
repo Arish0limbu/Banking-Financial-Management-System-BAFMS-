@@ -74,17 +74,18 @@ bool adminlogin()
 void adminmain()
 {
     int choice;
-    heading("|| WELCOME TO ADMIN PAGE ||");
-    cout << "1. Customer & Account Management." << endl
-         << "2. Transactuion mangement." << endl
-         << "3. Loan Management." << endl
-         << "4. Employee Management." << endl
-         << "5. Reports & Analytics." << endl
-         << "6. Admin Settings." << endl
-         << "7. Logout." << endl;
-    line();
     do
     {
+        heading("|| WELCOME TO ADMIN PAGE ||");
+        cout << "1. Customer & Account Management." << endl
+             << "2. Transactuion mangement." << endl
+             << "3. Loan Management." << endl
+             << "4. Employee Management." << endl
+             << "5. Reports & Analytics." << endl
+             << "6. Admin Settings." << endl
+             << "7. Logout." << endl;
+
+        line();
         cout << "Enter number to select the option: ";
         cin >> choice;
         if (cin.fail())
