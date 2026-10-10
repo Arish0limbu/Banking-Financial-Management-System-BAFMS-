@@ -44,6 +44,13 @@ void heading(string header)
     line();
 }
 
+void centertxt(string ct)
+{
+    center((100 - ct.length()) / 2);
+    cout << ct << endl;
+    line();
+}
+
 void footer(string footbar)
 {
     line();
