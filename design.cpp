@@ -1,8 +1,10 @@
 #include <iostream>
+#include "include/design.h"
+#include <string>
 
 using namespace std;
 
-void line(int l = 100)
+void line(int l)
 {
     for (int i = 0; i < l; i++)
     {
@@ -11,7 +13,7 @@ void line(int l = 100)
     cout << endl;
 }
 
-void center(int c = 45)
+void center(int c)
 {
     for (int i = 0; i < c; i++)
     {
@@ -39,6 +41,7 @@ void heading(string header)
     line();
     center((100 - header.length()) / 2);
     cout << header;
+    center((100 - header.length()) / 2);
     line();
 }
 
