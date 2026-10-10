@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits>
 #include <conio.h>
 #include "include/design.h"
 #include <string>
@@ -68,4 +69,35 @@ bool adminlogin()
             }
         }
     } while (count != 0);
+}
+
+void adminmain()
+{
+    int choice;
+    heading("|| WELCOME TO ADMIN PAGE ||");
+    cout << "1. Customer & Account Management." << endl
+         << "2. Transactuion mangement." << endl
+         << "3. Loan Management." << endl
+         << "4. Employee Management." << endl
+         << "5. Reports & Analytics." << endl
+         << "6. Admin Settings." << endl
+         << "7. Logout." << endl;
+    line();
+    do
+    {
+        cout << "Enter number to select the option: ";
+        cin >> choice;
+        if (cin.fail())
+        {
+            footer(" Invalid input! Enter integers only. ");
+            ps();
+            cin.clear();
+            continue;
+        }
+        if (choice < 1 || choice > 7)
+        {
+            footer(" Enter given option number from 1 to 7. ");
+        }
+
+    } while (cin.fail() || choice < 1 || choice > 7);
 }

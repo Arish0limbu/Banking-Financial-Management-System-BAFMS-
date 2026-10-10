@@ -9,8 +9,11 @@ int main()
 {
     if (adminlogin())
     {
-
+        adminmain();
     }
     else
+    {
         return 0;
+    }
+    return 0;
 }
