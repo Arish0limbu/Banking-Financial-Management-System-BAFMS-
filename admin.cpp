@@ -8,6 +8,7 @@ using namespace std;
 bool adminlogin()
 {
     string id, pass;
+    int count = 0;
 
     heading("|| Admin Login Page ||");
     cout << "Enter ID: ";
@@ -15,13 +16,28 @@ bool adminlogin()
     cout << "Enter Pass: ";
     getline(cin, pass);
 
-    if (id == "admin" && pass == "123")
+    do
     {
-        return true;
-    }
-    else
-    {
-        heading("ID or Password is incorrect!");
-        return false;
-    }
+
+        if (id == "admin" && pass == "123")
+        {
+            footer("SUCESS!");
+            return true;
+        }
+        else
+        {
+            if (count != 3)
+
+            {
+                footer("ID or Password is incorrect!");
+                count++;
+                cout << count;
+                ps();
+            }
+            else
+            {
+                return false;
+            }
+        }
+    } while (count == 3);
 }

@@ -47,7 +47,7 @@ void heading(string header)
 void footer(string footbar)
 {
     line();
-    center(100 - footbar.length() / 2);
+    center((100 - footbar.length()) / 2);
     cout << footbar << endl;
     line();
 }
