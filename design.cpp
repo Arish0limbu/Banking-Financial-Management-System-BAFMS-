@@ -40,8 +40,7 @@ void heading(string header)
     cls();
     line();
     center((100 - header.length()) / 2);
-    cout << header;
-    center((100 - header.length()) / 2);
+    cout << header << endl;
     line();
 }
 

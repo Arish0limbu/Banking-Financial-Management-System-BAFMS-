@@ -7,6 +7,6 @@ using namespace std;
 int main()
 
 {
-    line();
+    heading("|| Admin Login Page ||");
     return 0;
 }
