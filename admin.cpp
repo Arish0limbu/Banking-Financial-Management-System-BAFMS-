@@ -92,11 +92,14 @@ void adminmain()
             footer(" Invalid input! Enter integers only. ");
             ps();
             cin.clear();
+            cin.ignore(10000, '\n');
             continue;
         }
         if (choice < 1 || choice > 7)
         {
             footer(" Enter given option number from 1 to 7. ");
+            ps();
+            continue;
         }
 
     } while (cin.fail() || choice < 1 || choice > 7);
