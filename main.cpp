@@ -7,6 +7,10 @@ using namespace std;
 int main()
 
 {
-    heading("|| Admin Login Page ||");
-    return 0;
+    if (adminlogin())
+    {
+
+    }
+    else
+        return 0;
 }
