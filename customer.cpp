@@ -1,15 +1,24 @@
 #include <iostream>
+#include <fstream>
+#include <limits>
+#include <sstream>
 #include <string>
 
+#include "include/customer.h"
 #include "design.h"
 
 using namespace std;
 
+const string CUSTOMER_FILE = "data/customers.txt";
+
+bool readcustomer(ifstream &file, Customer &c)
+{
+    
+}
+
 void newcustomer()
 {
     heading("|| Register Customer ||");
-    
-
 }
 
 void viewcustomer()
