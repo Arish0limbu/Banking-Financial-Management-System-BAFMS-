@@ -104,4 +104,14 @@ void adminmain()
         }
 
     } while (cin.fail() || choice < 1 || choice > 7);
+
+    switch (choice)
+    {
+    case 1:
+        
+        break;
+    
+    default:
+        break;
+    }while(true);
 }
