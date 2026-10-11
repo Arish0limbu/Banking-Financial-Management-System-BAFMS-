@@ -32,3 +32,16 @@
 ========================================
   Enter Your Choice:
 ========================================
+
+# ========================================
+       CUSTOMER MANAGEMENT
+========================================
+
+  1. Register New Customer
+  2. View All Customers
+  3. Search Customer
+  4. Update Customer Details
+  5. Delete Customer
+  6. Back to Admin Menu
+
+========================================

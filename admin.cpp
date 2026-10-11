@@ -1,6 +1,7 @@
 #include <iostream>
 #include <limits>
 #include <conio.h>
+#include "include/customer.h"
 #include "include/design.h"
 #include <string>
 
@@ -103,13 +104,14 @@ void customeraccountmenu()
     switch (choice)
     {
     case 1:
-        void customermanagement();
+        customermanagement();
         break;
-
-    default:
+    case 2:
+        void accountmanagemant();
+        break;
+    case 3:
         break;
     }
-    void accountmanagemant();
 }
 
 void adminmain()
