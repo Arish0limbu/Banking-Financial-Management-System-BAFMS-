@@ -73,7 +73,43 @@ bool adminlogin()
 
 void customeraccountmenu()
 {
-    
+    int choice;
+    do
+    {
+        heading("|| Customer & Account  Management ||");
+        cout << "1. Customer Management" << endl
+             << "2. Account mangement." << endl
+             << "3. Back Mainmenu." << endl;
+
+        line();
+        cout << "Enter number to select the option: ";
+        cin >> choice;
+        if (cin.fail())
+        {
+            footer(" Invalid input! Enter integers only. ");
+            ps();
+            cin.clear();
+            cin.ignore(10000, '\n');
+            continue;
+        }
+        if (choice < 1 || choice > 3)
+        {
+            footer(" Enter given option number from 1 to 3. ");
+            ps();
+            continue;
+        }
+
+    } while (cin.fail() || choice < 1 || choice > 3);
+    switch (choice)
+    {
+    case 1:
+        void customermanagement();
+        break;
+
+    default:
+        break;
+    }
+    void accountmanagemant();
 }
 
 void adminmain()
@@ -113,10 +149,12 @@ void adminmain()
     switch (choice)
     {
     case 1:
-        
+        customeraccountmenu();
         break;
-    
+
     default:
         break;
-    }while(true);
+    }
+    while (true)
+        ;
 }
