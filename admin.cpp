@@ -71,6 +71,11 @@ bool adminlogin()
     } while (count != 0);
 }
 
+void customeraccountmenu()
+{
+    
+}
+
 void adminmain()
 {
     int choice;
