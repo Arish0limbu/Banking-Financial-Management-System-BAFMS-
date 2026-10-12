@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cctype>
 #include <fstream>
 #include <limits>
 #include <sstream>
@@ -28,6 +29,34 @@ void readcustomerfile()
     }
 }
 
+bool validname(string name)
+{
+    if (name.empty() || name[0] == ' ' || name.back() == ' ')
+        return false;
+    bool space;
+
+    for (char ch : name)
+    {
+        if (isalpha(static_cast<unsigned char>(ch)))
+        {
+            space = false;
+        }
+
+        else if (ch == ' ')
+        {
+            if (space)
+                return false;
+
+            space = true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    return false;
+}
+
 void newcustomer()
 {
 
@@ -38,10 +67,13 @@ void newcustomer()
     readcustomerfile();
     do
     {
-        heading("|| Register Customer ||");
-        cout << "Enter Information of customer." << endl;
-        cout << "Full Name: ";
-        getline(cin >> ws, customername);
+        do
+        {
+            heading("|| Register Customer ||");
+            cout << "Enter Information of customer." << endl;
+            cout << "Full Name: ";
+            getline(cin >> ws, customername);
+        } while (!validname(customername));
         cout << "Age: ";
         cin >> age;
         cout << "Address: ";
