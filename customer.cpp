@@ -10,7 +10,7 @@
 
 using namespace std;
 
-void readfile()
+void readcustomerfile()
 {
     string path;
 
@@ -30,9 +30,39 @@ void readfile()
 
 void newcustomer()
 {
-    heading("|| Register Customer ||");
-    readfile();
-    
+
+    string customername, address, gmail;
+    char choice;
+    int age, customers, phone;
+
+    readcustomerfile();
+    do
+    {
+        heading("|| Register Customer ||");
+        cout << "Enter Information of customer." << endl;
+        cout << "Full Name: ";
+        getline(cin >> ws, customername);
+        cout << "Age: ";
+        cin >> age;
+        cout << "Address: ";
+        getline(cin >> ws, address);
+        cout << "Gmail: ";
+        getline(cin >> ws, gmail);
+        cout << "Phone Number: ";
+        cin >> phone;
+
+        ofstream file("data/student.txt", ios::app);
+
+        file << customername;
+        file << age;
+        file << address;
+        file << gmail;
+        file << phone;
+
+        line();
+        cout << "Do you want add another customer? Enter Y for Yes or N for NO (Y/N): ";
+        cin >> choice;
+    } while (choice == 'Y' || choice == 'y');
 }
 
 void viewcustomer()
