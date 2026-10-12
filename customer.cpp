@@ -3,22 +3,36 @@
 #include <limits>
 #include <sstream>
 #include <string>
+#include <windows.h>
 
 #include "include/customer.h"
 #include "design.h"
 
 using namespace std;
 
-const string CUSTOMER_FILE = "data/customers.txt";
-
-bool readcustomer(ifstream &file, Customer &c)
+void readfile()
 {
-    
+    string path;
+
+    path += "data/customer.txt";
+
+    ifstream file(path);
+
+    if (file.is_open())
+    {
+        file.close();
+    }
+    else
+    {
+        ofstream newfile(path);
+    }
 }
 
 void newcustomer()
 {
     heading("|| Register Customer ||");
+    readfile();
+    
 }
 
 void viewcustomer()
