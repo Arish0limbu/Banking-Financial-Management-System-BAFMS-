@@ -67,6 +67,37 @@ bool validage(int age)
     return true;
 }
 
+bool validaddress(string address)
+{
+    if (address.empty() || address[0] == ' ' || address.back() == ' ')
+        return false;
+    bool vaddress = false;
+
+    for (char cha : address)
+    {
+        if (isalpha(static_cast<unsigned char>(cha)) || isdigit(static_cast<unsigned char>(cha)))
+            return false;
+        else if (cha == ' ')
+        {
+            if (vaddress)
+            {
+                return false;
+            }
+            vaddress = true;
+            
+        }
+        else if(cha == ',' || cha == '-')
+        {
+            return false;
+        }
+        else 
+        {
+            return false;
+        }
+        
+    }
+    return true;
+}
 void newcustomer()
 {
 
