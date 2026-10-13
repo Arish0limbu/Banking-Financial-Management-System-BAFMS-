@@ -69,31 +69,122 @@ bool validage(int age)
 
 bool validaddress(string address)
 {
-    if (address.empty() || address[0] == ' ' || address.back() == ' ')
+    
+    if (address.empty())
         return false;
-    bool vaddress = false;
 
-    for (char cha : address)
+    
+    if (address.front() == ' ' || address.back() == ' ')
+        return false;
+
+
+    for (int i = 0; i < address.length(); i++)
     {
-        if (isalpha(static_cast<unsigned char>(cha)) || isdigit(static_cast<unsigned char>(cha)))
-            vaddress = false;
-        else if (cha == ' ')
+        if (address[i] == ' ' && address[i + 1] == ' ')
+            return false;
+    }
+
+
+    int commaCount = 0;
+
+    for (char ch : address)
+    {
+        if (ch == ',')
+            commaCount++;
+    }
+
+    if (commaCount != 2)
+        return false;
+
+    
+    int firstComma = address.find(',');
+    int secondComma = address.find(',', firstComma + 1);
+
+    string cityWard = address.substr(0, firstComma);
+    string district = address.substr(firstComma + 1, secondComma - firstComma - 1);
+    string country = address.substr(secondComma + 1);
+
+    
+    if (cityWard.empty() || district.empty() || country.empty())
+        return false;
+
+    
+    auto trim = [](string &s)
+    {
+        while (!s.empty() && s.front() == ' ')
+            s.erase(s.begin());
+
+        while (!s.empty() && s.back() == ' ')
+            s.pop_back();
+    };
+
+    trim(cityWard);
+    trim(district);
+    trim(country);
+
+    
+    int hyphen = cityWard.find('-');
+
+    if (hyphen == string::npos || hyphen == 0 || hyphen == cityWard.length() - 1)
+        return false;
+
+    string city = cityWard.substr(0, hyphen);
+    string ward = cityWard.substr(hyphen + 1);
+
+
+    bool previousSpace = false;
+
+    for (char ch : city)
+    {
+        if (isalpha(static_cast<unsigned char>(ch)))
+            previousSpace = false;
+        else if (ch == ' ')
         {
-            if (vaddress)
-            {
+            if (previousSpace)
                 return false;
-            }
-            vaddress = true;
-        }
-        else if (cha == ',' || cha == '-')
-        {
-            vaddress = false;
+
+            previousSpace = true;
         }
         else
-        {
             return false;
+    }
+
+    
+    if (ward.empty())
+        return false;
+
+    for (char ch : ward)
+    {
+        if (!isdigit(static_cast<unsigned char>(ch)))
+            return false;
+    }
+
+    
+    string parts[] = {district, country};
+
+    for (string part : parts)
+    {
+        if (part.empty())
+            return false;
+
+        previousSpace = false;
+
+        for (char ch : part)
+        {
+            if (isalpha(static_cast<unsigned char>(ch)))
+                previousSpace = false;
+            else if (ch == ' ')
+            {
+                if (previousSpace)
+                    return false;
+
+                previousSpace = true;
+            }
+            else
+                return false;
         }
     }
+
     return true;
 }
 
