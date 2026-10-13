@@ -7,7 +7,7 @@
 #include <windows.h>
 
 #include "include/customer.h"
-#include "design.h"
+#include "include/design.h"
 
 using namespace std;
 
@@ -33,7 +33,7 @@ bool validname(string name)
 {
     if (name.empty() || name[0] == ' ' || name.back() == ' ')
         return false;
-    bool space;
+    bool space = false;
 
     for (char ch : name)
     {
@@ -54,8 +54,9 @@ bool validname(string name)
             return false;
         }
     }
-    return false;
+    return true;
 }
+
 
 void newcustomer()
 {
@@ -73,7 +74,13 @@ void newcustomer()
             cout << "Enter Information of customer." << endl;
             cout << "Full Name: ";
             getline(cin >> ws, customername);
-        } while (!validname(customername));
+
+            if (validname(customername) == false)
+            {
+             footer("Invalid Name!. Re Enter the Name.");
+             ps();
+            }
+        } while (validname(customername) == false);
         cout << "Age: ";
         cin >> age;
         cout << "Address: ";
