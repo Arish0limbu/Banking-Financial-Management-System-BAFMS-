@@ -57,6 +57,15 @@ bool validname(string name)
     return true;
 }
 
+bool validage(int age)
+{
+    if (age < 18 || age > 90)
+    {
+        return false;
+    }
+
+    return true;
+}
 
 void newcustomer()
 {
@@ -77,12 +86,29 @@ void newcustomer()
 
             if (validname(customername) == false)
             {
-             footer("Invalid Name!. Re Enter the Name.");
-             ps();
+                footer("Invalid Name!. Re Enter the Name.");
+                ps();
             }
         } while (validname(customername) == false);
-        cout << "Age: ";
-        cin >> age;
+
+        do
+        {
+            cout << "Age: ";
+            cin >> age;
+            if (validage(age) == false)
+            {
+                footer("Age is invalid!. Re Enter. ");
+                ps();
+                cin.clear();
+                cin.ignore(10000, '\n');
+
+                heading("|| Register Customer ||");
+                cout << "Enter Information of customer." << endl;
+                cout << "Full Name: " << customername << endl;
+            }
+
+        } while (validage(age) == false);
+
         cout << "Address: ";
         getline(cin >> ws, address);
         cout << "Gmail: ";
