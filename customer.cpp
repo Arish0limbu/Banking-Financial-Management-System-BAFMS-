@@ -76,7 +76,7 @@ bool validaddress(string address)
     for (char cha : address)
     {
         if (isalpha(static_cast<unsigned char>(cha)) || isdigit(static_cast<unsigned char>(cha)))
-            return false;
+            vaddress = false;
         else if (cha == ' ')
         {
             if (vaddress)
@@ -84,20 +84,19 @@ bool validaddress(string address)
                 return false;
             }
             vaddress = true;
-            
         }
-        else if(cha == ',' || cha == '-')
+        else if (cha == ',' || cha == '-')
+        {
+            vaddress = false;
+        }
+        else
         {
             return false;
         }
-        else 
-        {
-            return false;
-        }
-        
     }
     return true;
 }
+
 void newcustomer()
 {
 
@@ -140,8 +139,25 @@ void newcustomer()
 
         } while (validage(age) == false);
 
-        cout << "Address: ";
-        getline(cin >> ws, address);
+        do
+        {
+
+            cout << "Address (City-Ward no,District,Country): ";
+            getline(cin >> ws, address);
+            if (validaddress(address) == false)
+            {
+                footer("Address is Invalid!. Re Enter as format.");
+                ps();
+
+                heading("|| Register Customer ||");
+                cout << "Enter Information of customer." << endl;
+                cout << "Full Name: " << customername << endl;
+                cout << "Age: " << age << endl;
+
+            }
+            
+        } while (validaddress(address) == false);
+
         cout << "Gmail: ";
         getline(cin >> ws, gmail);
         cout << "Phone Number: ";
