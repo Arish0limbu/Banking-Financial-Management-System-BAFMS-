@@ -19,4 +19,4 @@ void centertxt(string ct);
 
 void footer(string footbar);
 
-#endif
+ #endif

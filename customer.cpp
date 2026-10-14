@@ -209,6 +209,15 @@ bool validgmail(string gmail)
     return true;
 }
 
+bool validphone(int phone)
+{
+    if (phone < 9700000000 || phone > 9899999999 )
+    {
+        return false;
+    }
+    return true;
+}
+
 void newcustomer()
 {
 
@@ -277,18 +286,36 @@ void newcustomer()
             {
                 footer("Gmail is Invalid!. Re Enter.");
                 ps();
-                
+
                 heading("|| Register Customer ||");
                 cout << "Enter Information of customer." << endl;
                 cout << "Full Name: " << customername << endl;
                 cout << "Age: " << age << endl;
                 cout << "Address (City-Ward no,District,Country): " << address << endl;
-                
             }
         } while (validgmail(gmail) == false);
 
-        cout << "Phone Number: ";
-        cin >> phone;
+        do
+        {
+            cout << "Phone Number: ";
+            cin >> phone;
+            if (validphone(phone) == false)
+            {
+                footer("Phone number is Invalid!. Re Enter.");
+                ps();
+
+                cin.clear();
+                cin.ignore(100000,'\n');
+
+                heading("|| Register Customer ||");
+                cout << "Enter Information of customer." << endl;
+                cout << "Full Name: " << customername << endl;
+                cout << "Age: " << age << endl;
+                cout << "Address (City-Ward no,District,Country): " << address << endl;
+                cout << "Gmail: " << gmail << endl;
+            }
+
+        } while (validphone(phone) == false);
 
         ofstream file("data/student.txt", ios::app);
 
