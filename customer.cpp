@@ -275,6 +275,9 @@ void newcustomer()
             getline(cin >> ws, gmail);
             if (validgmail(gmail) == false)
             {
+                footer("Gmail is Invalid!. Re Enter.");
+                ps();
+                
                 heading("|| Register Customer ||");
                 cout << "Enter Information of customer." << endl;
                 cout << "Full Name: " << customername << endl;
