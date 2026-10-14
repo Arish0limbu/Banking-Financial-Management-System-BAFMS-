@@ -69,21 +69,18 @@ bool validage(int age)
 
 bool validaddress(string address)
 {
-    
+
     if (address.empty())
         return false;
 
-    
     if (address.front() == ' ' || address.back() == ' ')
         return false;
-
 
     for (int i = 0; i < address.length(); i++)
     {
         if (address[i] == ' ' && address[i + 1] == ' ')
             return false;
     }
-
 
     int commaCount = 0;
 
@@ -96,7 +93,6 @@ bool validaddress(string address)
     if (commaCount != 2)
         return false;
 
-    
     int firstComma = address.find(',');
     int secondComma = address.find(',', firstComma + 1);
 
@@ -104,11 +100,9 @@ bool validaddress(string address)
     string district = address.substr(firstComma + 1, secondComma - firstComma - 1);
     string country = address.substr(secondComma + 1);
 
-    
     if (cityWard.empty() || district.empty() || country.empty())
         return false;
 
-    
     auto trim = [](string &s)
     {
         while (!s.empty() && s.front() == ' ')
@@ -122,7 +116,6 @@ bool validaddress(string address)
     trim(district);
     trim(country);
 
-    
     int hyphen = cityWard.find('-');
 
     if (hyphen == string::npos || hyphen == 0 || hyphen == cityWard.length() - 1)
@@ -130,7 +123,6 @@ bool validaddress(string address)
 
     string city = cityWard.substr(0, hyphen);
     string ward = cityWard.substr(hyphen + 1);
-
 
     bool previousSpace = false;
 
@@ -149,7 +141,6 @@ bool validaddress(string address)
             return false;
     }
 
-    
     if (ward.empty())
         return false;
 
@@ -159,7 +150,6 @@ bool validaddress(string address)
             return false;
     }
 
-    
     string parts[] = {district, country};
 
     for (string part : parts)
@@ -183,6 +173,37 @@ bool validaddress(string address)
             else
                 return false;
         }
+    }
+
+    return true;
+}
+
+bool validgmail(string gmail)
+{
+    if (gmail.empty() || gmail.find(' ') != string::npos)
+        return false;
+
+    if (gmail.find('@') == string::npos || gmail.find('@') != gmail.rfind('@'))
+        return false;
+
+    size_t at = gmail.find('@');
+
+    if (at == 0 || gmail.substr(at) != "@gmail.com")
+        return false;
+
+    if (gmail[0] == '.' || gmail[at - 1] == '.')
+        return false;
+
+    if (gmail.find("..") != string::npos)
+        return false;
+
+    for (size_t i = 0; i < at; i++)
+    {
+        char ch = gmail[i];
+
+        if (!isalnum(static_cast<unsigned char>(ch)) && ch != '.' &&
+            ch != '_' && ch != '%' && ch != '+' && ch != '-')
+            return false;
     }
 
     return true;
@@ -244,13 +265,25 @@ void newcustomer()
                 cout << "Enter Information of customer." << endl;
                 cout << "Full Name: " << customername << endl;
                 cout << "Age: " << age << endl;
-
             }
-            
+
         } while (validaddress(address) == false);
 
-        cout << "Gmail: ";
-        getline(cin >> ws, gmail);
+        do
+        {
+            cout << "Gmail: ";
+            getline(cin >> ws, gmail);
+            if (validgmail(gmail) == false)
+            {
+                heading("|| Register Customer ||");
+                cout << "Enter Information of customer." << endl;
+                cout << "Full Name: " << customername << endl;
+                cout << "Age: " << age << endl;
+                cout << "Address (City-Ward no,District,Country): " << address << endl;
+                
+            }
+        } while (validgmail(gmail) == false);
+
         cout << "Phone Number: ";
         cin >> phone;
 
