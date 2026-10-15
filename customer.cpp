@@ -209,13 +209,9 @@ bool validgmail(string gmail)
     return true;
 }
 
-bool validphone(int phone)
+bool validphone(long long phone)
 {
-    if (phone < 9700000000 || phone > 9899999999 )
-    {
-        return false;
-    }
-    return true;
+  return phone >= 9699999999LL && phone <= 9900000000LL;
 }
 
 void newcustomer()
@@ -298,24 +294,42 @@ void newcustomer()
         do
         {
             cout << "Phone Number: ";
-            cin >> phone;
-            if (validphone(phone) == false)
-            {
-                footer("Phone number is Invalid!. Re Enter.");
-                ps();
 
+            if (!(cin >> phone))
+            {
                 cin.clear();
-                cin.ignore(100000,'\n');
+                cin.ignore(100000, '\n');
+
+                footer("Invalid input!. Enter numbers only.");
+                ps();
 
                 heading("|| Register Customer ||");
                 cout << "Enter Information of customer." << endl;
                 cout << "Full Name: " << customername << endl;
                 cout << "Age: " << age << endl;
-                cout << "Address (City-Ward no,District,Country): " << address << endl;
+                cout << "Address (City-Ward no, District, Country): " << address << endl;
+                cout << "Gmail: " << gmail << endl;
+
+                phone = 0;
+                continue;
+            }
+
+            cin.ignore(100000, '\n');
+
+            if (!validphone(phone))
+            {
+                footer("Phone number is Invalid!. Re-enter.");
+                ps();
+
+                heading("|| Register Customer ||");
+                cout << "Enter Information of customer." << endl;
+                cout << "Full Name: " << customername << endl;
+                cout << "Age: " << age << endl;
+                cout << "Address (City-Ward no, District, Country): " << address << endl;
                 cout << "Gmail: " << gmail << endl;
             }
 
-        } while (validphone(phone) == false);
+        } while (!validphone(phone));
 
         ofstream file("data/student.txt", ios::app);
 
