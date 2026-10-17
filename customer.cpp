@@ -220,9 +220,11 @@ void filesave(string customername, string address, string gmail, int age, long l
     ofstream file("data/customer.txt", ios::app);
     if (!file)
         return;
-
+    file.seekp(0, ios::end);
     if (file.tellp() == 0)
+    {
         fileheader(file, "|| CUSTOMER DETAILS ||");
+    }
     file << customername << " | ";
     file << age << " | ";
     file << address << " | ";
