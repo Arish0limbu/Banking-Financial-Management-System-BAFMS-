@@ -58,3 +58,31 @@ void footer(string footbar)
     cout << footbar << endl;
     line();
 }
+
+
+void fileline(ostream &out, int l = 100)
+{
+    for (int i = 0; i < l; i++)
+    {
+        out << "=";
+    }
+    out << endl;
+}
+
+void filecenter(ostream &out, int c = 45)
+{
+    for (int i = 0; i < c; i++)
+    {
+        out << " ";
+    }
+    
+}
+
+void fileheader(ostream &out,string heading)
+{
+    fileline(out);
+    filecenter(out,(100 - heading.length())/2);
+    out << heading << endl;
+    fileline(out);
+
+}

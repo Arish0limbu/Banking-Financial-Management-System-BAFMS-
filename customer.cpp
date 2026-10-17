@@ -216,6 +216,12 @@ bool validphone(long long phone)
 void filesave(string customername, string address, string gmail,int age,long long phone)
 {
 
+    ofstream file("student.txt",ios::app);
+
+    
+
+    
+
 }
 
 void newcustomer()
