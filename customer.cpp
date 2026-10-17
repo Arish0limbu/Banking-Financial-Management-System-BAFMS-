@@ -216,17 +216,18 @@ bool validphone(long long phone)
 void filesave(string customername, string address, string gmail, int age, long long phone)
 {
 
-    ofstream file("student.txt", ios::app);
+    readcustomerfile();
+    ofstream file("data/customer.txt", ios::app);
     if (!file)
         return;
 
     
     fileheader(file, "|| CUSTOMER DETAILS ||");
-    file << customername << ' | ';
-    file << age << ' | ';
-    file << address << ' | ';
-    file << gmail << ' | ';
-    file << phone << ' | ';
+    file << customername << " | ";
+    file << age << " | ";
+    file << address << " | ";
+    file << gmail << " | ";
+    file << phone << " | " << endl;
 
 }
 

@@ -59,7 +59,7 @@ void footer(string footbar)
     line();
 }
 
-void fileline(ostream &out, int l = 100)
+void fileline(ostream &out, int l)
 {
     for (int i = 0; i < l; i++)
     {
@@ -68,7 +68,7 @@ void fileline(ostream &out, int l = 100)
     out << endl;
 }
 
-void filecenter(ostream &out, int c = 45)
+void filecenter(ostream &out, int c)
 {
     for (int i = 0; i < c; i++)
     {
