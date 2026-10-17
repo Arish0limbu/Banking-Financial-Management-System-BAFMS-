@@ -211,7 +211,11 @@ bool validgmail(string gmail)
 
 bool validphone(long long phone)
 {
-  return phone >= 9699999999LL && phone <= 9900000000LL;
+    return phone > 9699999999LL && phone < 9900000000LL;
+}
+void filesave(string customername, string address, string gmail,int age,long long phone)
+{
+
 }
 
 void newcustomer()
@@ -219,7 +223,8 @@ void newcustomer()
 
     string customername, address, gmail;
     char choice;
-    int age, customers, phone;
+    int age, customers;
+    long long phone;
 
     readcustomerfile();
     do
@@ -316,7 +321,7 @@ void newcustomer()
 
             cin.ignore(100000, '\n');
 
-            if (!validphone(phone))
+            if (validphone(phone) == false)
             {
                 footer("Phone number is Invalid!. Re-enter.");
                 ps();
@@ -329,15 +334,9 @@ void newcustomer()
                 cout << "Gmail: " << gmail << endl;
             }
 
-        } while (!validphone(phone));
+        } while (validphone(phone) == false);
 
-        ofstream file("data/student.txt", ios::app);
-
-        file << customername;
-        file << age;
-        file << address;
-        file << gmail;
-        file << phone;
+        filesave(customername,address,gmail,age,phone);
 
         line();
         cout << "Do you want add another customer? Enter Y for Yes or N for NO (Y/N): ";
