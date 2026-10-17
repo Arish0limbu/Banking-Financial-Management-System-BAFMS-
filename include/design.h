@@ -19,4 +19,10 @@ void centertxt(string ct);
 
 void footer(string footbar);
 
- #endif
+void fileline(ostream &out, int l = 100);
+
+void filecenter(ostream &out, int c = 45);
+
+void fileheader(ostream &out, string heading);
+
+#endif

@@ -213,14 +213,20 @@ bool validphone(long long phone)
 {
     return phone > 9699999999LL && phone < 9900000000LL;
 }
-void filesave(string customername, string address, string gmail,int age,long long phone)
+void filesave(string customername, string address, string gmail, int age, long long phone)
 {
 
-    ofstream file("student.txt",ios::app);
+    ofstream file("student.txt", ios::app);
+    if (!file)
+        return;
 
     
-
-    
+    fileheader(file, "|| CUSTOMER DETAILS ||");
+    file << customername << ' | ';
+    file << age << ' | ';
+    file << address << ' | ';
+    file << gmail << ' | ';
+    file << phone << ' | ';
 
 }
 
@@ -342,7 +348,7 @@ void newcustomer()
 
         } while (validphone(phone) == false);
 
-        filesave(customername,address,gmail,age,phone);
+        filesave(customername, address, gmail, age, phone);
 
         line();
         cout << "Do you want add another customer? Enter Y for Yes or N for NO (Y/N): ";
