@@ -221,14 +221,13 @@ void filesave(string customername, string address, string gmail, int age, long l
     if (!file)
         return;
 
-    
-    fileheader(file, "|| CUSTOMER DETAILS ||");
+    if (file.tellp() == 0)
+        fileheader(file, "|| CUSTOMER DETAILS ||");
     file << customername << " | ";
     file << age << " | ";
     file << address << " | ";
     file << gmail << " | ";
     file << phone << " | " << endl;
-
 }
 
 void newcustomer()
