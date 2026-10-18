@@ -214,6 +214,7 @@ bool validphone(long long phone)
 {
     return phone > 9699999999LL && phone < 9900000000LL;
 }
+
 void filesave(string customername, string address, string gmail, int age, long long phone)
 {
 
@@ -226,6 +227,8 @@ void filesave(string customername, string address, string gmail, int age, long l
     {
         fileheader(file, "|| CUSTOMER DETAILS ||");
     }
+
+    file 
     file << customername << " | ";
     file << age << " | ";
     file << address << " | ";
@@ -415,11 +418,13 @@ void customermanagement()
     case 2:
         viewcustomer();
         break;
+
     case 3:
         searchcustomer();
         break;
     case 4:
         updatecustomer();
+
         break;
     case 5:
         deletecustomer();
