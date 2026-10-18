@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include "include/design.h"
 #include <string>
 
@@ -86,5 +87,6 @@ void fileheader(ostream &out, string heading)
 
 void filesubheader(ostream &out, int r, int l, string subheading)
 {
-    
+    out << right << setw(r) << subheading << left << setw(l) << "|";
+
 }
