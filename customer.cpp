@@ -228,7 +228,8 @@ void filesave(string customername, string address, string gmail, int age, long l
         fileheader(file, "|| CUSTOMER DETAILS ||");
     }
 
-    file 
+    file  << left << setw(20) << "CUSTOMER NAME";
+
     file << customername << " | ";
     file << age << " | ";
     file << address << " | ";
