@@ -215,9 +215,11 @@ bool validphone(long long phone)
     return phone > 9699999999LL && phone < 9900000000LL;
 }
 
+
+
 void filesave(string customername, string address, string gmail, int age, long long phone)
 {
-
+    int sn = 1;
     readcustomerfile();
     ofstream file("data/customer.txt", ios::app);
     if (!file)
@@ -226,11 +228,15 @@ void filesave(string customername, string address, string gmail, int age, long l
     if (file.tellp() == 0)
     {
         fileheader(file, "|| CUSTOMER DETAILS ||");
+        sn = 1;
     }
 
-    file  << left << setw(20) << "CUSTOMER NAME";
-
-    file << customername << " | ";
+    file << right << setw(3) << "SN" << left << setw(2) << "|"
+         << right << setw(20) << "CUSTOMER NAME" << left << setw(9) << "|"
+        << right << setw(3)<<"AGE"<<left << setw(2) << "|"
+        << right <<
+        file
+         << customername << " | ";
     file << age << " | ";
     file << address << " | ";
     file << gmail << " | ";

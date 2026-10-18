@@ -83,3 +83,8 @@ void fileheader(ostream &out, string heading)
     out << heading << endl;
     fileline(out);
 }
+
+void filesubheader(ostream &out, int r, int l, string subheading)
+{
+    
+}
