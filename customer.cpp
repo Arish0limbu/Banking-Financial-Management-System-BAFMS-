@@ -228,19 +228,13 @@ void filesave(string customername, string address, string gmail, int age, long l
     if (file.tellp() == 0)
     {
         fileheader(file, "|| CUSTOMER DETAILS ||");
+        filesubheader(file,3,"SN",2);
+        filesubheader(file,20,"CUSTOMER NAME",8);
         sn = 1;
     }
 
-    file << right << setw(3) << "SN" << left << setw(2) << "|"
-         << right << setw(20) << "CUSTOMER NAME" << left << setw(9) << "|"
-        << right << setw(3)<<"AGE"<<left << setw(2) << "|"
-        << right <<
-        file
-         << customername << " | ";
-    file << age << " | ";
-    file << address << " | ";
-    file << gmail << " | ";
-    file << phone << " | " << endl;
+        
+ 
 }
 
 void newcustomer()
