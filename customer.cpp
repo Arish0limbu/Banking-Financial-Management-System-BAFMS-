@@ -245,7 +245,6 @@ void filesave(string customername, string address, string gmail, int age, long l
     file << left << setw(37) << address << right << setw(2) << "|";
     file << left << setw(13) << phone << right << setw(2) << "|";
     file << left << setw(24) << gmail << right << setw(1) << "|" << endl;
-
 }
 
 void newcustomer()
@@ -253,7 +252,7 @@ void newcustomer()
 
     string customername, address, gmail;
     char choice;
-    int age, customers , sn = 1;
+    int age, customers, sn = 1;
     long long phone;
 
     readcustomerfile();
@@ -285,7 +284,7 @@ void newcustomer()
                 cin.ignore(10000, '\n');
 
                 heading("|| Register Customer ||");
-                cout << "Enter Information of customer." << endl; 
+                cout << "Enter Information of customer." << endl;
                 cout << "Full Name: " << customername << endl;
             }
 
@@ -365,14 +364,15 @@ void newcustomer()
             }
 
         } while (validphone(phone) == false);
-
-        filesave(customername, address, gmail, age, phone , sn);
+        filesave(customername, address, gmail, age, phone, sn);
 
         line();
         cout << "Do you want add another customer? Enter Y for Yes or N for NO (Y/N): ";
         cin >> choice;
         sn++;
     } while (choice == 'Y' || choice == 'y');
+
+    customermanagement();
 }
 
 void viewcustomer()
