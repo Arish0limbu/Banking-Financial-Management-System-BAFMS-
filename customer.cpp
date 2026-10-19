@@ -215,27 +215,20 @@ bool validphone(long long phone)
     return phone > 9699999999LL && phone < 9900000000LL;
 }
 
-void filesave(string customername, string address, string gmail, int age, long long phone)
+void filesave(string customername, string address, string gmail, int age, long long phone, int sn)
 {
-    int sn = 1;
 
-    ifstream checkfile("data/customer.txt");
-    string line;
-
-    while (getline(checkfile, line))
-    {
-        if (!line.empty())
-            sn++;
-    }
-
-    checkfile.close();
+    readcustomerfile();
 
     ofstream file("data/customer.txt", ios::app);
 
     if (!file)
+    {
         return;
+    }
 
-    if (sn == 1)
+    file.seekp(0, ios::end);
+    if (file.tellp() == 0)
     {
         fileheader(file, "|| CUSTOMER DETAILS ||");
         filesubheader(file, 1, "SN");
@@ -246,15 +239,13 @@ void filesave(string customername, string address, string gmail, int age, long l
         filesubheader(file, 9, "GMAIL ");
         fileline(file);
     }
-
-    sn = sn - 5;
-
     file << right << setw(3) << sn << right << setw(2) << "|";
     file << left << setw(29) << customername << right << setw(1) << "|";
     file << right << setw(4) << age << right << setw(2) << "|";
     file << left << setw(37) << address << right << setw(2) << "|";
     file << left << setw(13) << phone << right << setw(2) << "|";
     file << left << setw(24) << gmail << right << setw(1) << "|" << endl;
+
 }
 
 void newcustomer()
@@ -262,7 +253,7 @@ void newcustomer()
 
     string customername, address, gmail;
     char choice;
-    int age, customers;
+    int age, customers , sn = 1;
     long long phone;
 
     readcustomerfile();
@@ -294,7 +285,7 @@ void newcustomer()
                 cin.ignore(10000, '\n');
 
                 heading("|| Register Customer ||");
-                cout << "Enter Information of customer." << endl;
+                cout << "Enter Information of customer." << endl; 
                 cout << "Full Name: " << customername << endl;
             }
 
@@ -375,11 +366,12 @@ void newcustomer()
 
         } while (validphone(phone) == false);
 
-        filesave(customername, address, gmail, age, phone);
+        filesave(customername, address, gmail, age, phone , sn);
 
         line();
         cout << "Do you want add another customer? Enter Y for Yes or N for NO (Y/N): ";
         cin >> choice;
+        sn++;
     } while (choice == 'Y' || choice == 'y');
 }
 
