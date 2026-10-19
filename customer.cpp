@@ -215,8 +215,6 @@ bool validphone(long long phone)
     return phone > 9699999999LL && phone < 9900000000LL;
 }
 
-
-
 void filesave(string customername, string address, string gmail, int age, long long phone)
 {
     int sn = 1;
@@ -228,13 +226,20 @@ void filesave(string customername, string address, string gmail, int age, long l
     if (file.tellp() == 0)
     {
         fileheader(file, "|| CUSTOMER DETAILS ||");
-        filesubheader(file,3,"SN",2);
-        filesubheader(file,20,"CUSTOMER NAME",8);
+        filesubheader(file, 1, "SN");
+        filesubheader(file, 5, "CUSTOMER NAME");
+        filesubheader(file, 1, "AGE");
+        filesubheader(file, 2, "ADDRESS (City-Ward, District, Country)");
+        filesubheader(file, 1, "PHONE NUMBER");
+        filesubheader(file, 8, "GMAIL");
         sn = 1;
     }
-
-        
- 
+    file << right << setw(3) << sn << right << setw(2) << "|";
+    filesubheader(file, 5, customername);
+    filesubheader(file, 1, age);
+    filesubheader(file, 2, "ADDRESS (City-Ward, District, Country)");
+    filesubheader(file, 1, "PHONE NUMBER");
+    filesubheader(file, 8, "GMAIL");
 }
 
 void newcustomer()

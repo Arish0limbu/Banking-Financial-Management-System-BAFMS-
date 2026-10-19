@@ -85,7 +85,7 @@ void fileheader(ostream &out, string heading)
     fileline(out);
 }
 
-void filesubheader(ostream &out, int r,string subheading,int l)
+void filesubheader(ostream &out,int r,string subheading)
 {
-    out << right << setw(r) << subheading << right << setw(l) << "|";
+    out << right << setw(subheading.length()+r) << subheading << right << setw(r+1) << "|";
 }

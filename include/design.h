@@ -26,5 +26,5 @@ void filecenter(ostream &out, int c = 45);
 
 void fileheader(ostream &out, string heading);
 
-void filesubheader(ostream &out, int r ,string heading,int l);
+void filesubheader(ostream &out, int r ,string heading);
 #endif
