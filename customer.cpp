@@ -247,6 +247,8 @@ void filesave(string customername, string address, string gmail, int age, long l
         fileline(file);
     }
 
+    sn = sn - 5;
+
     file << right << setw(3) << sn << right << setw(2) << "|";
     file << left << setw(29) << customername << right << setw(1) << "|";
     file << right << setw(4) << age << right << setw(2) << "|";
