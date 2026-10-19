@@ -20,7 +20,7 @@ void centertxt(string ct);
 
 void footer(string footbar);
 
-void fileline(ostream &out, int l = 100);
+void fileline(ostream &out, int l = 120);
 
 void filecenter(ostream &out, int c = 45);
 

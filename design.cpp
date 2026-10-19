@@ -84,8 +84,8 @@ void filecenter(ostream &out, int c)
 void fileheader(ostream &out, string heading)
 {
     fileline(out);
-    filecenter(out, (100 - heading.length()) / 2);
-    out << heading << endl;
+    filecenter(out, (120 - heading.length()) / 2);
+    out << heading;
     fileline(out);
 }
 
