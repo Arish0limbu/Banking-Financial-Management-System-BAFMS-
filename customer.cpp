@@ -364,6 +364,36 @@ void newcustomer()
             }
 
         } while (validphone(phone) == false);
+
+        ifstream file("data/customer.txt");
+
+        if (file.peek() != EOF)
+        {
+
+            sn = 0;
+            string dline;
+
+            while (getline(file, dline))
+            {
+                size_t pos = dline.find('|');
+
+                if (pos != string::npos)
+                {
+                    string value = dline.substr(0, pos);
+
+                    try
+                    {
+                        sn = stoi(value);
+                    }
+                    catch (...)
+                    {
+                    }
+                }
+            }
+            sn++;
+            file.close();
+        }
+
         filesave(customername, address, gmail, age, phone, sn);
 
         line();
@@ -377,6 +407,31 @@ void newcustomer()
 
 void viewcustomer()
 {
+    ifstream file("data/customer.txt");
+    if (!file.is_open() || file.peek() == EOF)
+    {
+        cls();
+        heading("|| CUSTOMER DETAILS ||");
+        centertxt("File is empty OR didn't exits.....!");
+        ps();
+        customermanagement();
+    }
+    else
+    {
+
+        string details;
+
+        cls();
+        while (getline(file, details))
+        {
+            cout << details << endl;
+        }
+
+        file.close();
+        line();
+    }
+    ps();
+    customermanagement();
 }
 
 void searchcustomer()
