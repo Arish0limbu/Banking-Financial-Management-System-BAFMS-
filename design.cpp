@@ -64,6 +64,10 @@ void fileline(ostream &out, int l)
 {
     for (int i = 0; i < l; i++)
     {
+        if (out.tellp() == 0)
+        {
+            out << endl;
+        }
         out << "=";
     }
     out << endl;
@@ -85,7 +89,7 @@ void fileheader(ostream &out, string heading)
     fileline(out);
 }
 
-void filesubheader(ostream &out,int r,string subheading)
+void filesubheader(ostream &out, int r, string subheading)
 {
-    out << right << setw(subheading.length()+r) << subheading << right << setw(r+1) << "|";
+    out << right << setw(subheading.length() + r) << subheading << right << setw(r + 1) << "|";
 }

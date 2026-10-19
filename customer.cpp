@@ -218,6 +218,7 @@ bool validphone(long long phone)
 void filesave(string customername, string address, string gmail, int age, long long phone)
 {
     int sn = 1;
+    string lengthcount[7];
     readcustomerfile();
     ofstream file("data/customer.txt", ios::app);
     if (!file)
@@ -227,19 +228,20 @@ void filesave(string customername, string address, string gmail, int age, long l
     {
         fileheader(file, "|| CUSTOMER DETAILS ||");
         filesubheader(file, 1, "SN");
-        filesubheader(file, 5, "CUSTOMER NAME");
+        filesubheader(file, 8, "CUSTOMER NAME");
         filesubheader(file, 1, "AGE");
-        filesubheader(file, 2, "ADDRESS (City-Ward, District, Country)");
+        filesubheader(file, 1, "ADDRESS (City-Ward,District,Country)");
         filesubheader(file, 1, "PHONE NUMBER");
         filesubheader(file, 8, "GMAIL");
+        fileline(file);
         sn = 1;
     }
     file << right << setw(3) << sn << right << setw(2) << "|";
-    filesubheader(file, 5, customername);
-    filesubheader(file, 1, age);
-    filesubheader(file, 2, "ADDRESS (City-Ward, District, Country)");
-    filesubheader(file, 1, "PHONE NUMBER");
-    filesubheader(file, 8, "GMAIL");
+    file << left << setw(21) << customername << right << setw(9) << "|";
+    file << right << setw(4) << age << right << setw(2) << "|";
+    file << left << setw(37) << address << right << setw(2) << "|";
+    file << right << setw(13) << phone << right << setw(2) << "|";
+    file << left << setw(15) << gmail << right << setw(2) << "|";
 }
 
 void newcustomer()
