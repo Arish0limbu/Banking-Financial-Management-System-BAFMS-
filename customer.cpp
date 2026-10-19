@@ -240,8 +240,8 @@ void filesave(string customername, string address, string gmail, int age, long l
     file << left << setw(21) << customername << right << setw(9) << "|";
     file << right << setw(4) << age << right << setw(2) << "|";
     file << left << setw(37) << address << right << setw(2) << "|";
-    file << right << setw(13) << phone << right << setw(2) << "|";
-    file << left << setw(15) << gmail << right << setw(2) << "|";
+    file << left << setw(13) << phone << right << setw(2) << "|";
+    file << left << setw(15) << gmail << right << setw(3) << "|";
 }
 
 void newcustomer()

@@ -62,12 +62,12 @@ void footer(string footbar)
 
 void fileline(ostream &out, int l)
 {
+    if (out.tellp() != 0)
+    {
+        out << endl;
+    }
     for (int i = 0; i < l; i++)
     {
-        if (out.tellp() == 0)
-        {
-            out << endl;
-        }
         out << "=";
     }
     out << endl;
