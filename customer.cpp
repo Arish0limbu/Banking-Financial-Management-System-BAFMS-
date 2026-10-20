@@ -571,9 +571,12 @@ void searchcustomer()
         ps();
         return;
     }
-    line(120);
-    cout << " SN | CUSTOMER NAME | AGE | ADDRESS (City-Ward,District,Country) | PHONE NUMBER | GMAIL |" << endl;
-    line(120);
+    if (file.peek() != 0)
+    {
+        line(120);
+        cout << " SN |        CUSTOMER NAME        | AGE | ADDRESS (City-Ward,District,Country) | PHONE NUMBER |         GMAIL          |" << endl;
+        line(120);
+    }
     while (getline(file, nline))
     {
         if (nline.find('|') == string::npos)
