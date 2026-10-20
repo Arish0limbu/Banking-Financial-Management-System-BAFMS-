@@ -1,4 +1,6 @@
 #include <iostream>
+#include <algorithm>
+#include <vector>
 #include <cctype>
 #include <fstream>
 #include <iomanip>
@@ -34,7 +36,9 @@ bool validname(string name)
 {
     if (name.empty() || name[0] == ' ' || name.back() == ' ')
         return false;
+
     bool space = false;
+    int words = 1;
 
     for (char ch : name)
     {
@@ -42,20 +46,45 @@ bool validname(string name)
         {
             space = false;
         }
-
         else if (ch == ' ')
         {
             if (space)
                 return false;
 
             space = true;
+            words++;
         }
         else
         {
             return false;
         }
     }
-    return true;
+
+    return words >= 2;
+}
+
+string formatname(string name)
+{
+    bool first = true;
+
+    for (char &ch : name)
+    {
+        if (ch == ' ')
+        {
+            first = true;
+        }
+        else
+        {
+            if (first)
+                ch = toupper(static_cast<unsigned char>(ch));
+            else
+                ch = tolower(static_cast<unsigned char>(ch));
+
+            first = false;
+        }
+    }
+
+    return name;
 }
 
 bool validage(int age)
@@ -214,37 +243,112 @@ bool validphone(long long phone)
 {
     return phone > 9699999999LL && phone < 9900000000LL;
 }
-
-void filesave(string customername, string address, string gmail, int age, long long phone, int sn)
+struct Customer
 {
+    int sn;
+    string name;
+    int age;
+    string address;
+    long long phone;
+    string gmail;
+};
 
-    readcustomerfile();
+void filesave(string customername, string address, string gmail,
+              int age, long long phone, int sn)
+{
+    vector<Customer> customers;
+    string line;
 
-    ofstream file("data/customer.txt", ios::app);
+    ifstream infile("data/customer.txt");
+
+    while (getline(infile, line))
+    {
+        stringstream ss(line);
+        Customer c;
+        char separator1, separator2, separator3, separator4, separator5;
+
+        if (ss >> c.sn >> separator1 &&
+            separator1 == '|' &&
+            getline(ss, c.name, '|') &&
+            ss >> c.age >> separator2 &&
+            separator2 == '|' &&
+            getline(ss, c.address, '|') &&
+            getline(ss, line, '|'))
+        {
+            stringstream phoneStream(line);
+
+            if (!(phoneStream >> c.phone))
+                continue;
+
+            if (!getline(ss, c.gmail, '|'))
+                continue;
+
+            auto trim = [](string &s)
+            {
+                size_t first = s.find_first_not_of(" \t");
+                if (first == string::npos)
+                {
+                    s.clear();
+                    return;
+                }
+
+                size_t last = s.find_last_not_of(" \t");
+                s = s.substr(first, last - first + 1);
+            };
+
+            trim(c.name);
+            trim(c.address);
+            trim(c.gmail);
+
+            if (!c.name.empty())
+                customers.push_back(c);
+        }
+    }
+
+    infile.close();
+
+    customers.push_back({sn, customername, age, address, phone, gmail});
+
+    sort(customers.begin(), customers.end(),
+         [](const Customer &a, const Customer &b)
+         {
+             string x = a.name;
+             string y = b.name;
+
+             transform(x.begin(), x.end(), x.begin(),
+                       [](unsigned char ch) { return tolower(ch); });
+
+             transform(y.begin(), y.end(), y.begin(),
+                       [](unsigned char ch) { return tolower(ch); });
+
+             return x < y;
+         });
+
+    ofstream file("data/customer.txt");
 
     if (!file)
-    {
         return;
-    }
 
-    file.seekp(0, ios::end);
-    if (file.tellp() == 0)
+    fileheader(file, "|| CUSTOMER DETAILS ||");
+    filesubheader(file, 1, "SN");
+    filesubheader(file, 8, "CUSTOMER NAME");
+    filesubheader(file, 1, "AGE");
+    filesubheader(file, 1, "ADDRESS (City-Ward,District,Country)");
+    filesubheader(file, 1, "PHONE NUMBER");
+    filesubheader(file, 9, "GMAIL ");
+    fileline(file);
+
+    sn = 1;
+
+    for (const Customer &c : customers)
     {
-        fileheader(file, "|| CUSTOMER DETAILS ||");
-        filesubheader(file, 1, "SN");
-        filesubheader(file, 8, "CUSTOMER NAME");
-        filesubheader(file, 1, "AGE");
-        filesubheader(file, 1, "ADDRESS (City-Ward,District,Country)");
-        filesubheader(file, 1, "PHONE NUMBER");
-        filesubheader(file, 9, "GMAIL ");
-        fileline(file);
+        file << right << setw(3) << sn++ << right << setw(2) << "|";
+        file << left << setw(29) << c.name << right << setw(1) << "|";
+        file << right << setw(4) << c.age << right << setw(2) << "|";
+        file << left << setw(37) << c.address << right << setw(2) << "|";
+        file << left << setw(13) << c.phone << right << setw(2) << "|";
+        file << left << setw(24) << c.gmail << right << setw(1) << "|" << endl;
     }
-    file << right << setw(3) << sn << right << setw(2) << "|";
-    file << left << setw(29) << customername << right << setw(1) << "|";
-    file << right << setw(4) << age << right << setw(2) << "|";
-    file << left << setw(37) << address << right << setw(2) << "|";
-    file << left << setw(13) << phone << right << setw(2) << "|";
-    file << left << setw(24) << gmail << right << setw(1) << "|" << endl;
 }
 
 void newcustomer()
@@ -264,12 +368,14 @@ void newcustomer()
             cout << "Enter Information of customer." << endl;
             cout << "Full Name: ";
             getline(cin >> ws, customername);
+            customername = formatname(customername);
 
             if (validname(customername) == false)
             {
                 footer("Invalid Name!. Re Enter the Name.");
                 ps();
             }
+          
         } while (validname(customername) == false);
 
         do
@@ -428,7 +534,7 @@ void viewcustomer()
         }
 
         file.close();
-        line();
+        line(120);
     }
     ps();
     customermanagement();
