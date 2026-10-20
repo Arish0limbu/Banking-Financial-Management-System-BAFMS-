@@ -87,6 +87,17 @@ string formatname(string name)
     return name;
 }
 
+string lowercase(string text)
+{
+    transform(text.begin(), text.end(), text.begin(),
+              [](unsigned char ch)
+              {
+                  return tolower(ch);
+              });
+
+    return text;
+}
+
 bool validage(int age)
 {
     if (age < 18 || age > 90)
@@ -316,10 +327,12 @@ void filesave(string customername, string address, string gmail,
              string y = b.name;
 
              transform(x.begin(), x.end(), x.begin(),
-                       [](unsigned char ch) { return tolower(ch); });
+                       [](unsigned char ch)
+                       { return tolower(ch); });
 
              transform(y.begin(), y.end(), y.begin(),
-                       [](unsigned char ch) { return tolower(ch); });
+                       [](unsigned char ch)
+                       { return tolower(ch); });
 
              return x < y;
          });
@@ -375,7 +388,7 @@ void newcustomer()
                 footer("Invalid Name!. Re Enter the Name.");
                 ps();
             }
-          
+
         } while (validname(customername) == false);
 
         do
@@ -542,6 +555,51 @@ void viewcustomer()
 
 void searchcustomer()
 {
+    string name, line;
+    bool found = false;
+
+    cls();
+    heading("|| CUSTOMER SEARCH RESULT ||");
+
+    cout << "Enter Customer Name: ";
+    getline(cin >> ws, name);
+    name = lowercase(name);
+
+    ifstream file("data/customer.txt");
+
+    if (!file.is_open())
+    {
+        footer("Unable to open customer file!");
+        ps();
+        return;
+    }
+
+    cout << " SN |        CUSTOMER NAME        | AGE | ADDRESS (City-Ward,District,Country) | PHONE NUMBER |         GMAIL          |" << endl;
+    while (getline(file, line))
+    {
+        if (line.find('|') == string::npos)
+            continue;
+
+        if (lowercase(line).find(name) != string::npos)
+        {
+            if (!found)
+            {
+                found = true;
+            }
+
+            cout << line << '\n';
+        }
+    }
+
+    file.close();
+
+    if (!found)
+    {
+        footer("Customer Not Found!");
+    }
+
+    ps();
+    customermanagement();
 }
 
 void updatecustomer()

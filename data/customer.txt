@@ -3,5 +3,6 @@
 ========================================================================================================================
  SN |        CUSTOMER NAME        | AGE | ADDRESS (City-Ward,District,Country) | PHONE NUMBER |         GMAIL          |
 ========================================================================================================================
-  1 |akkfbk                       |  23 |wiww-22,dvsjh,vsdujhsdv               |9800000000    |ef@gmail.com            |
-  2 |vsdv                         |  22 |gtdr-4,ehy,eyr                        |9876543210    |fe@gmail.com            |
+  1 |Jental Karki                 |  20 |itahari-2,sunsari,nepal               |9812763455    |karkijental0@gmail.com  |
+  2 |Rupson Sapkota               |  19 |itahari-8,sunsari,nepal               |9812376540    |sapkotarupson@gmail.com |
+  3 |Yum Senehang Limbu           |  22 |itahari-14,sunsari,nepal              |9761013096    |limbuyum0@gmail.com     |
