@@ -571,7 +571,7 @@ void searchcustomer()
         ps();
         return;
     }
-    if (file.peek() != 0)
+    if (file.peek() != EOF)
     {
         line(120);
         cout << " SN |        CUSTOMER NAME        | AGE | ADDRESS (City-Ward,District,Country) | PHONE NUMBER |         GMAIL          |" << endl;

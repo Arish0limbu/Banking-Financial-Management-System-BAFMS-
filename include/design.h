@@ -16,7 +16,7 @@ void cls();
 
 void heading(string header, int c = 100);
 
-void centertxt(string ct);
+void centertxt(string ct, int l = 100);
 
 void footer(string footbar);
 

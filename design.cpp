@@ -45,11 +45,11 @@ void heading(string header,int c)
     line(c);
 }
 
-void centertxt(string ct)
+void centertxt(string ct,int l)
 {
-    center((100 - ct.length()) / 2);
+    center((l - ct.length()) / 2);
     cout << ct << endl;
-    line();
+    line(l);
 }
 
 void footer(string footbar)
