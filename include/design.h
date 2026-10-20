@@ -14,7 +14,7 @@ void ps();
 
 void cls();
 
-void heading(string header);
+void heading(string header, int c = 100);
 
 void centertxt(string ct);
 

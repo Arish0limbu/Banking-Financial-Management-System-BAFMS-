@@ -555,49 +555,42 @@ void viewcustomer()
 
 void searchcustomer()
 {
-    string name, line;
+    string name, phone, nline;
     bool found = false;
-
     cls();
-    heading("|| CUSTOMER SEARCH RESULT ||");
-
+    heading("|| CUSTOMER SEARCH RESULT ||", 120);
     cout << "Enter Customer Name: ";
     getline(cin >> ws, name);
+    cout << "Enter Phone Number: ";
+    getline(cin >> ws, phone);
     name = lowercase(name);
-
     ifstream file("data/customer.txt");
-
     if (!file.is_open())
     {
-        footer("Unable to open customer file!");
+        centertxt("Unable to open customer file!");
         ps();
         return;
     }
-
-    cout << " SN |        CUSTOMER NAME        | AGE | ADDRESS (City-Ward,District,Country) | PHONE NUMBER |         GMAIL          |" << endl;
-    while (getline(file, line))
+    line(120);
+    cout << " SN | CUSTOMER NAME | AGE | ADDRESS (City-Ward,District,Country) | PHONE NUMBER | GMAIL |" << endl;
+    line(120);
+    while (getline(file, nline))
     {
-        if (line.find('|') == string::npos)
+        if (nline.find('|') == string::npos)
             continue;
-
-        if (lowercase(line).find(name) != string::npos)
+        string lowerline = lowercase(nline);
+        if (lowerline.find(name) != string::npos && nline.find(phone) != string::npos)
         {
-            if (!found)
-            {
-                found = true;
-            }
-
-            cout << line << '\n';
+            cout << nline << '\n';
+            found = true;
         }
     }
-
+    line(120);
     file.close();
-
     if (!found)
     {
-        footer("Customer Not Found!");
+        centertxt("Customer Not Found.....!");
     }
-
     ps();
     customermanagement();
 }

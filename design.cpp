@@ -36,13 +36,13 @@ void cls()
 #endif
 }
 
-void heading(string header)
+void heading(string header,int c)
 {
     cls();
-    line();
-    center((100 - header.length()) / 2);
+    line(c);
+    center((c - header.length()) / 2);
     cout << header << endl;
-    line();
+    line(c);
 }
 
 void centertxt(string ct)
