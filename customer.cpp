@@ -567,7 +567,7 @@ void searchcustomer()
     ifstream file("data/customer.txt");
     if (!file.is_open())
     {
-        centertxt("Unable to open customer file!");
+        centertxt("Unable to open customer file!", 120);
         ps();
         return;
     }
@@ -592,7 +592,7 @@ void searchcustomer()
     file.close();
     if (!found)
     {
-        centertxt("Customer Not Found.....!");
+        centertxt("Customer Not Found.....!", 120);
     }
     ps();
     customermanagement();
