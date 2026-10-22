@@ -694,10 +694,13 @@ void updatecustomer()
 
     do
     {
-        heading("UPDATE CUSTOMER");
-        cout << "Enter Customer Name:  " << targetName << endl;
         cout << "Enter Customer Phone: ";
         getline(cin, targetPhone);
+
+        footer("Enter only numbers!.Re-enter!..........");
+        ps();
+        heading("UPDATE CUSTOMER");
+        cout << "Enter Customer Name:  " << targetName << endl;
 
     } while (!validphone(targetPhone));
 
