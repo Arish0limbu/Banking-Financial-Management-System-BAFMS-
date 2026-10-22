@@ -686,8 +686,13 @@ void updatecustomer()
         cout << "Enter Customer Name: ";
         getline(cin >> ws, targetName);
 
-        cout << "Enter Customer Phone: ";
-        getline(cin, targetPhone);
+        do
+        {
+            cout << "Enter Customer Phone: ";
+            getline(cin, targetPhone);
+
+            validphone(targetPhone);
+        } while (!validphone(targetPhone));
     }
 
     if (!file.is_open())
