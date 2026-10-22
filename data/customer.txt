@@ -3,5 +3,5 @@
 ========================================================================================================================
  SN |        CUSTOMER NAME        | AGE | ADDRESS (City-Ward,District,Country) | PHONE NUMBER |         GMAIL          |
 ========================================================================================================================
-  1 |Jental Karki                 |  20 |itahari-2,sunsari,nepal               |9876123455    |karkijental0@gmail.com  |
+  1 |jental rai                   |  20 |itahari-2,sunsari,nepal               |9876123455    |karkijental0@gmail.com  |
   2 |Yum Senehang Limbu           |  20 |itahari-14,sunsari,nepal              |9761013096    |limbuyum0@gmail.com     |

@@ -719,18 +719,18 @@ void updatecustomer()
 
     vector<string> headerLines;
     vector<Customer> customers;
-    string line;
+    string nline;
 
-    while (getline(file, line))
+    while (getline(file, nline))
     {
         Customer c;
-        if (readCustomerLine(line, c))
+        if (readCustomerLine(nline, c))
         {
             customers.push_back(c);
         }
         else
         {
-            headerLines.push_back(line);
+            headerLines.push_back(nline);
         }
     }
 
@@ -745,8 +745,6 @@ void updatecustomer()
         {
             found = true;
             foundIndex = i;
-            cls();
-            heading("|| UPDATE CUSTOMER ||");
             footer("Customer Found!");
             cout << "SN      : " << customers[i].sn << endl;
             cout << "Name    : " << customers[i].name << '\n';
@@ -756,7 +754,7 @@ void updatecustomer()
             cout << "Gmail   : " << customers[i].gmail << endl;
 
             int choice;
-
+            footer("Option to Update!.");
             cout << "\n1. Update Name\n";
             cout << "2. Update Age\n";
             cout << "3. Update Address\n";
@@ -764,13 +762,15 @@ void updatecustomer()
             cout << "5. Update Gmail\n";
             cout << "6. Update All Details\n";
             cout << "7. Cancel\n";
-            cout << "Enter choice: ";
+            line();
+            cout << "Enter number to select that option. Which u want to update: ";
 
             if (!(cin >> choice))
             {
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                return;
+                ps();
+                customermanagement();
             }
 
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
