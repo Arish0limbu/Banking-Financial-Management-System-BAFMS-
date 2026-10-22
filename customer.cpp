@@ -300,7 +300,7 @@ void filesave(string customername, string address, string gmail,
         if (ss >> c.sn >> separator1 &&
             separator1 == '|' &&
             getline(ss, c.name, '|') &&
-            ss >> c.age >> separator2 &&          
+            ss >> c.age >> separator2 &&
             separator2 == '|' &&
             getline(ss, c.address, '|') &&
             getline(ss, line, '|'))
@@ -617,9 +617,6 @@ void searchcustomer()
     customermanagement();
 }
 
-
-
-
 bool readCustomerLine(const string &line, Customer &c)
 {
     size_t first = line.find('|');
@@ -680,56 +677,62 @@ void updatecustomer()
 {
     string targetName, targetPhone;
 
-    cout << "\n================ UPDATE CUSTOMER ================\n";
-
-    cout << "Enter Customer Name: ";
-    getline(cin >> ws, targetName);
-
-    cout << "Enter Customer Phone: ";
-    getline(cin, targetPhone);
+    heading("UPDATE CUSTOMER");
 
     ifstream file("data/customer.txt");
 
+    if (file.is_open())
+    {
+        cout << "Enter Customer Name: ";
+        getline(cin >> ws, targetName);
+
+        cout << "Enter Customer Phone: ";
+        getline(cin, targetPhone);
+    }
+
     if (!file.is_open())
     {
-        cout << "Unable to open customer file.\n";
-        return;
+        centertxt("Unable to open customer file!............");
+        ps();
+        customermanagement();
     }
 
-    ofstream temp("data/customer_temp.txt");
-
-    if (!temp.is_open())
-    {
-        cout << "Unable to create temporary file.\n";
-        file.close();
-        return;
-    }
-
+    vector<string> headerLines;
+    vector<Customer> customers;
     string line;
-    bool found = false;
-    bool updated = false;
 
     while (getline(file, line))
     {
         Customer c;
-
-        if (!readCustomerLine(line, c))
+        if (readCustomerLine(line, c))
         {
-            temp << line << '\n';
-            continue;
+            customers.push_back(c);
         }
+        else
+        {
+            headerLines.push_back(line);
+        }
+    }
 
-        if (c.name == targetName && c.phone == targetPhone)
+    file.close();
+
+    bool found = false;
+    int foundIndex = -1;
+
+    for (size_t i = 0; i < customers.size(); i++)
+    {
+        if (lowercase(customers[i].name) == lowercase(targetName) && customers[i].phone == targetPhone)
         {
             found = true;
+            foundIndex = i;
 
             cout << "\nCustomer Found\n";
-            cout << "SN      : " << c.sn << '\n';
-            cout << "Name    : " << c.name << '\n';
-            cout << "Age     : " << c.age << '\n';
-            cout << "Address : " << c.address << '\n';
-            cout << "Phone   : " << c.phone << '\n';
-            cout << "Gmail   : " << c.gmail << '\n';
+            cout << "SN      : " << customers[i].sn << '\n';
+            cout << "Name    : " << customers[i].name << '\n';
+            cout << "Age     : " << customers[i].age << '\n';
+            cout << "Address : " << customers[i].address << '\n';
+            cout << "Phone   : " << customers[i].phone << '\n';
+            cout << "Gmail   : " << customers[i].gmail << '\n';
 
             int choice;
 
@@ -746,8 +749,7 @@ void updatecustomer()
             {
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                temp << line << '\n';
-                continue;
+                return;
             }
 
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -764,7 +766,7 @@ void updatecustomer()
                     getline(cin, input);
                 } while (!validname(input));
 
-                c.name = input;
+                customers[i].name = input;
                 break;
 
             case 2:
@@ -781,7 +783,7 @@ void updatecustomer()
                 } while (!validage(ageInput));
 
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                c.age = ageInput;
+                customers[i].age = ageInput;
                 break;
 
             case 3:
@@ -791,7 +793,7 @@ void updatecustomer()
                     getline(cin, input);
                 } while (!validaddress(input));
 
-                c.address = input;
+                customers[i].address = input;
                 break;
 
             case 4:
@@ -801,7 +803,7 @@ void updatecustomer()
                     getline(cin, input);
                 } while (!validphone(input));
 
-                c.phone = input;
+                customers[i].phone = input;
                 break;
 
             case 5:
@@ -811,114 +813,114 @@ void updatecustomer()
                     getline(cin, input);
                 } while (!validgmail(input));
 
-                c.gmail = input;
+                customers[i].gmail = input;
                 break;
 
             case 6:
                 do
                 {
                     cout << "Enter New Name: ";
-                    getline(cin, c.name);
-                } while (!validname(c.name));
+                    getline(cin, customers[i].name);
+                } while (!validname(customers[i].name));
 
                 do
                 {
                     cout << "Enter New Age: ";
 
-                    if (!(cin >> c.age))
+                    if (!(cin >> customers[i].age))
                     {
                         cin.clear();
                         cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                        c.age = 0;
+                        customers[i].age = 0;
                     }
-                } while (!validage(c.age));
+                } while (!validage(customers[i].age));
 
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
                 do
                 {
                     cout << "Enter New Address: ";
-                    getline(cin, c.address);
-                } while (!validaddress(c.address));
+                    getline(cin, customers[i].address);
+                } while (!validaddress(customers[i].address));
 
                 do
                 {
                     cout << "Enter New Phone: ";
-                    getline(cin, c.phone);
-                } while (!validphone(c.phone));
+                    getline(cin, customers[i].phone);
+                } while (!validphone(customers[i].phone));
 
                 do
                 {
                     cout << "Enter New Gmail: ";
-                    getline(cin, c.gmail);
-                } while (!validgmail(c.gmail));
+                    getline(cin, customers[i].gmail);
+                } while (!validgmail(customers[i].gmail));
 
                 break;
 
             case 7:
                 cout << "Update cancelled.\n";
-                break;
+                return;
 
             default:
                 cout << "Invalid choice.\n";
-                break;
+                return;
             }
 
-            if (choice >= 1 && choice <= 6)
-            {
-                updated = true;
-            }
-
-            if (updated)
-            {
-                temp << setw(3) << c.sn << " |"
-                     << left << setw(29) << c.name << "|"
-                     << right << setw(4) << c.age << " |"
-                     << left << setw(37) << c.address << "|"
-                     << setw(13) << c.phone << "|"
-                     << setw(23) << c.gmail << "|\n";
-            }
-            else
-            {
-                temp << line << '\n';
-            }
-        }
-        else
-        {
-            temp << line << '\n';
+            cout << "\nCustomer updated successfully.\n";
+            break;
         }
     }
-
-    file.close();
-    temp.close();
-
-    if (!found)
+    if (file.is_open())
     {
-        remove("data/customer_temp.txt");
-        cout << "\nCustomer not found.\n";
+        if (!found)
+        {
+            cout << "\nCustomer not found.\n";
+            ps();
+            customermanagement();
+        }
+    }
+    ofstream outfile("data/customer.txt");
+
+    if (!outfile.is_open())
+    {
+        cout << "Unable to open customer file for writing.\n";
         return;
     }
 
-    if (updated)
+    for (const string &header : headerLines)
     {
-        if (remove("data/customer.txt") != 0)
-        {
-            cout << "Unable to replace customer file.\n";
-            return;
-        }
-
-        if (rename("data/customer_temp.txt", "data/customer.txt") != 0)
-        {
-            cout << "Unable to save updated customer file.\n";
-            return;
-        }
-
-        cout << "\nCustomer updated successfully.\n";
+        outfile << header << '\n';
     }
-    else
+
+    sort(customers.begin(), customers.end(),
+         [](const Customer &a, const Customer &b)
+         {
+             string x = a.name;
+             string y = b.name;
+
+             transform(x.begin(), x.end(), x.begin(),
+                       [](unsigned char ch)
+                       { return tolower(ch); });
+
+             transform(y.begin(), y.end(), y.begin(),
+                       [](unsigned char ch)
+                       { return tolower(ch); });
+
+             return x < y;
+         });
+
+    int sn = 1;
+    for (const Customer &c : customers)
     {
-        remove("data/customer_temp.txt");
+        outfile << right << setw(3) << sn++ << right << setw(2) << "|";
+        outfile << left << setw(29) << c.name << right << setw(1) << "|";
+        outfile << right << setw(4) << c.age << right << setw(2) << "|";
+        outfile << left << setw(37) << c.address << right << setw(2) << "|";
+        outfile << left << setw(13) << c.phone << right << setw(2) << "|";
+        outfile << left << setw(24) << c.gmail << right << setw(1) << "|" << endl;
     }
+
+    outfile.close();
 }
 
 void deletecustomer()
