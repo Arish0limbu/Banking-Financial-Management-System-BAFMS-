@@ -689,18 +689,29 @@ void updatecustomer()
         return;
     }
 
-    cout << "Enter Customer Name: ";
-    getline(cin >> ws, targetName);
+    do
+    {
+
+        cout << "Enter Customer Name: ";
+        getline(cin >> ws, targetName);
+        if (validname(targetName) == false)
+        {
+            heading("UPDATE CUSTOMER");
+        }
+        
+    } while (!validname(targetName));
 
     do
     {
         cout << "Enter Customer Phone: ";
         getline(cin, targetPhone);
-
-        footer("Enter only numbers!.Re-enter!..........");
-        ps();
-        heading("UPDATE CUSTOMER");
-        cout << "Enter Customer Name:  " << targetName << endl;
+        if (validphone(targetPhone) == false)
+        {
+            footer("Enter only numbers!.Re-enter!..........");
+            ps();
+            heading("UPDATE CUSTOMER");
+            cout << "Enter Customer Name:  " << targetName << endl;
+        }
 
     } while (!validphone(targetPhone));
 
