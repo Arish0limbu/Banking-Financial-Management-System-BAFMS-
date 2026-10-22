@@ -755,7 +755,7 @@ void updatecustomer()
 
             int choice;
             footer("Option to Update!.");
-            cout << "\n1. Update Name\n";
+            cout << "1. Update Name\n";
             cout << "2. Update Age\n";
             cout << "3. Update Address\n";
             cout << "4. Update Phone\n";
