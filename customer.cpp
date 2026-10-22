@@ -677,7 +677,7 @@ void updatecustomer()
 {
     string targetName, targetPhone;
 
-    heading("UPDATE CUSTOMER");
+    heading("|| UPDATE CUSTOMER ||");
 
     ifstream file("data/customer.txt");
 
@@ -698,7 +698,7 @@ void updatecustomer()
         {
             footer("Invalid name!.Try full name!.RE-enter1.......... ");
             ps();
-            heading("UPDATE CUSTOMER");
+            heading("|| UPDATE CUSTOMER ||");
         }
 
     } while (!validname(targetName));
@@ -711,7 +711,7 @@ void updatecustomer()
         {
             footer("Enter only numbers!.Re-enter!..........");
             ps();
-            heading("UPDATE CUSTOMER");
+            heading("|| UPDATE CUSTOMER ||");
             cout << "Enter Customer Name:  " << targetName << endl;
         }
 
@@ -745,14 +745,15 @@ void updatecustomer()
         {
             found = true;
             foundIndex = i;
-
-            cout << "\nCustomer Found\n";
-            cout << "SN      : " << customers[i].sn << '\n';
+            cls();
+            heading("|| UPDATE CUSTOMER ||");
+            footer("Customer Found!");
+            cout << "SN      : " << customers[i].sn << endl;
             cout << "Name    : " << customers[i].name << '\n';
             cout << "Age     : " << customers[i].age << '\n';
             cout << "Address : " << customers[i].address << '\n';
             cout << "Phone   : " << customers[i].phone << '\n';
-            cout << "Gmail   : " << customers[i].gmail << '\n';
+            cout << "Gmail   : " << customers[i].gmail << endl;
 
             int choice;
 
