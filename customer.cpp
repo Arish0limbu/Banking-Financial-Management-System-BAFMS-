@@ -681,26 +681,25 @@ void updatecustomer()
 
     ifstream file("data/customer.txt");
 
-    if (file.is_open())
-    {
-        cout << "Enter Customer Name: ";
-        getline(cin >> ws, targetName);
-
-        do
-        {
-            cout << "Enter Customer Phone: ";
-            getline(cin, targetPhone);
-
-            validphone(targetPhone);
-        } while (!validphone(targetPhone));
-    }
-
     if (!file.is_open())
     {
         centertxt("Unable to open customer file!............");
         ps();
         customermanagement();
+        return;
     }
+
+    cout << "Enter Customer Name: ";
+    getline(cin >> ws, targetName);
+
+    do
+    {
+        heading("UPDATE CUSTOMER");
+        cout << "Enter Customer Name:  " << targetName << endl;
+        cout << "Enter Customer Phone: ";
+        getline(cin, targetPhone);
+
+    } while (!validphone(targetPhone));
 
     vector<string> headerLines;
     vector<Customer> customers;
