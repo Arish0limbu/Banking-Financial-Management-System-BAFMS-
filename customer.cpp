@@ -696,15 +696,17 @@ void updatecustomer()
         getline(cin >> ws, targetName);
         if (validname(targetName) == false)
         {
+            footer("Invalid name!.RE-enter1.......... ");
+            ps();
             heading("UPDATE CUSTOMER");
         }
-        
+
     } while (!validname(targetName));
 
     do
     {
         cout << "Enter Customer Phone: ";
-        getline(cin, targetPhone);
+        getline(cin >> ws, targetPhone);
         if (validphone(targetPhone) == false)
         {
             footer("Enter only numbers!.Re-enter!..........");
