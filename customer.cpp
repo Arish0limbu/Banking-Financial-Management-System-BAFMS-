@@ -7,6 +7,7 @@
 #include <limits>
 #include <sstream>
 #include <string>
+#include <cstdio>
 #include <windows.h>
 
 #include "include/customer.h"
@@ -254,13 +255,30 @@ bool validphone(long long phone)
 {
     return phone > 9699999999LL && phone < 9900000000LL;
 }
+
+bool validphone(string phone)
+{
+    if (phone.length() != 10)
+        return false;
+
+    if (phone[0] != '9' || (phone[1] != '7' && phone[1] != '8'))
+        return false;
+
+    for (char ch : phone)
+    {
+        if (!isdigit(static_cast<unsigned char>(ch)))
+            return false;
+    }
+
+    return true;
+}
 struct Customer
 {
     int sn;
     string name;
     int age;
     string address;
-    long long phone;
+    string phone;
     string gmail;
 };
 
@@ -598,8 +616,308 @@ void searchcustomer()
     customermanagement();
 }
 
+
+
+
+bool readCustomerLine(const string &line, Customer &c)
+{
+    size_t first = line.find('|');
+    size_t second = line.find('|', first == string::npos ? first : first + 1);
+    size_t third = line.find('|', second == string::npos ? second : second + 1);
+    size_t fourth = line.find('|', third == string::npos ? third : third + 1);
+    size_t fifth = line.find('|', fourth == string::npos ? fourth : fourth + 1);
+    size_t sixth = line.find('|', fifth == string::npos ? fifth : fifth + 1);
+
+    if (first == string::npos || second == string::npos ||
+        third == string::npos || fourth == string::npos ||
+        fifth == string::npos || sixth == string::npos)
+        return false;
+
+    try
+    {
+        string snText = line.substr(0, first);
+
+        size_t start = snText.find_first_not_of(" \t");
+        if (start == string::npos)
+            return false;
+
+        c.sn = stoi(snText.substr(start));
+
+        c.name = line.substr(first + 1, second - first - 1);
+        c.age = stoi(line.substr(second + 1, third - second - 1));
+        c.address = line.substr(third + 1, fourth - third - 1);
+        c.phone = line.substr(fourth + 1, fifth - fourth - 1);
+        c.gmail = line.substr(fifth + 1, sixth - fifth - 1);
+
+        auto trim = [](string &s)
+        {
+            size_t start = s.find_first_not_of(" \t");
+            if (start == string::npos)
+            {
+                s.clear();
+                return;
+            }
+
+            size_t end = s.find_last_not_of(" \t");
+            s = s.substr(start, end - start + 1);
+        };
+
+        trim(c.name);
+        trim(c.address);
+        trim(c.phone);
+        trim(c.gmail);
+
+        return true;
+    }
+    catch (...)
+    {
+        return false;
+    }
+}
+
 void updatecustomer()
 {
+    string targetName, targetPhone;
+
+    cout << "\n================ UPDATE CUSTOMER ================\n";
+
+    cout << "Enter Customer Name: ";
+    getline(cin >> ws, targetName);
+
+    cout << "Enter Customer Phone: ";
+    getline(cin, targetPhone);
+
+    ifstream file("data/customer.txt");
+
+    if (!file.is_open())
+    {
+        cout << "Unable to open customer file.\n";
+        return;
+    }
+
+    ofstream temp("data/customer_temp.txt");
+
+    if (!temp.is_open())
+    {
+        cout << "Unable to create temporary file.\n";
+        file.close();
+        return;
+    }
+
+    string line;
+    bool found = false;
+    bool updated = false;
+
+    while (getline(file, line))
+    {
+        Customer c;
+
+        if (!readCustomerLine(line, c))
+        {
+            temp << line << '\n';
+            continue;
+        }
+
+        if (c.name == targetName && c.phone == targetPhone)
+        {
+            found = true;
+
+            cout << "\nCustomer Found\n";
+            cout << "SN      : " << c.sn << '\n';
+            cout << "Name    : " << c.name << '\n';
+            cout << "Age     : " << c.age << '\n';
+            cout << "Address : " << c.address << '\n';
+            cout << "Phone   : " << c.phone << '\n';
+            cout << "Gmail   : " << c.gmail << '\n';
+
+            int choice;
+
+            cout << "\n1. Update Name\n";
+            cout << "2. Update Age\n";
+            cout << "3. Update Address\n";
+            cout << "4. Update Phone\n";
+            cout << "5. Update Gmail\n";
+            cout << "6. Update All Details\n";
+            cout << "7. Cancel\n";
+            cout << "Enter choice: ";
+
+            if (!(cin >> choice))
+            {
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                temp << line << '\n';
+                continue;
+            }
+
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+            string input;
+            int ageInput;
+
+            switch (choice)
+            {
+            case 1:
+                do
+                {
+                    cout << "Enter New Name: ";
+                    getline(cin, input);
+                } while (!validname(input));
+
+                c.name = input;
+                break;
+
+            case 2:
+                do
+                {
+                    cout << "Enter New Age: ";
+
+                    if (!(cin >> ageInput))
+                    {
+                        cin.clear();
+                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                        ageInput = 0;
+                    }
+                } while (!validage(ageInput));
+
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                c.age = ageInput;
+                break;
+
+            case 3:
+                do
+                {
+                    cout << "Enter New Address: ";
+                    getline(cin, input);
+                } while (!validaddress(input));
+
+                c.address = input;
+                break;
+
+            case 4:
+                do
+                {
+                    cout << "Enter New Phone: ";
+                    getline(cin, input);
+                } while (!validphone(input));
+
+                c.phone = input;
+                break;
+
+            case 5:
+                do
+                {
+                    cout << "Enter New Gmail: ";
+                    getline(cin, input);
+                } while (!validgmail(input));
+
+                c.gmail = input;
+                break;
+
+            case 6:
+                do
+                {
+                    cout << "Enter New Name: ";
+                    getline(cin, c.name);
+                } while (!validname(c.name));
+
+                do
+                {
+                    cout << "Enter New Age: ";
+
+                    if (!(cin >> c.age))
+                    {
+                        cin.clear();
+                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                        c.age = 0;
+                    }
+                } while (!validage(c.age));
+
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+                do
+                {
+                    cout << "Enter New Address: ";
+                    getline(cin, c.address);
+                } while (!validaddress(c.address));
+
+                do
+                {
+                    cout << "Enter New Phone: ";
+                    getline(cin, c.phone);
+                } while (!validphone(c.phone));
+
+                do
+                {
+                    cout << "Enter New Gmail: ";
+                    getline(cin, c.gmail);
+                } while (!validgmail(c.gmail));
+
+                break;
+
+            case 7:
+                cout << "Update cancelled.\n";
+                break;
+
+            default:
+                cout << "Invalid choice.\n";
+                break;
+            }
+
+            if (choice >= 1 && choice <= 6)
+            {
+                updated = true;
+            }
+
+            if (updated)
+            {
+                temp << setw(3) << c.sn << " |"
+                     << left << setw(29) << c.name << "|"
+                     << right << setw(4) << c.age << " |"
+                     << left << setw(37) << c.address << "|"
+                     << setw(13) << c.phone << "|"
+                     << setw(23) << c.gmail << "|\n";
+            }
+            else
+            {
+                temp << line << '\n';
+            }
+        }
+        else
+        {
+            temp << line << '\n';
+        }
+    }
+
+    file.close();
+    temp.close();
+
+    if (!found)
+    {
+        remove("data/customer_temp.txt");
+        cout << "\nCustomer not found.\n";
+        return;
+    }
+
+    if (updated)
+    {
+        if (remove("data/customer.txt") != 0)
+        {
+            cout << "Unable to replace customer file.\n";
+            return;
+        }
+
+        if (rename("data/customer_temp.txt", "data/customer.txt") != 0)
+        {
+            cout << "Unable to save updated customer file.\n";
+            return;
+        }
+
+        cout << "\nCustomer updated successfully.\n";
+    }
+    else
+    {
+        remove("data/customer_temp.txt");
+    }
 }
 
 void deletecustomer()
