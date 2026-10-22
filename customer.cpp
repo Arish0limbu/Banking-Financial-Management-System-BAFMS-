@@ -696,7 +696,7 @@ void updatecustomer()
         getline(cin >> ws, targetName);
         if (validname(targetName) == false)
         {
-            footer("Invalid name!.RE-enter1.......... ");
+            footer("Invalid name!.Try full name!.RE-enter1.......... ");
             ps();
             heading("UPDATE CUSTOMER");
         }
@@ -879,68 +879,76 @@ void updatecustomer()
 
             case 7:
                 cout << "Update cancelled.\n";
+                ps();
+                customermanagement();
                 return;
 
             default:
                 cout << "Invalid choice.\n";
+                ps();
+                customermanagement();
                 return;
             }
 
             cout << "\nCustomer updated successfully.\n";
+            ps();
+
+            ofstream outfile("data/customer.txt");
+
+            if (!outfile.is_open())
+            {
+                cout << "Unable to open customer file for writing.\n";
+                ps();
+                customermanagement();
+                return;
+            }
+
+            for (const string &header : headerLines)
+            {
+                outfile << header << '\n';
+            }
+
+            sort(customers.begin(), customers.end(),
+                 [](const Customer &a, const Customer &b)
+                 {
+                     string x = a.name;
+                     string y = b.name;
+
+                     transform(x.begin(), x.end(), x.begin(),
+                               [](unsigned char ch)
+                               { return tolower(ch); });
+
+                     transform(y.begin(), y.end(), y.begin(),
+                               [](unsigned char ch)
+                               { return tolower(ch); });
+
+                     return x < y;
+                 });
+
+            int sn = 1;
+            for (const Customer &c : customers)
+            {
+                outfile << right << setw(3) << sn++ << right << setw(2) << "|";
+                outfile << left << setw(29) << c.name << right << setw(1) << "|";
+                outfile << right << setw(4) << c.age << right << setw(2) << "|";
+                outfile << left << setw(37) << c.address << right << setw(2) << "|";
+                outfile << left << setw(13) << c.phone << right << setw(2) << "|";
+                outfile << left << setw(24) << c.gmail << right << setw(1) << "|" << endl;
+            }
+
+            outfile.close();
+            customermanagement();
             break;
         }
     }
-    if (file.is_open())
-    {
-        if (!found)
-        {
-            cout << "\nCustomer not found.\n";
-            ps();
-            customermanagement();
-        }
-    }
-    ofstream outfile("data/customer.txt");
 
-    if (!outfile.is_open())
+    if (!found)
     {
-        cout << "Unable to open customer file for writing.\n";
+        cout << "\nCustomer not found.\n";
+        ps();
+        customermanagement();
         return;
     }
-
-    for (const string &header : headerLines)
-    {
-        outfile << header << '\n';
-    }
-
-    sort(customers.begin(), customers.end(),
-         [](const Customer &a, const Customer &b)
-         {
-             string x = a.name;
-             string y = b.name;
-
-             transform(x.begin(), x.end(), x.begin(),
-                       [](unsigned char ch)
-                       { return tolower(ch); });
-
-             transform(y.begin(), y.end(), y.begin(),
-                       [](unsigned char ch)
-                       { return tolower(ch); });
-
-             return x < y;
-         });
-
-    int sn = 1;
-    for (const Customer &c : customers)
-    {
-        outfile << right << setw(3) << sn++ << right << setw(2) << "|";
-        outfile << left << setw(29) << c.name << right << setw(1) << "|";
-        outfile << right << setw(4) << c.age << right << setw(2) << "|";
-        outfile << left << setw(37) << c.address << right << setw(2) << "|";
-        outfile << left << setw(13) << c.phone << right << setw(2) << "|";
-        outfile << left << setw(24) << c.gmail << right << setw(1) << "|" << endl;
-    }
-
-    outfile.close();
 }
 
 void deletecustomer()
