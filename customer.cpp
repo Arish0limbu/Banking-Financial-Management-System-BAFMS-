@@ -300,7 +300,7 @@ void filesave(string customername, string address, string gmail,
         if (ss >> c.sn >> separator1 &&
             separator1 == '|' &&
             getline(ss, c.name, '|') &&
-            ss >> c.age >> separator2 &&
+            ss >> c.age >> separator2 &&          
             separator2 == '|' &&
             getline(ss, c.address, '|') &&
             getline(ss, line, '|'))
