@@ -251,6 +251,16 @@ bool validgmail(string gmail)
     return true;
 }
 
+struct Customer
+{
+    int sn;
+    string name;
+    int age;
+    string address;
+    string phone;
+    string gmail;
+};
+
 bool validphone(long long phone)
 {
     return phone > 9699999999LL && phone < 9900000000LL;
@@ -272,15 +282,6 @@ bool validphone(string phone)
 
     return true;
 }
-struct Customer
-{
-    int sn;
-    string name;
-    int age;
-    string address;
-    string phone;
-    string gmail;
-};
 
 void filesave(string customername, string address, string gmail,
               int age, long long phone, int sn)
@@ -336,7 +337,7 @@ void filesave(string customername, string address, string gmail,
 
     infile.close();
 
-    customers.push_back({sn, customername, age, address, phone, gmail});
+    customers.push_back({sn, customername, age, address, to_string(phone), gmail});
 
     sort(customers.begin(), customers.end(),
          [](const Customer &a, const Customer &b)
