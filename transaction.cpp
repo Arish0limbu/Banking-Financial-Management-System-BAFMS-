@@ -116,18 +116,60 @@ static void depositFunds()
     ps();
 }
 
+static void withdrawFunds()
+{
+    int number;
+    double amount;
+    if (!readint("Account number: ", number, 1, 2147483647))
+        return;
+
+    AccountRecord account;
+    if (!findAccount(number, account) || !account.active)
+    {
+        cout << "Active account was not found.\n";
+        ps();
+        return;
+    }
+    if (!readdouble("Withdrawal amount: ", amount, 0.01, 1000000000.0))
+        return;
+    if (amount > account.balance)
+    {
+        cout << fixed << setprecision(2) << "Insufficient funds. Available balance: " << account.balance << '\n';
+        ps();
+        return;
+    }
+
+    if (!updateAccountBalance(number, account.balance - amount))
+    {
+        cout << "Unable to update the account balance.\n";
+        ps();
+        return;
+    }
+    if (!saveTransaction("WITHDRAWAL", number, 0, amount))
+    {
+        updateAccountBalance(number, account.balance);
+        cout << "Withdrawal was not recorded; the previous balance was restored.\n";
+        ps();
+        return;
+    }
+    cout << fixed << setprecision(2) << "Withdrawal successful. New balance: " << account.balance - amount << '\n';
+    ps();
+}
+
 void transactionmanagement()
 {
     int choice;
     do
     {
         heading("|| TRANSACTION MANAGEMENT ||");
-        cout << "1. Deposit funds\n2. View transaction history\n3. Back\n";
-        if (!readint("Select an option: ", choice, 1, 3))
+        cout << "1. Deposit funds\n2. Withdraw funds\n3. View transaction history\n4. Back\n";
+        if (!readint("Select an option: ", choice, 1, 4))
             return;
         if (choice == 1)
             depositFunds();
         else if (choice == 2)
+            withdrawFunds();
+        else if (choice == 3)
             showHistory();
-    } while (choice != 3);
+    } while (choice != 4);
 }
