@@ -156,20 +156,85 @@ static void withdrawFunds()
     ps();
 }
 
+static void transferFunds()
+{
+    int sourceNumber, destinationNumber;
+    double amount;
+    if (!readint("Source account number: ", sourceNumber, 1, 2147483647) ||
+        !readint("Destination account number: ", destinationNumber, 1, 2147483647))
+        return;
+    if (sourceNumber == destinationNumber)
+    {
+        cout << "Choose two different accounts.\n";
+        ps();
+        return;
+    }
+    if (!readdouble("Transfer amount: ", amount, 0.01, 1000000000.0))
+        return;
+
+    vector<AccountRecord> accounts = readAccounts();
+    auto source = accounts.end();
+    auto destination = accounts.end();
+    for (auto it = accounts.begin(); it != accounts.end(); ++it)
+    {
+        if (it->accountNumber == sourceNumber && it->active)
+            source = it;
+        if (it->accountNumber == destinationNumber && it->active)
+            destination = it;
+    }
+    if (source == accounts.end() || destination == accounts.end())
+    {
+        cout << "Both accounts must exist and be active.\n";
+        ps();
+        return;
+    }
+    if (source->balance < amount)
+    {
+        cout << "Insufficient funds in the source account.\n";
+        ps();
+        return;
+    }
+
+    const double sourceBalance = source->balance;
+    const double destinationBalance = destination->balance;
+    source->balance -= amount;
+    destination->balance += amount;
+    if (!saveAccounts(accounts))
+    {
+        cout << "Unable to update account balances.\n";
+        ps();
+        return;
+    }
+    if (!saveTransaction("TRANSFER", sourceNumber, destinationNumber, amount))
+    {
+        source->balance = sourceBalance;
+        destination->balance = destinationBalance;
+        saveAccounts(accounts);
+        cout << "Transfer was not recorded; the previous balances were restored.\n";
+        ps();
+        return;
+    }
+    cout << "Transfer completed successfully.\n";
+    ps();
+}
+
 void transactionmanagement()
 {
     int choice;
     do
     {
         heading("|| TRANSACTION MANAGEMENT ||");
-        cout << "1. Deposit funds\n2. Withdraw funds\n3. View transaction history\n4. Back\n";
-        if (!readint("Select an option: ", choice, 1, 4))
+        cout << "1. Deposit funds\n2. Withdraw funds\n3. Transfer funds\n"
+             << "4. View transaction history\n5. Back\n";
+        if (!readint("Select an option: ", choice, 1, 5))
             return;
         if (choice == 1)
             depositFunds();
         else if (choice == 2)
             withdrawFunds();
         else if (choice == 3)
+            transferFunds();
+        else if (choice == 4)
             showHistory();
-    } while (choice != 4);
+    } while (choice != 5);
 }
