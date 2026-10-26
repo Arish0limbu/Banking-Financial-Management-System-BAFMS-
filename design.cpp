@@ -2,6 +2,7 @@
 #include <iomanip>
 #include "include/design.h"
 #include <string>
+#include <limits>
 
 using namespace std;
 
@@ -92,4 +93,44 @@ void fileheader(ostream &out, string heading)
 void filesubheader(ostream &out, int r, string subheading)
 {
     out << right << setw(subheading.length() + r) << subheading << right << setw(r + 1) << "|";
+}
+
+bool readint(const string &prompt, int &value, int minimum, int maximum)
+{
+    while (true)
+    {
+        cout << prompt;
+        if (cin >> value && value >= minimum && value <= maximum)
+        {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            return true;
+        }
+
+        if (cin.eof())
+            return false;
+
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Enter a number from " << minimum << " to " << maximum << ".\n";
+    }
+}
+
+bool readdouble(const string &prompt, double &value, double minimum, double maximum)
+{
+    while (true)
+    {
+        cout << prompt;
+        if (cin >> value && value >= minimum && value <= maximum)
+        {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            return true;
+        }
+
+        if (cin.eof())
+            return false;
+
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Enter a value from " << minimum << " to " << maximum << ".\n";
+    }
 }

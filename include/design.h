@@ -27,4 +27,8 @@ void filecenter(ostream &out, int c = 45);
 void fileheader(ostream &out, string heading);
 
 void filesubheader(ostream &out, int r ,string heading);
+
+bool readint(const string &prompt, int &value, int minimum, int maximum);
+
+bool readdouble(const string &prompt, double &value, double minimum, double maximum);
 #endif
