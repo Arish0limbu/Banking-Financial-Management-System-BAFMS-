@@ -1,7 +1,9 @@
 #include <fstream>
 #include <iomanip>
+#include <iostream>
 #include <sstream>
 #include "include/account.h"
+#include "include/design.h"
 
 using namespace std;
 
@@ -84,4 +86,98 @@ bool updateAccountBalance(int accountNumber, double newBalance)
         }
     }
     return false;
+}
+
+static bool customerSerialExists(int serial)
+{
+    ifstream file("data/customer.txt");
+    string row;
+    while (getline(file, row))
+    {
+        size_t separator = row.find('|');
+        if (separator == string::npos)
+            continue;
+        try
+        {
+            if (stoi(row.substr(0, separator)) == serial)
+                return true;
+        }
+        catch (...)
+        {
+            continue;
+        }
+    }
+    return false;
+}
+
+static void openAccount()
+{
+    int customerSerial, typeChoice;
+    heading("|| OPEN BANK ACCOUNT ||");
+    if (!readint("Customer serial number: ", customerSerial, 1, 1000000))
+        return;
+    if (!customerSerialExists(customerSerial))
+    {
+        cout << "Customer serial number was not found.\n";
+        ps();
+        return;
+    }
+
+    if (!readint("Account type (1 Savings, 2 Current): ", typeChoice, 1, 2))
+        return;
+
+    vector<AccountRecord> accounts = readAccounts();
+    int nextNumber = 100001;
+    for (const AccountRecord &account : accounts)
+        if (account.accountNumber >= nextNumber)
+            nextNumber = account.accountNumber + 1;
+
+    AccountRecord account{nextNumber, customerSerial,
+                          typeChoice == 1 ? "Savings" : "Current", 0.0, true};
+    accounts.push_back(account);
+    if (!saveAccounts(accounts))
+    {
+        cout << "Unable to save account. Check the data folder.\n";
+        ps();
+        return;
+    }
+
+    cout << "Account opened successfully. Account number: " << account.accountNumber << '\n';
+    ps();
+}
+
+static void listAccounts()
+{
+    heading("|| BANK ACCOUNTS ||");
+    vector<AccountRecord> accounts = readAccounts();
+    if (accounts.empty())
+        cout << "No accounts have been opened yet.\n";
+    else
+    {
+        cout << left << setw(14) << "ACCOUNT" << setw(14) << "CUSTOMER SN"
+             << setw(14) << "TYPE" << setw(14) << "BALANCE" << "STATUS\n";
+        line();
+        cout << fixed << setprecision(2);
+        for (const AccountRecord &account : accounts)
+            cout << left << setw(14) << account.accountNumber << setw(14) << account.customerSerial
+                 << setw(14) << account.accountType << setw(14) << account.balance
+                 << (account.active ? "Active" : "Closed") << '\n';
+    }
+    ps();
+}
+
+void accountmanagement()
+{
+    int choice;
+    do
+    {
+        heading("|| ACCOUNT MANAGEMENT ||");
+        cout << "1. Open account\n2. View all accounts\n3. Back\n";
+        if (!readint("Select an option: ", choice, 1, 3))
+            return;
+        if (choice == 1)
+            openAccount();
+        else if (choice == 2)
+            listAccounts();
+    } while (choice != 3);
 }
