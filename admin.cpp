@@ -1,97 +1,87 @@
 #include <iostream>
-#include <limits>
 #include "include/account.h"
+#include "include/admin.h"
 #include "include/customer.h"
 #include "include/design.h"
-#include <string>
+#include "include/employee.h"
+#include "include/finance.h"
+#include "include/loan.h"
+#include "include/security.h"
+#include "include/transaction.h"
 
 using namespace std;
 
-void customeraccountmenu()
+static void customeraccountmenu()
 {
     int choice;
     do
     {
-        heading("|| Customer & Account  Management ||");
-        cout << "1. Customer Management" << endl
-             << "2. Account mangement." << endl
-             << "3. Back Mainmenu." << endl;
+        heading("|| CUSTOMER & ACCOUNT MANAGEMENT ||");
+        cout << "1. Customer management\n2. Account management\n3. Back to admin menu\n";
+        if (!readint("Select an option: ", choice, 1, 3))
+            return;
+        if (choice == 1)
+            customermanagement();
+        else if (choice == 2)
+            accountmanagement();
+    } while (choice != 3);
+}
 
-        line();
-        cout << "Enter number to select the option: ";
-        cin >> choice;
-        if (cin.fail())
-        {
-            footer(" Invalid input! Enter integers only. ");
-            ps();
-            cin.clear();
-            cin.ignore(10000, '\n');
-            continue;
-        }
-        if (choice < 1 || choice > 3)
-        {
-            footer(" Enter given option number from 1 to 3. ");
-            ps();
-            continue;
-        }
-
-    } while (cin.fail() || choice < 1 || choice > 3);
-    switch (choice)
+static void adminsettings()
+{
+    int choice;
+    do
     {
-    case 1:
-        customermanagement();
-        break;
-    case 2:
-        void accountmanagemant();
-        break;
-    case 3:
-        break;
-    }
+        heading("|| ADMIN SETTINGS ||");
+        cout << "1. Change password\n2. View administrator profile\n3. Back\n";
+        if (!readint("Select an option: ", choice, 1, 3))
+            return;
+        if (choice == 1)
+            changeAdminPassword();
+        else if (choice == 2)
+            showAdminProfile();
+    } while (choice != 3);
 }
 
 void adminmain()
 {
     int choice;
-    do
+    while (true)
     {
         heading("|| WELCOME TO ADMIN PAGE ||");
-        cout << "1. Customer & Account Management." << endl
-             << "2. Transactuion mangement." << endl
-             << "3. Loan Management." << endl
-             << "4. Employee Management." << endl
-             << "5. Reports & Analytics." << endl
-             << "6. Admin Settings." << endl
-             << "7. Logout." << endl;
+        cout << "1. Customer & account management\n"
+             << "2. Transaction management\n"
+             << "3. Loan management\n"
+             << "4. Employee management\n"
+             << "5. Reports & analytics\n"
+             << "6. Admin settings\n"
+             << "7. Logout\n";
 
-        line();
-        cout << "Enter number to select the option: ";
-        cin >> choice;
-        if (cin.fail())
+        if (!readint("Select an option: ", choice, 1, 7))
+            return;
+        switch (choice)
         {
-            footer(" Invalid input! Enter integers only. ");
-            ps();
-            cin.clear();
-            cin.ignore(10000, '\n');
-            continue;
+        case 1:
+            customeraccountmenu();
+            break;
+        case 2:
+            transactionmanagement();
+            break;
+        case 3:
+            loanmanagement();
+            break;
+        case 4:
+            employeemanagement();
+            break;
+        case 5:
+            showReports();
+            break;
+        case 6:
+            adminsettings();
+            break;
+        case 7:
+            cout << "You have been logged out.\n";
+            return;
         }
-        if (choice < 1 || choice > 7)
-        {
-            footer(" Enter given option number from 1 to 7. ");
-            ps();
-            continue;
-        }
-
-    } while (cin.fail() || choice < 1 || choice > 7);
-
-    switch (choice)
-    {
-    case 1:
-        customeraccountmenu();
-        break;
-
-    default:
-        break;
     }
-    while (true)
-        ;
 }
