@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <limits>
 #include <sstream>
 #include "include/account.h"
 #include "include/design.h"
@@ -166,18 +167,91 @@ static void listAccounts()
     ps();
 }
 
+static void searchAccount()
+{
+    int number;
+    if (!readint("Account number: ", number, 1, 2147483647))
+        return;
+    AccountRecord account;
+    if (!findAccount(number, account))
+    {
+        cout << "Account was not found.\n";
+        ps();
+        return;
+    }
+
+    cout << "Account number : " << account.accountNumber << '\n'
+         << "Customer SN    : " << account.customerSerial << '\n'
+         << "Type           : " << account.accountType << '\n'
+         << fixed << setprecision(2) << "Balance        : " << account.balance << '\n'
+         << "Status         : " << (account.active ? "Active" : "Closed") << '\n';
+    ps();
+}
+
+static void closeAccount()
+{
+    int number;
+    if (!readint("Account number to close: ", number, 1, 2147483647))
+        return;
+
+    vector<AccountRecord> accounts = readAccounts();
+    auto found = accounts.end();
+    for (auto it = accounts.begin(); it != accounts.end(); ++it)
+        if (it->accountNumber == number && it->active)
+        {
+            found = it;
+            break;
+        }
+
+    if (found == accounts.end())
+    {
+        cout << "Active account was not found.\n";
+        ps();
+        return;
+    }
+    if (found->balance > 0.005)
+    {
+        cout << "An account must have a zero balance before it can be closed.\n";
+        ps();
+        return;
+    }
+
+    char confirm;
+    cout << "Close account " << number << "? (Y/N): ";
+    cin >> confirm;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    if (confirm != 'Y' && confirm != 'y')
+    {
+        cout << "Account closure cancelled.\n";
+        ps();
+        return;
+    }
+
+    found->active = false;
+    if (!saveAccounts(accounts))
+        cout << "Unable to save account changes.\n";
+    else
+        cout << "Account closed successfully.\n";
+    ps();
+}
+
 void accountmanagement()
 {
     int choice;
     do
     {
         heading("|| ACCOUNT MANAGEMENT ||");
-        cout << "1. Open account\n2. View all accounts\n3. Back\n";
-        if (!readint("Select an option: ", choice, 1, 3))
+        cout << "1. Open account\n2. View all accounts\n3. Search account\n"
+             << "4. Close account\n5. Back\n";
+        if (!readint("Select an option: ", choice, 1, 5))
             return;
         if (choice == 1)
             openAccount();
         else if (choice == 2)
             listAccounts();
-    } while (choice != 3);
+        else if (choice == 3)
+            searchAccount();
+        else if (choice == 4)
+            closeAccount();
+    } while (choice != 5);
 }
