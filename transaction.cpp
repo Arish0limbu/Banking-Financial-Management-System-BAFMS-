@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include "include/account.h"
 #include "include/design.h"
 #include "include/transaction.h"
 
@@ -81,16 +82,52 @@ static void showHistory()
     ps();
 }
 
+static void depositFunds()
+{
+    int number;
+    double amount;
+    if (!readint("Account number: ", number, 1, 2147483647))
+        return;
+
+    AccountRecord account;
+    if (!findAccount(number, account) || !account.active)
+    {
+        cout << "Active account was not found.\n";
+        ps();
+        return;
+    }
+    if (!readdouble("Deposit amount: ", amount, 0.01, 1000000000.0))
+        return;
+
+    if (!updateAccountBalance(number, account.balance + amount))
+    {
+        cout << "Unable to update the account balance.\n";
+        ps();
+        return;
+    }
+    if (!saveTransaction("DEPOSIT", 0, number, amount))
+    {
+        updateAccountBalance(number, account.balance);
+        cout << "Deposit was not recorded; the previous balance was restored.\n";
+        ps();
+        return;
+    }
+    cout << fixed << setprecision(2) << "Deposit successful. New balance: " << account.balance + amount << '\n';
+    ps();
+}
+
 void transactionmanagement()
 {
     int choice;
     do
     {
         heading("|| TRANSACTION MANAGEMENT ||");
-        cout << "1. View transaction history\n2. Back\n";
-        if (!readint("Select an option: ", choice, 1, 2))
+        cout << "1. Deposit funds\n2. View transaction history\n3. Back\n";
+        if (!readint("Select an option: ", choice, 1, 3))
             return;
         if (choice == 1)
+            depositFunds();
+        else if (choice == 2)
             showHistory();
-    } while (choice != 2);
+    } while (choice != 3);
 }
