@@ -787,23 +787,12 @@ void updatecustomer()
                     getline(cin, input);
                 } while (!validname(input));
 
-                customers[i].name = input;
+                customers[i].name = formatname(input);
                 break;
 
             case 2:
-                do
-                {
-                    cout << "Enter New Age: ";
-
-                    if (!(cin >> ageInput))
-                    {
-                        cin.clear();
-                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                        ageInput = 0;
-                    }
-                } while (!validage(ageInput));
-
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                if (!readint("Enter New Age: ", ageInput, 18, 90))
+                    return;
                 customers[i].age = ageInput;
                 break;
 
@@ -843,20 +832,10 @@ void updatecustomer()
                     cout << "Enter New Name: ";
                     getline(cin, customers[i].name);
                 } while (!validname(customers[i].name));
+                customers[i].name = formatname(customers[i].name);
 
-                do
-                {
-                    cout << "Enter New Age: ";
-
-                    if (!(cin >> customers[i].age))
-                    {
-                        cin.clear();
-                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                        customers[i].age = 0;
-                    }
-                } while (!validage(customers[i].age));
-
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                if (!readint("Enter New Age: ", customers[i].age, 18, 90))
+                    return;
 
                 do
                 {
@@ -954,6 +933,109 @@ void updatecustomer()
 
 void deletecustomer()
 {
+    string targetName, targetPhone, currentLine;
+    vector<string> headerLines;
+    vector<Customer> customers;
+
+    heading("|| DELETE CUSTOMER ||");
+    do
+    {
+        cout << "Enter Customer Name: ";
+        getline(cin >> ws, targetName);
+        if (!validname(targetName))
+            cout << "Enter the customer's full name.\n";
+    } while (!validname(targetName));
+
+    do
+    {
+        cout << "Enter Customer Phone: ";
+        getline(cin, targetPhone);
+        if (!validphone(targetPhone))
+            cout << "Enter a valid 10 digit phone number.\n";
+    } while (!validphone(targetPhone));
+
+    ifstream file("data/customer.txt");
+    if (!file.is_open())
+    {
+        cout << "Unable to open customer file.\n";
+        ps();
+        customermanagement();
+        return;
+    }
+
+    while (getline(file, currentLine))
+    {
+        Customer customer;
+        if (readCustomerLine(currentLine, customer))
+            customers.push_back(customer);
+        else
+            headerLines.push_back(currentLine);
+    }
+    file.close();
+
+    auto match = customers.end();
+    for (auto it = customers.begin(); it != customers.end(); ++it)
+    {
+        if (lowercase(it->name) == lowercase(targetName) && it->phone == targetPhone)
+        {
+            match = it;
+            break;
+        }
+    }
+
+    if (match == customers.end())
+    {
+        cout << "Customer not found.\n";
+        ps();
+        customermanagement();
+        return;
+    }
+
+    cout << "Customer: " << match->name << " | Phone: " << match->phone << '\n';
+    char confirm;
+    cout << "Delete this customer? (Y/N): ";
+    cin >> confirm;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    if (confirm != 'Y' && confirm != 'y')
+    {
+        cout << "Deletion cancelled.\n";
+        ps();
+        customermanagement();
+        return;
+    }
+
+    customers.erase(match);
+    ofstream outfile("data/customer.txt");
+    if (!outfile.is_open())
+    {
+        cout << "Unable to save customer file.\n";
+        ps();
+        customermanagement();
+        return;
+    }
+
+    for (const string &header : headerLines)
+        outfile << header << '\n';
+
+    sort(customers.begin(), customers.end(), [](const Customer &a, const Customer &b)
+    {
+        return lowercase(a.name) < lowercase(b.name);
+    });
+
+    int serial = 1;
+    for (const Customer &customer : customers)
+    {
+        outfile << right << setw(3) << serial++ << right << setw(2) << "|";
+        outfile << left << setw(29) << customer.name << right << setw(1) << "|";
+        outfile << right << setw(4) << customer.age << right << setw(2) << "|";
+        outfile << left << setw(37) << customer.address << right << setw(2) << "|";
+        outfile << left << setw(13) << customer.phone << right << setw(2) << "|";
+        outfile << left << setw(24) << customer.gmail << right << setw(1) << "|" << '\n';
+    }
+
+    cout << "Customer deleted successfully.\n";
+    ps();
+    customermanagement();
 }
 
 void customermanagement()
