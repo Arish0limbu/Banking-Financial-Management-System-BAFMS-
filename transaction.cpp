@@ -1,0 +1,96 @@
+#include <ctime>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
+#include "include/design.h"
+#include "include/transaction.h"
+
+using namespace std;
+
+vector<TransactionRecord> readTransactions()
+{
+    vector<TransactionRecord> transactions;
+    ifstream file("data/transactions.txt");
+    string row;
+
+    while (getline(file, row))
+    {
+        stringstream fields(row);
+        string id, type, from, to, amount, timestamp;
+        if (!getline(fields, id, '|') || !getline(fields, type, '|') ||
+            !getline(fields, from, '|') || !getline(fields, to, '|') ||
+            !getline(fields, amount, '|') || !getline(fields, timestamp))
+            continue;
+        try
+        {
+            TransactionRecord transaction{stoi(id), type, stoi(from), stoi(to), stod(amount), timestamp};
+            if (transaction.transactionId > 0 && transaction.amount > 0)
+                transactions.push_back(transaction);
+        }
+        catch (...)
+        {
+            continue;
+        }
+    }
+    return transactions;
+}
+
+bool saveTransaction(const string &type, int fromAccount, int toAccount, double amount)
+{
+    if (type.empty() || amount <= 0)
+        return false;
+
+    int nextId = 1;
+    for (const TransactionRecord &transaction : readTransactions())
+        if (transaction.transactionId >= nextId)
+            nextId = transaction.transactionId + 1;
+
+    time_t now = time(nullptr);
+    tm *local = localtime(&now);
+    char timestamp[32] = "unknown";
+    if (local)
+        strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", local);
+
+    ofstream file("data/transactions.txt", ios::app);
+    if (!file.is_open())
+        return false;
+    file << nextId << '|' << type << '|' << fromAccount << '|' << toAccount << '|'
+         << fixed << setprecision(2) << amount << '|' << timestamp << '\n';
+    return file.good();
+}
+
+static void showHistory()
+{
+    heading("|| TRANSACTION HISTORY ||");
+    vector<TransactionRecord> transactions = readTransactions();
+    if (transactions.empty())
+        cout << "No transactions have been recorded.\n";
+    else
+    {
+        cout << left << setw(8) << "ID" << setw(18) << "TYPE" << setw(14) << "FROM"
+             << setw(14) << "TO" << setw(14) << "AMOUNT" << "DATE / TIME\n";
+        line();
+        cout << fixed << setprecision(2);
+        for (auto it = transactions.rbegin(); it != transactions.rend(); ++it)
+            cout << left << setw(8) << it->transactionId << setw(18) << it->type
+                 << setw(14) << (it->fromAccount == 0 ? "-" : to_string(it->fromAccount))
+                 << setw(14) << (it->toAccount == 0 ? "-" : to_string(it->toAccount))
+                 << setw(14) << it->amount << it->timestamp << '\n';
+    }
+    ps();
+}
+
+void transactionmanagement()
+{
+    int choice;
+    do
+    {
+        heading("|| TRANSACTION MANAGEMENT ||");
+        cout << "1. View transaction history\n2. Back\n";
+        if (!readint("Select an option: ", choice, 1, 2))
+            return;
+        if (choice == 1)
+            showHistory();
+    } while (choice != 2);
+}
