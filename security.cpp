@@ -26,6 +26,11 @@ static string readPassword()
     while (true)
     {
         int key = _getch();
+        if (key == 0 || key == 224)
+        {
+            _getch();
+            continue;
+        }
         if (key == 13)
             break;
         if (key == 8)

@@ -540,7 +540,6 @@ void newcustomer()
         sn++;
     } while (choice == 'Y' || choice == 'y');
 
-    customermanagement();
 }
 
 void viewcustomer()
@@ -551,8 +550,6 @@ void viewcustomer()
         cls();
         heading("|| CUSTOMER DETAILS ||");
         centertxt("File is empty OR didn't exits.....!");
-        ps();
-        customermanagement();
     }
     else
     {
@@ -569,7 +566,6 @@ void viewcustomer()
         line(120);
     }
     ps();
-    customermanagement();
 }
 
 void searchcustomer()
@@ -614,7 +610,6 @@ void searchcustomer()
         centertxt("Customer Not Found.....!", 120);
     }
     ps();
-    customermanagement();
 }
 
 bool readCustomerLine(const string &line, Customer &c)
@@ -685,7 +680,6 @@ void updatecustomer()
     {
         centertxt("Unable to open customer file!............");
         ps();
-        customermanagement();
         return;
     }
 
@@ -737,14 +731,12 @@ void updatecustomer()
     file.close();
 
     bool found = false;
-    int foundIndex = -1;
 
     for (size_t i = 0; i < customers.size(); i++)
     {
         if (lowercase(customers[i].name) == lowercase(targetName) && customers[i].phone == targetPhone)
         {
             found = true;
-            foundIndex = i;
             footer("Customer Found!");
             cout << "SN      : " << customers[i].sn << endl;
             cout << "Name    : " << customers[i].name << '\n';
@@ -763,17 +755,10 @@ void updatecustomer()
             cout << "6. Update All Details\n";
             cout << "7. Cancel\n";
             line();
-            cout << "Enter number to select that option. Which u want to update: ";
-
-            if (!(cin >> choice))
+            if (!readint("Enter update option (1-7): ", choice, 1, 7))
             {
-                cin.clear();
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                ps();
-                customermanagement();
+                return;
             }
-
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
             string input;
             int ageInput;
@@ -860,13 +845,11 @@ void updatecustomer()
             case 7:
                 cout << "Update cancelled.\n";
                 ps();
-                customermanagement();
                 return;
 
             default:
                 cout << "Invalid choice.\n";
                 ps();
-                customermanagement();
                 return;
             }
 
@@ -879,7 +862,6 @@ void updatecustomer()
             {
                 cout << "Unable to open customer file for writing.\n";
                 ps();
-                customermanagement();
                 return;
             }
 
@@ -917,8 +899,7 @@ void updatecustomer()
             }
 
             outfile.close();
-            customermanagement();
-            break;
+            return;
         }
     }
 
@@ -926,7 +907,6 @@ void updatecustomer()
     {
         cout << "\nCustomer not found.\n";
         ps();
-        customermanagement();
         return;
     }
 }
@@ -959,7 +939,6 @@ void deletecustomer()
     {
         cout << "Unable to open customer file.\n";
         ps();
-        customermanagement();
         return;
     }
 
@@ -987,7 +966,6 @@ void deletecustomer()
     {
         cout << "Customer not found.\n";
         ps();
-        customermanagement();
         return;
     }
 
@@ -1000,7 +978,6 @@ void deletecustomer()
     {
         cout << "Deletion cancelled.\n";
         ps();
-        customermanagement();
         return;
     }
 
@@ -1010,7 +987,6 @@ void deletecustomer()
     {
         cout << "Unable to save customer file.\n";
         ps();
-        customermanagement();
         return;
     }
 
@@ -1035,61 +1011,41 @@ void deletecustomer()
 
     cout << "Customer deleted successfully.\n";
     ps();
-    customermanagement();
 }
 
 void customermanagement()
 {
     int choice;
-    do
+    while (true)
     {
         heading("|| Customer Management ||");
-        cout << "1. Register new Customer. " << endl
-             << "2. View all customer." << endl
-             << "3. Search customer." << endl
-             << "4. Update Customer Details." << endl
-             << "5. Delete Customer." << endl
-             << "6. Back." << endl;
-
-        line();
-        cout << "Enter number to select the option: ";
-        cin >> choice;
-        if (cin.fail())
+        cout << "1. Register new customer\n"
+             << "2. View all customers\n"
+             << "3. Search customer\n"
+             << "4. Update customer details\n"
+             << "5. Delete customer\n"
+             << "6. Back\n";
+        if (!readint("Select an option: ", choice, 1, 6))
+            return;
+        switch (choice)
         {
-            footer(" Invalid input! Enter integers only. ");
-            ps();
-            cin.clear();
-            cin.ignore(10000, '\n');
-            continue;
+        case 1:
+            newcustomer();
+            break;
+        case 2:
+            viewcustomer();
+            break;
+        case 3:
+            searchcustomer();
+            break;
+        case 4:
+            updatecustomer();
+            break;
+        case 5:
+            deletecustomer();
+            break;
+        case 6:
+            return;
         }
-        if (choice < 1 || choice > 6)
-        {
-            footer(" Enter given option number from 1 to 6. ");
-            ps();
-            continue;
-        }
-
-    } while (cin.fail() || choice < 1 || choice > 6);
-    switch (choice)
-    {
-    case 1:
-        newcustomer();
-        break;
-    case 2:
-        viewcustomer();
-        break;
-
-    case 3:
-        searchcustomer();
-        break;
-    case 4:
-        updatecustomer();
-
-        break;
-    case 5:
-        deletecustomer();
-        break;
-    case 6:
-        break;
     }
 }

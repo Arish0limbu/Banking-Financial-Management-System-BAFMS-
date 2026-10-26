@@ -1,47 +1,23 @@
-# ========================================
-        BANKING MANAGEMENT SYSTEM
-              ADMIN PANEL
-========================================
+# Banking & Financial Management System
 
-  [1] CUSTOMER & ACCOUNT MANAGEMENT
-      1. Customer Management
-      2. Account Management
+A C++17 console application for managing customers, accounts, transactions, loans, employees, and basic banking reports. Menus use numbered choices and keep operational records in the local `data/` directory.
 
-  [2] TRANSACTION MANAGEMENT
-      3. Deposit Management
-      4. Withdraw Management
-      5. Fund Transfer Management
-      6. Transaction History
+## Run on Windows
 
-  [3] LOAN MANAGEMENT
-      7. Loan Management
+Install a C++17 compiler such as MinGW g++, then run `run.bat` from File Explorer or a Command Prompt. The script compiles the application sources and starts the program. The default administrator login is `admin` with password `123`.
 
-  [4] EMPLOYEE MANAGEMENT
-      8. Employee Management
+After signing in, the main menu provides:
 
-  [5] REPORTS & ANALYTICS
-      9. Reports and Statistics
+1. Customer and account management
+2. Deposits, withdrawals, transfers, and transaction history
+3. Loan applications, review, and repayments
+4. Employee register and salary maintenance
+5. Reports and analytics
+6. Administrator password and profile settings
+7. Logout
 
-  [6] ADMIN SETTINGS
-     10. Change Password
-     11. View Admin Profile
+## Local data files
 
-  [7] SESSION MANAGEMENT
-     12. Logout
+Customer details use the existing formatted table in `data/customer.txt`. Account, transaction, loan, and employee records are stored as pipe-separated rows in their corresponding files under `data/`. Keep the records in place between runs to retain the application data. The administrator password is saved in `data/admin.txt` after it is changed; that local settings file is ignored by Git.
 
-========================================
-  Enter Your Choice:
-========================================
-
-# ========================================
-       CUSTOMER MANAGEMENT
-========================================
-
-  1. Register New Customer
-  2. View All Customers
-  3. Search Customer
-  4. Update Customer Details
-  5. Delete Customer
-  6. Back to Admin Menu
-
-========================================
+This is a learning project, not production banking software. Its local text-file records and password storage are not encrypted and do not provide production-grade security, audit controls, concurrency protection, or recovery guarantees. Do not use real customer or financial data.
