@@ -3,8 +3,10 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include "include/account.h"
 #include "include/design.h"
 #include "include/loan.h"
+#include "include/transaction.h"
 
 using namespace std;
 
@@ -161,14 +163,81 @@ static void reviewApplications()
     ps();
 }
 
+static void makeRepayment()
+{
+    int loanId, accountNumber;
+    double amount;
+    vector<LoanRecord> loans = readLoans();
+    if (!readint("Approved loan ID: ", loanId, 1, 2147483647) ||
+        !readint("Payment account number: ", accountNumber, 1, 2147483647))
+        return;
+
+    auto found = loans.end();
+    for (auto it = loans.begin(); it != loans.end(); ++it)
+        if (it->loanId == loanId && it->status == "Approved")
+        {
+            found = it;
+            break;
+        }
+    AccountRecord account;
+    if (found == loans.end() || !findAccount(accountNumber, account) || !account.active ||
+        account.customerSerial != found->customerSerial)
+    {
+        cout << "Use an approved loan and an active account belonging to its customer.\n";
+        ps();
+        return;
+    }
+
+    double outstanding = max(0.0, totalDue(*found) - found->amountPaid);
+    if (!readdouble("Payment amount: ", amount, 0.01, outstanding))
+        return;
+    if (amount > account.balance)
+    {
+        cout << "Insufficient funds in the payment account.\n";
+        ps();
+        return;
+    }
+
+    vector<LoanRecord> originalLoans = loans;
+    found->amountPaid += amount;
+    if (totalDue(*found) - found->amountPaid <= 0.005)
+        found->status = "Paid";
+
+    if (!updateAccountBalance(accountNumber, account.balance - amount))
+    {
+        cout << "Unable to debit the payment account.\n";
+        ps();
+        return;
+    }
+    if (!saveLoans(loans))
+    {
+        updateAccountBalance(accountNumber, account.balance);
+        cout << "Unable to update the loan record; the account balance was restored.\n";
+        ps();
+        return;
+    }
+    if (!saveTransaction("LOAN_PAYMENT", accountNumber, 0, amount))
+    {
+        saveLoans(originalLoans);
+        updateAccountBalance(accountNumber, account.balance);
+        cout << "Payment was not recorded; the previous balances were restored.\n";
+        ps();
+        return;
+    }
+    cout << "Payment recorded. Remaining loan balance: "
+         << fixed << setprecision(2) << max(0.0, totalDue(*found) - found->amountPaid) << '\n';
+    ps();
+}
+
 void loanmanagement()
 {
     int choice;
     do
     {
         heading("|| LOAN MANAGEMENT ||");
-        cout << "1. Apply for loan\n2. View loan register\n3. Review pending application\n4. Back\n";
-        if (!readint("Select an option: ", choice, 1, 4))
+        cout << "1. Apply for loan\n2. View loan register\n3. Review pending application\n"
+             << "4. Make loan repayment\n5. Back\n";
+        if (!readint("Select an option: ", choice, 1, 5))
             return;
         if (choice == 1)
             applyForLoan();
@@ -176,5 +245,7 @@ void loanmanagement()
             listLoans();
         else if (choice == 3)
             reviewApplications();
-    } while (choice != 4);
+        else if (choice == 4)
+            makeRepayment();
+    } while (choice != 5);
 }
