@@ -3,10 +3,39 @@
 #include <iostream>
 #include <limits>
 #include <sstream>
+#include <cmath>
 #include "include/account.h"
 #include "include/design.h"
 
 using namespace std;
+
+static bool parseAccountInteger(const string &text, int &value)
+{
+    try
+    {
+        size_t consumed = 0;
+        value = stoi(text, &consumed);
+        return consumed == text.size();
+    }
+    catch (...)
+    {
+        return false;
+    }
+}
+
+static bool parseAccountBalance(const string &text, double &value)
+{
+    try
+    {
+        size_t consumed = 0;
+        value = stod(text, &consumed);
+        return consumed == text.size() && isfinite(value);
+    }
+    catch (...)
+    {
+        return false;
+    }
+}
 
 vector<AccountRecord> readAccounts()
 {
@@ -20,25 +49,19 @@ vector<AccountRecord> readAccounts()
         string number, customer, type, balance, active;
         if (!getline(fields, number, '|') || !getline(fields, customer, '|') ||
             !getline(fields, type, '|') || !getline(fields, balance, '|') ||
-            !getline(fields, active, '|'))
+            !getline(fields, active) || (active != "0" && active != "1"))
             continue;
 
-        try
-        {
-            AccountRecord account;
-            account.accountNumber = stoi(number);
-            account.customerSerial = stoi(customer);
-            account.accountType = type;
-            account.balance = stod(balance);
-            account.active = (active == "1");
-            if (account.accountNumber > 0 && account.customerSerial > 0 &&
-                account.balance >= 0 && (account.accountType == "Savings" || account.accountType == "Current"))
-                accounts.push_back(account);
-        }
-        catch (...)
-        {
+        AccountRecord account{};
+        if (!parseAccountInteger(number, account.accountNumber) ||
+            !parseAccountInteger(customer, account.customerSerial) ||
+            !parseAccountBalance(balance, account.balance))
             continue;
-        }
+        account.accountType = type;
+        account.active = (active == "1");
+        if (account.accountNumber > 0 && account.customerSerial > 0 &&
+            account.balance >= 0 && (account.accountType == "Savings" || account.accountType == "Current"))
+            accounts.push_back(account);
     }
 
     return accounts;
