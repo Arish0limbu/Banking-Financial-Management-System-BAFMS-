@@ -73,12 +73,18 @@ void showReports()
 
     double depositVolume = 0;
     double withdrawalVolume = 0;
+    double loanPaymentVolume = 0;
+    double transferVolume = 0;
     for (const TransactionRecord &transaction : transactions)
     {
         if (transaction.type == "DEPOSIT")
             depositVolume += transaction.amount;
-        else if (transaction.type == "WITHDRAWAL" || transaction.type == "LOAN_PAYMENT")
+        else if (transaction.type == "WITHDRAWAL")
             withdrawalVolume += transaction.amount;
+        else if (transaction.type == "LOAN_PAYMENT")
+            loanPaymentVolume += transaction.amount;
+        else if (transaction.type == "TRANSFER")
+            transferVolume += transaction.amount;
     }
 
     cout << fixed << setprecision(2);
@@ -86,7 +92,9 @@ void showReports()
          << "Active accounts              : " << activeAccounts << " / " << accounts.size() << '\n'
          << "Total active account balance : " << totalDeposits << '\n'
          << "Deposit transaction volume   : " << depositVolume << '\n'
-         << "Withdrawal / loan payments   : " << withdrawalVolume << '\n'
+         << "Withdrawal transaction volume: " << withdrawalVolume << '\n'
+         << "Loan payment volume          : " << loanPaymentVolume << '\n'
+         << "Transfer transaction volume  : " << transferVolume << '\n'
          << "Approved loan outstanding   : " << outstandingLoans << '\n'
          << "Pending loan applications   : " << pendingLoans << '\n'
          << "Transactions recorded        : " << transactions.size() << '\n'
