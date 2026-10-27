@@ -1,4 +1,5 @@
 #include <ctime>
+#include <cmath>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -8,6 +9,49 @@
 #include "include/transaction.h"
 
 using namespace std;
+
+static bool parseTransactionInteger(const string &text, int &value)
+{
+    try
+    {
+        size_t consumed = 0;
+        value = stoi(text, &consumed);
+        return consumed == text.size();
+    }
+    catch (...)
+    {
+        return false;
+    }
+}
+
+static bool parseTransactionAmount(const string &text, double &value)
+{
+    try
+    {
+        size_t consumed = 0;
+        value = stod(text, &consumed);
+        return consumed == text.size() && isfinite(value);
+    }
+    catch (...)
+    {
+        return false;
+    }
+}
+
+static bool validTransaction(const TransactionRecord &transaction)
+{
+    if (transaction.transactionId <= 0 || !isfinite(transaction.amount) || transaction.amount <= 0)
+        return false;
+
+    if (transaction.type == "DEPOSIT")
+        return transaction.fromAccount == 0 && transaction.toAccount > 0;
+    if (transaction.type == "WITHDRAWAL" || transaction.type == "LOAN_PAYMENT")
+        return transaction.fromAccount > 0 && transaction.toAccount == 0;
+    if (transaction.type == "TRANSFER")
+        return transaction.fromAccount > 0 && transaction.toAccount > 0 &&
+               transaction.fromAccount != transaction.toAccount;
+    return false;
+}
 
 vector<TransactionRecord> readTransactions()
 {
@@ -23,23 +67,24 @@ vector<TransactionRecord> readTransactions()
             !getline(fields, from, '|') || !getline(fields, to, '|') ||
             !getline(fields, amount, '|') || !getline(fields, timestamp))
             continue;
-        try
-        {
-            TransactionRecord transaction{stoi(id), type, stoi(from), stoi(to), stod(amount), timestamp};
-            if (transaction.transactionId > 0 && transaction.amount > 0)
-                transactions.push_back(transaction);
-        }
-        catch (...)
-        {
+        TransactionRecord transaction{};
+        if (!parseTransactionInteger(id, transaction.transactionId) ||
+            !parseTransactionInteger(from, transaction.fromAccount) ||
+            !parseTransactionInteger(to, transaction.toAccount) ||
+            !parseTransactionAmount(amount, transaction.amount))
             continue;
-        }
+        transaction.type = type;
+        transaction.timestamp = timestamp;
+        if (validTransaction(transaction))
+            transactions.push_back(transaction);
     }
     return transactions;
 }
 
 bool saveTransaction(const string &type, int fromAccount, int toAccount, double amount)
 {
-    if (type.empty() || amount <= 0)
+    TransactionRecord newTransaction{1, type, fromAccount, toAccount, amount, ""};
+    if (!validTransaction(newTransaction))
         return false;
 
     int nextId = 1;
