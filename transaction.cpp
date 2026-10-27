@@ -158,8 +158,10 @@ static void depositFunds()
     }
     if (!saveTransaction("DEPOSIT", 0, number, amount))
     {
-        updateAccountBalance(number, account.balance);
-        cout << "Deposit was not recorded; the previous balance was restored.\n";
+        if (updateAccountBalance(number, account.balance))
+            cout << "Deposit was not recorded; the previous balance was restored.\n";
+        else
+            cout << "Deposit logging failed and the balance could not be restored. Check the account record.\n";
         ps();
         return;
     }
@@ -198,8 +200,10 @@ static void withdrawFunds()
     }
     if (!saveTransaction("WITHDRAWAL", number, 0, amount))
     {
-        updateAccountBalance(number, account.balance);
-        cout << "Withdrawal was not recorded; the previous balance was restored.\n";
+        if (updateAccountBalance(number, account.balance))
+            cout << "Withdrawal was not recorded; the previous balance was restored.\n";
+        else
+            cout << "Withdrawal logging failed and the balance could not be restored. Check the account record.\n";
         ps();
         return;
     }
@@ -260,8 +264,10 @@ static void transferFunds()
     {
         source->balance = sourceBalance;
         destination->balance = destinationBalance;
-        saveAccounts(accounts);
-        cout << "Transfer was not recorded; the previous balances were restored.\n";
+        if (saveAccounts(accounts))
+            cout << "Transfer was not recorded; the previous balances were restored.\n";
+        else
+            cout << "Transfer logging failed and the balances could not be restored. Check both account records.\n";
         ps();
         return;
     }

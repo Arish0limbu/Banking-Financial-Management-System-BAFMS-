@@ -211,16 +211,21 @@ static void makeRepayment()
     }
     if (!saveLoans(loans))
     {
-        updateAccountBalance(accountNumber, account.balance);
-        cout << "Unable to update the loan record; the account balance was restored.\n";
+        if (updateAccountBalance(accountNumber, account.balance))
+            cout << "Unable to update the loan record; the account balance was restored.\n";
+        else
+            cout << "Loan update failed and the account balance could not be restored. Check both records.\n";
         ps();
         return;
     }
     if (!saveTransaction("LOAN_PAYMENT", accountNumber, 0, amount))
     {
-        saveLoans(originalLoans);
-        updateAccountBalance(accountNumber, account.balance);
-        cout << "Payment was not recorded; the previous balances were restored.\n";
+        const bool loanRestored = saveLoans(originalLoans);
+        const bool accountRestored = updateAccountBalance(accountNumber, account.balance);
+        if (loanRestored && accountRestored)
+            cout << "Payment was not recorded; the previous balances were restored.\n";
+        else
+            cout << "Payment logging failed and rollback was incomplete. Check the loan and account records.\n";
         ps();
         return;
     }
