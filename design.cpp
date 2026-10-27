@@ -2,7 +2,7 @@
 #include <iomanip>
 #include "include/design.h"
 #include <string>
-#include <limits>
+#include <sstream>
 
 using namespace std;
 
@@ -100,17 +100,22 @@ bool readint(const string &prompt, int &value, int minimum, int maximum)
     while (true)
     {
         cout << prompt;
-        if (cin >> value && value >= minimum && value <= maximum)
-        {
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            return true;
-        }
-
-        if (cin.eof())
+        string input;
+        if (!getline(cin >> ws, input))
             return false;
 
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        istringstream parser(input);
+        int parsedValue;
+        if (parser >> parsedValue)
+        {
+            parser >> ws;
+            if (parser.eof() && parsedValue >= minimum && parsedValue <= maximum)
+            {
+                value = parsedValue;
+                return true;
+            }
+        }
+
         cout << "Enter a number from " << minimum << " to " << maximum << ".\n";
     }
 }
