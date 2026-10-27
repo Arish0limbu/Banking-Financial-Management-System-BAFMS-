@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cmath>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -9,6 +10,47 @@
 #include "include/transaction.h"
 
 using namespace std;
+
+static double totalDue(const LoanRecord &loan);
+
+static bool parseLoanInteger(const string &text, int &value)
+{
+    try
+    {
+        size_t consumed = 0;
+        value = stoi(text, &consumed);
+        return consumed == text.size();
+    }
+    catch (...)
+    {
+        return false;
+    }
+}
+
+static bool parseLoanAmount(const string &text, double &value)
+{
+    try
+    {
+        size_t consumed = 0;
+        value = stod(text, &consumed);
+        return consumed == text.size() && isfinite(value);
+    }
+    catch (...)
+    {
+        return false;
+    }
+}
+
+static bool validLoanRecord(const LoanRecord &loan)
+{
+    const bool knownStatus = loan.status == "Pending" || loan.status == "Approved" ||
+                             loan.status == "Rejected" || loan.status == "Paid";
+    const double due = totalDue(loan);
+    return loan.loanId > 0 && loan.customerSerial > 0 && isfinite(loan.principal) &&
+           loan.principal > 0 && isfinite(loan.annualRate) && loan.annualRate >= 0 &&
+           loan.termMonths > 0 && isfinite(loan.amountPaid) && loan.amountPaid >= 0 &&
+           isfinite(due) && loan.amountPaid <= due + 0.005 && knownStatus;
+}
 
 vector<LoanRecord> readLoans()
 {
@@ -22,26 +64,30 @@ vector<LoanRecord> readLoans()
         if (!getline(fields, id, '|') || !getline(fields, customer, '|') ||
             !getline(fields, principal, '|') || !getline(fields, rate, '|') ||
             !getline(fields, months, '|') || !getline(fields, paid, '|') ||
-            !getline(fields, status, '|'))
+            !getline(fields, status))
             continue;
-        try
-        {
-            LoanRecord loan{stoi(id), stoi(customer), stod(principal), stod(rate),
-                            stoi(months), stod(paid), status};
-            if (loan.loanId > 0 && loan.customerSerial > 0 && loan.principal > 0 &&
-                loan.annualRate >= 0 && loan.termMonths > 0 && loan.amountPaid >= 0)
-                loans.push_back(loan);
-        }
-        catch (...)
-        {
+
+        LoanRecord loan{};
+        if (!parseLoanInteger(id, loan.loanId) ||
+            !parseLoanInteger(customer, loan.customerSerial) ||
+            !parseLoanAmount(principal, loan.principal) ||
+            !parseLoanAmount(rate, loan.annualRate) ||
+            !parseLoanInteger(months, loan.termMonths) ||
+            !parseLoanAmount(paid, loan.amountPaid))
             continue;
-        }
+        loan.status = status;
+        if (validLoanRecord(loan))
+            loans.push_back(loan);
     }
     return loans;
 }
 
 bool saveLoans(const vector<LoanRecord> &loans)
 {
+    for (const LoanRecord &loan : loans)
+        if (!validLoanRecord(loan))
+            return false;
+
     ofstream file("data/loans.txt", ios::trunc);
     if (!file.is_open())
         return false;
