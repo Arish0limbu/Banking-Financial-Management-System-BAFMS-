@@ -124,7 +124,8 @@ static bool loanCustomerExists(int serial)
 
 static double totalDue(const LoanRecord &loan)
 {
-    return loan.principal * (1.0 + loan.annualRate * loan.termMonths / 1200.0);
+    const double amount = loan.principal * (1.0 + loan.annualRate * loan.termMonths / 1200.0);
+    return round(amount * 100.0) / 100.0;
 }
 
 static void applyForLoan()
