@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <limits>
 #include <sstream>
 #include "include/account.h"
 #include "include/design.h"
@@ -90,7 +91,11 @@ bool saveTransaction(const string &type, int fromAccount, int toAccount, double 
     int nextId = 1;
     for (const TransactionRecord &transaction : readTransactions())
         if (transaction.transactionId >= nextId)
+        {
+            if (transaction.transactionId == numeric_limits<int>::max())
+                return false;
             nextId = transaction.transactionId + 1;
+        }
 
     time_t now = time(nullptr);
     tm *local = localtime(&now);
