@@ -69,6 +69,14 @@ vector<AccountRecord> readAccounts()
 
 bool saveAccounts(const vector<AccountRecord> &accounts)
 {
+    for (const AccountRecord &account : accounts)
+    {
+        if (account.accountNumber <= 0 || account.customerSerial <= 0 ||
+            !isfinite(account.balance) || account.balance < 0 ||
+            (account.accountType != "Savings" && account.accountType != "Current"))
+            return false;
+    }
+
     ofstream file("data/accounts.txt", ios::trunc);
     if (!file.is_open())
         return false;
@@ -97,7 +105,7 @@ bool findAccount(int accountNumber, AccountRecord &account)
 
 bool updateAccountBalance(int accountNumber, double newBalance)
 {
-    if (newBalance < 0)
+    if (!isfinite(newBalance) || newBalance < 0)
         return false;
 
     vector<AccountRecord> accounts = readAccounts();
