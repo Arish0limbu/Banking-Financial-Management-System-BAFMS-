@@ -314,6 +314,19 @@ static int nextCustomerSerial()
     return highestSerial + 1;
 }
 
+static bool customerPhoneExists(const string &phone)
+{
+    ifstream file("data/customer.txt");
+    string row;
+    while (getline(file, row))
+    {
+        Customer customer{};
+        if (readCustomerLine(row, customer) && customer.phone == phone)
+            return true;
+    }
+    return false;
+}
+
 bool validphone(long long phone)
 {
     return phone > 9699999999LL && phone < 9900000000LL;
@@ -470,8 +483,13 @@ void newcustomer()
                 cout << "Address (City-Ward no, District, Country): " << address << endl;
                 cout << "Gmail: " << gmail << endl;
             }
+            else if (customerPhoneExists(to_string(phone)))
+            {
+                footer("That phone number already belongs to a customer.");
+                ps();
+            }
 
-        } while (validphone(phone) == false);
+        } while (validphone(phone) == false || customerPhoneExists(to_string(phone)));
 
         sn = nextCustomerSerial();
         filesave(customername, address, gmail, age, phone, sn);
