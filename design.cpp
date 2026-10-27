@@ -1,5 +1,6 @@
 #include <iostream>
 #include <iomanip>
+#include <cmath>
 #include "include/design.h"
 #include <string>
 #include <sstream>
@@ -125,17 +126,23 @@ bool readdouble(const string &prompt, double &value, double minimum, double maxi
     while (true)
     {
         cout << prompt;
-        if (cin >> value && value >= minimum && value <= maximum)
-        {
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            return true;
-        }
-
-        if (cin.eof())
+        string input;
+        if (!getline(cin >> ws, input))
             return false;
 
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        istringstream parser(input);
+        double parsedValue;
+        if (parser >> parsedValue)
+        {
+            parser >> ws;
+            if (parser.eof() && isfinite(parsedValue) &&
+                parsedValue >= minimum && parsedValue <= maximum)
+            {
+                value = parsedValue;
+                return true;
+            }
+        }
+
         cout << "Enter a value from " << minimum << " to " << maximum << ".\n";
     }
 }
