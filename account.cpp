@@ -154,7 +154,15 @@ static void openAccount()
     int nextNumber = 100001;
     for (const AccountRecord &account : accounts)
         if (account.accountNumber >= nextNumber)
+        {
+            if (account.accountNumber == numeric_limits<int>::max())
+            {
+                cout << "No more account numbers are available.\n";
+                ps();
+                return;
+            }
             nextNumber = account.accountNumber + 1;
+        }
 
     AccountRecord account{nextNumber, customerSerial,
                           typeChoice == 1 ? "Savings" : "Current", 0.0, true};
