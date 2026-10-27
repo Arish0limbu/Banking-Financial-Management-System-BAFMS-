@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <limits>
 #include <sstream>
 #include "include/account.h"
 #include "include/design.h"
@@ -147,7 +148,15 @@ static void applyForLoan()
     int nextId = 1;
     for (const LoanRecord &loan : loans)
         if (loan.loanId >= nextId)
+        {
+            if (loan.loanId == numeric_limits<int>::max())
+            {
+                cout << "No more loan application IDs are available.\n";
+                ps();
+                return;
+            }
             nextId = loan.loanId + 1;
+        }
     loans.push_back({nextId, serial, principal, 10.0, term, 0.0, "Pending"});
     if (!saveLoans(loans))
         cout << "Unable to save the loan application.\n";
