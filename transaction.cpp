@@ -96,7 +96,7 @@ static void depositFunds()
         ps();
         return;
     }
-    if (!readdouble("Deposit amount: ", amount, 0.01, 1000000000.0))
+    if (!readmoney("Deposit amount: ", amount, 0.01, 1000000000.0))
         return;
 
     if (!updateAccountBalance(number, account.balance + amount))
@@ -130,7 +130,7 @@ static void withdrawFunds()
         ps();
         return;
     }
-    if (!readdouble("Withdrawal amount: ", amount, 0.01, 1000000000.0))
+    if (!readmoney("Withdrawal amount: ", amount, 0.01, 1000000000.0))
         return;
     if (amount > account.balance)
     {
@@ -169,7 +169,7 @@ static void transferFunds()
         ps();
         return;
     }
-    if (!readdouble("Transfer amount: ", amount, 0.01, 1000000000.0))
+    if (!readmoney("Transfer amount: ", amount, 0.01, 1000000000.0))
         return;
 
     vector<AccountRecord> accounts = readAccounts();

@@ -128,7 +128,7 @@ static void addEmployee()
         ps();
         return;
     }
-    if (!readdouble("Monthly salary: ", salary, 0.0, 1000000000.0))
+    if (!readmoney("Monthly salary: ", salary, 0.0, 1000000000.0))
         return;
 
     vector<EmployeeRecord> employees = readEmployees();
@@ -197,7 +197,7 @@ static void updateSalary()
     int id;
     double salary;
     if (!readint("Employee ID: ", id, 1, 2147483647) ||
-        !readdouble("New monthly salary: ", salary, 0.0, 1000000000.0))
+        !readmoney("New monthly salary: ", salary, 0.0, 1000000000.0))
         return;
     vector<EmployeeRecord> employees = readEmployees();
     for (EmployeeRecord &employee : employees)

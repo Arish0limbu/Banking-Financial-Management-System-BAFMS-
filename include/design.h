@@ -30,5 +30,5 @@ void filesubheader(ostream &out, int r ,string heading);
 
 bool readint(const string &prompt, int &value, int minimum, int maximum);
 
-bool readdouble(const string &prompt, double &value, double minimum, double maximum);
+bool readmoney(const string &prompt, double &value, double minimum, double maximum);
 #endif

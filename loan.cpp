@@ -93,7 +93,7 @@ static void applyForLoan()
         ps();
         return;
     }
-    if (!readdouble("Requested principal: ", principal, 1.0, 10000000.0) ||
+    if (!readmoney("Requested principal: ", principal, 1.0, 10000000.0) ||
         !readint("Term in months (1-360): ", term, 1, 360))
         return;
 
@@ -189,7 +189,7 @@ static void makeRepayment()
     }
 
     double outstanding = max(0.0, totalDue(*found) - found->amountPaid);
-    if (!readdouble("Payment amount: ", amount, 0.01, outstanding))
+    if (!readmoney("Payment amount: ", amount, 0.01, outstanding))
         return;
     if (amount > account.balance)
     {

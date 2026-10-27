@@ -121,7 +121,7 @@ bool readint(const string &prompt, int &value, int minimum, int maximum)
     }
 }
 
-bool readdouble(const string &prompt, double &value, double minimum, double maximum)
+bool readmoney(const string &prompt, double &value, double minimum, double maximum)
 {
     while (true)
     {
@@ -130,9 +130,18 @@ bool readdouble(const string &prompt, double &value, double minimum, double maxi
         if (!getline(cin >> ws, input))
             return false;
 
+        size_t last = input.find_last_not_of(" \t\r");
+        if (last != string::npos)
+            input.erase(last + 1);
+        size_t decimal = input.find('.');
+        bool validPrecision = input.find_first_of("eE") == string::npos &&
+                              (decimal == string::npos ||
+                               (input.find('.', decimal + 1) == string::npos &&
+                                input.size() - decimal - 1 <= 2));
+
         istringstream parser(input);
         double parsedValue;
-        if (parser >> parsedValue)
+        if (validPrecision && (parser >> parsedValue))
         {
             parser >> ws;
             if (parser.eof() && isfinite(parsedValue) &&
@@ -143,6 +152,7 @@ bool readdouble(const string &prompt, double &value, double minimum, double maxi
             }
         }
 
-        cout << "Enter a value from " << minimum << " to " << maximum << ".\n";
+        cout << "Enter an amount with no more than two decimal places, from "
+             << minimum << " to " << maximum << ".\n";
     }
 }
