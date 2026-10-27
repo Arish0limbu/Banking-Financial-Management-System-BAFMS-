@@ -10,8 +10,10 @@
 #include <cstdio>
 #include <windows.h>
 
+#include "include/account.h"
 #include "include/customer.h"
 #include "include/design.h"
+#include "include/loan.h"
 
 using namespace std;
 
@@ -865,6 +867,26 @@ void deletecustomer()
         cout << "Customer not found.\n";
         ps();
         return;
+    }
+
+    for (const AccountRecord &account : readAccounts())
+    {
+        if (account.customerSerial == match->sn)
+        {
+            cout << "This customer has account records. Close or retain those records before deletion.\n";
+            ps();
+            return;
+        }
+    }
+
+    for (const LoanRecord &loan : readLoans())
+    {
+        if (loan.customerSerial == match->sn)
+        {
+            cout << "This customer has loan history and cannot be deleted.\n";
+            ps();
+            return;
+        }
     }
 
     cout << "Customer: " << match->name << " | Phone: " << match->phone << '\n';
