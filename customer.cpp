@@ -314,27 +314,28 @@ static int nextCustomerSerial()
     return highestSerial + 1;
 }
 
-static bool customerPhoneExists(const string &phone)
+static bool customerPhoneExists(const string &phone, int exceptSerial = 0)
 {
     ifstream file("data/customer.txt");
     string row;
     while (getline(file, row))
     {
         Customer customer{};
-        if (readCustomerLine(row, customer) && customer.phone == phone)
+        if (readCustomerLine(row, customer) && customer.sn != exceptSerial && customer.phone == phone)
             return true;
     }
     return false;
 }
 
-static bool customerEmailExists(const string &gmail)
+static bool customerEmailExists(const string &gmail, int exceptSerial = 0)
 {
     ifstream file("data/customer.txt");
     string row;
     while (getline(file, row))
     {
         Customer customer{};
-        if (readCustomerLine(row, customer) && lowercase(customer.gmail) == lowercase(gmail))
+        if (readCustomerLine(row, customer) && customer.sn != exceptSerial &&
+            lowercase(customer.gmail) == lowercase(gmail))
             return true;
     }
     return false;
@@ -824,6 +825,19 @@ void updatecustomer()
 
             default:
                 cout << "Invalid choice.\n";
+                ps();
+                return;
+            }
+
+            if (customerPhoneExists(customers[i].phone, customers[i].sn))
+            {
+                cout << "That phone number already belongs to another customer.\n";
+                ps();
+                return;
+            }
+            if (customerEmailExists(customers[i].gmail, customers[i].sn))
+            {
+                cout << "That Gmail address already belongs to another customer.\n";
                 ps();
                 return;
             }
