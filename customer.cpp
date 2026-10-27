@@ -327,6 +327,19 @@ static bool customerPhoneExists(const string &phone)
     return false;
 }
 
+static bool customerEmailExists(const string &gmail)
+{
+    ifstream file("data/customer.txt");
+    string row;
+    while (getline(file, row))
+    {
+        Customer customer{};
+        if (readCustomerLine(row, customer) && lowercase(customer.gmail) == lowercase(gmail))
+            return true;
+    }
+    return false;
+}
+
 bool validphone(long long phone)
 {
     return phone > 9699999999LL && phone < 9900000000LL;
@@ -444,7 +457,12 @@ void newcustomer()
                 cout << "Age: " << age << endl;
                 cout << "Address (City-Ward no,District,Country): " << address << endl;
             }
-        } while (validgmail(gmail) == false);
+            else if (customerEmailExists(gmail))
+            {
+                footer("That Gmail address already belongs to a customer.");
+                ps();
+            }
+        } while (validgmail(gmail) == false || customerEmailExists(gmail));
 
         do
         {
