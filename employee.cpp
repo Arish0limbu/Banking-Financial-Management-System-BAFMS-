@@ -1,4 +1,6 @@
+#include <algorithm>
 #include <cctype>
+#include <cmath>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -7,6 +9,37 @@
 #include "include/employee.h"
 
 using namespace std;
+
+static bool validEmployeeName(const string &name);
+static bool validEmployeePhone(const string &phone);
+
+static bool parseEmployeeInteger(const string &text, int &value)
+{
+    try
+    {
+        size_t consumed = 0;
+        value = stoi(text, &consumed);
+        return consumed == text.size();
+    }
+    catch (...)
+    {
+        return false;
+    }
+}
+
+static bool parseEmployeeSalary(const string &text, double &value)
+{
+    try
+    {
+        size_t consumed = 0;
+        value = stod(text, &consumed);
+        return consumed == text.size() && isfinite(value);
+    }
+    catch (...)
+    {
+        return false;
+    }
+}
 
 vector<EmployeeRecord> readEmployees()
 {
@@ -20,18 +53,27 @@ vector<EmployeeRecord> readEmployees()
         if (!getline(fields, id, '|') || !getline(fields, name, '|') ||
             !getline(fields, age, '|') || !getline(fields, phone, '|') ||
             !getline(fields, role, '|') || !getline(fields, salary, '|') ||
-            !getline(fields, active, '|'))
+            !getline(fields, active) || (active != "0" && active != "1"))
             continue;
-        try
-        {
-            EmployeeRecord employee{stoi(id), name, stoi(age), phone, role, stod(salary), active == "1"};
-            if (employee.employeeId > 0 && employee.age >= 18 && employee.salary >= 0)
-                employees.push_back(employee);
-        }
-        catch (...)
-        {
+
+        EmployeeRecord employee{};
+        if (!parseEmployeeInteger(id, employee.employeeId) ||
+            !parseEmployeeInteger(age, employee.age) ||
+            !parseEmployeeSalary(salary, employee.salary))
             continue;
-        }
+        employee.name = name;
+        employee.phone = phone;
+        employee.role = role;
+        employee.active = active == "1";
+
+        const bool duplicateId = any_of(employees.begin(), employees.end(),
+                                        [&employee](const EmployeeRecord &stored)
+                                        { return stored.employeeId == employee.employeeId; });
+        if (employee.employeeId > 0 && employee.age >= 18 && employee.age <= 90 &&
+            employee.salary >= 0 && validEmployeeName(employee.name) &&
+            validEmployeePhone(employee.phone) && !employee.role.empty() &&
+            employee.role.find('|') == string::npos && !duplicateId)
+            employees.push_back(employee);
     }
     return employees;
 }
