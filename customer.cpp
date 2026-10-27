@@ -261,6 +261,57 @@ struct Customer
     string gmail;
 };
 
+bool readCustomerLine(const string &line, Customer &c);
+
+static bool customerNameLess(const Customer &a, const Customer &b)
+{
+    return lowercase(a.name) < lowercase(b.name);
+}
+
+static bool writeCustomerFile(vector<Customer> customers)
+{
+    sort(customers.begin(), customers.end(), customerNameLess);
+
+    ofstream file("data/customer.txt", ios::trunc);
+    if (!file.is_open())
+        return false;
+
+    fileheader(file, "|| CUSTOMER DETAILS ||");
+    filesubheader(file, 1, "SN");
+    filesubheader(file, 8, "CUSTOMER NAME");
+    filesubheader(file, 1, "AGE");
+    filesubheader(file, 1, "ADDRESS (City-Ward,District,Country)");
+    filesubheader(file, 1, "PHONE NUMBER");
+    filesubheader(file, 9, "GMAIL ");
+    fileline(file);
+
+    for (const Customer &customer : customers)
+    {
+        file << right << setw(3) << customer.sn << right << setw(2) << "|";
+        file << left << setw(29) << customer.name << right << setw(1) << "|";
+        file << right << setw(4) << customer.age << right << setw(2) << "|";
+        file << left << setw(37) << customer.address << right << setw(2) << "|";
+        file << left << setw(13) << customer.phone << right << setw(2) << "|";
+        file << left << setw(24) << customer.gmail << right << setw(1) << "|" << '\n';
+    }
+
+    return file.good();
+}
+
+static int nextCustomerSerial()
+{
+    ifstream file("data/customer.txt");
+    string row;
+    int highestSerial = 0;
+    while (getline(file, row))
+    {
+        Customer customer{};
+        if (readCustomerLine(row, customer))
+            highestSerial = max(highestSerial, customer.sn);
+    }
+    return highestSerial + 1;
+}
+
 bool validphone(long long phone)
 {
     return phone > 9699999999LL && phone < 9900000000LL;
@@ -290,97 +341,14 @@ void filesave(string customername, string address, string gmail,
     string line;
 
     ifstream infile("data/customer.txt");
-
     while (getline(infile, line))
     {
-        stringstream ss(line);
-        Customer c;
-        char separator1, separator2, separator3, separator4, separator5;
-
-        if (ss >> c.sn >> separator1 &&
-            separator1 == '|' &&
-            getline(ss, c.name, '|') &&
-            ss >> c.age >> separator2 &&
-            separator2 == '|' &&
-            getline(ss, c.address, '|') &&
-            getline(ss, line, '|'))
-        {
-            stringstream phoneStream(line);
-
-            if (!(phoneStream >> c.phone))
-                continue;
-
-            if (!getline(ss, c.gmail, '|'))
-                continue;
-
-            auto trim = [](string &s)
-            {
-                size_t first = s.find_first_not_of(" \t");
-                if (first == string::npos)
-                {
-                    s.clear();
-                    return;
-                }
-
-                size_t last = s.find_last_not_of(" \t");
-                s = s.substr(first, last - first + 1);
-            };
-
-            trim(c.name);
-            trim(c.address);
-            trim(c.gmail);
-
-            if (!c.name.empty())
-                customers.push_back(c);
-        }
+        Customer customer{};
+        if (readCustomerLine(line, customer))
+            customers.push_back(customer);
     }
-
-    infile.close();
-
     customers.push_back({sn, customername, age, address, to_string(phone), gmail});
-
-    sort(customers.begin(), customers.end(),
-         [](const Customer &a, const Customer &b)
-         {
-             string x = a.name;
-             string y = b.name;
-
-             transform(x.begin(), x.end(), x.begin(),
-                       [](unsigned char ch)
-                       { return tolower(ch); });
-
-             transform(y.begin(), y.end(), y.begin(),
-                       [](unsigned char ch)
-                       { return tolower(ch); });
-
-             return x < y;
-         });
-
-    ofstream file("data/customer.txt");
-
-    if (!file)
-        return;
-
-    fileheader(file, "|| CUSTOMER DETAILS ||");
-    filesubheader(file, 1, "SN");
-    filesubheader(file, 8, "CUSTOMER NAME");
-    filesubheader(file, 1, "AGE");
-    filesubheader(file, 1, "ADDRESS (City-Ward,District,Country)");
-    filesubheader(file, 1, "PHONE NUMBER");
-    filesubheader(file, 9, "GMAIL ");
-    fileline(file);
-
-    sn = 1;
-
-    for (const Customer &c : customers)
-    {
-        file << right << setw(3) << sn++ << right << setw(2) << "|";
-        file << left << setw(29) << c.name << right << setw(1) << "|";
-        file << right << setw(4) << c.age << right << setw(2) << "|";
-        file << left << setw(37) << c.address << right << setw(2) << "|";
-        file << left << setw(13) << c.phone << right << setw(2) << "|";
-        file << left << setw(24) << c.gmail << right << setw(1) << "|" << endl;
-    }
+    writeCustomerFile(customers);
 }
 
 void newcustomer()
@@ -388,7 +356,7 @@ void newcustomer()
 
     string customername, address, gmail;
     char choice;
-    int age, customers, sn = 1;
+    int age, sn = 1;
     long long phone;
 
     readcustomerfile();
@@ -503,35 +471,7 @@ void newcustomer()
 
         } while (validphone(phone) == false);
 
-        ifstream file("data/customer.txt");
-
-        if (file.peek() != EOF)
-        {
-
-            sn = 0;
-            string dline;
-
-            while (getline(file, dline))
-            {
-                size_t pos = dline.find('|');
-
-                if (pos != string::npos)
-                {
-                    string value = dline.substr(0, pos);
-
-                    try
-                    {
-                        sn = stoi(value);
-                    }
-                    catch (...)
-                    {
-                    }
-                }
-            }
-            sn++;
-            file.close();
-        }
-
+        sn = nextCustomerSerial();
         filesave(customername, address, gmail, age, phone, sn);
 
         line();
@@ -711,7 +651,6 @@ void updatecustomer()
 
     } while (!validphone(targetPhone));
 
-    vector<string> headerLines;
     vector<Customer> customers;
     string nline;
 
@@ -723,9 +662,7 @@ void updatecustomer()
             customers.push_back(c);
         }
         else
-        {
-            headerLines.push_back(nline);
-        }
+            continue;
     }
 
     file.close();
@@ -853,52 +790,14 @@ void updatecustomer()
                 return;
             }
 
-            cout << "\nCustomer updated successfully.\n";
-            ps();
-
-            ofstream outfile("data/customer.txt");
-
-            if (!outfile.is_open())
+            if (!writeCustomerFile(customers))
             {
-                cout << "Unable to open customer file for writing.\n";
+                cout << "Unable to save customer changes.\n";
                 ps();
                 return;
             }
-
-            for (const string &header : headerLines)
-            {
-                outfile << header << '\n';
-            }
-
-            sort(customers.begin(), customers.end(),
-                 [](const Customer &a, const Customer &b)
-                 {
-                     string x = a.name;
-                     string y = b.name;
-
-                     transform(x.begin(), x.end(), x.begin(),
-                               [](unsigned char ch)
-                               { return tolower(ch); });
-
-                     transform(y.begin(), y.end(), y.begin(),
-                               [](unsigned char ch)
-                               { return tolower(ch); });
-
-                     return x < y;
-                 });
-
-            int sn = 1;
-            for (const Customer &c : customers)
-            {
-                outfile << right << setw(3) << sn++ << right << setw(2) << "|";
-                outfile << left << setw(29) << c.name << right << setw(1) << "|";
-                outfile << right << setw(4) << c.age << right << setw(2) << "|";
-                outfile << left << setw(37) << c.address << right << setw(2) << "|";
-                outfile << left << setw(13) << c.phone << right << setw(2) << "|";
-                outfile << left << setw(24) << c.gmail << right << setw(1) << "|" << endl;
-            }
-
-            outfile.close();
+            cout << "\nCustomer updated successfully.\n";
+            ps();
             return;
         }
     }
@@ -914,7 +813,6 @@ void updatecustomer()
 void deletecustomer()
 {
     string targetName, targetPhone, currentLine;
-    vector<string> headerLines;
     vector<Customer> customers;
 
     heading("|| DELETE CUSTOMER ||");
@@ -948,7 +846,7 @@ void deletecustomer()
         if (readCustomerLine(currentLine, customer))
             customers.push_back(customer);
         else
-            headerLines.push_back(currentLine);
+            continue;
     }
     file.close();
 
@@ -982,31 +880,11 @@ void deletecustomer()
     }
 
     customers.erase(match);
-    ofstream outfile("data/customer.txt");
-    if (!outfile.is_open())
+    if (!writeCustomerFile(customers))
     {
         cout << "Unable to save customer file.\n";
         ps();
         return;
-    }
-
-    for (const string &header : headerLines)
-        outfile << header << '\n';
-
-    sort(customers.begin(), customers.end(), [](const Customer &a, const Customer &b)
-    {
-        return lowercase(a.name) < lowercase(b.name);
-    });
-
-    int serial = 1;
-    for (const Customer &customer : customers)
-    {
-        outfile << right << setw(3) << serial++ << right << setw(2) << "|";
-        outfile << left << setw(29) << customer.name << right << setw(1) << "|";
-        outfile << right << setw(4) << customer.age << right << setw(2) << "|";
-        outfile << left << setw(37) << customer.address << right << setw(2) << "|";
-        outfile << left << setw(13) << customer.phone << right << setw(2) << "|";
-        outfile << left << setw(24) << customer.gmail << right << setw(1) << "|" << '\n';
     }
 
     cout << "Customer deleted successfully.\n";
