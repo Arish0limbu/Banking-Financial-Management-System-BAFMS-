@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cctype>
 #include <ctime>
 #include <cmath>
 #include <fstream>
@@ -45,6 +46,20 @@ static bool hasCentPrecision(double value)
     return isfinite(value) && fabs(value * 100.0 - round(value * 100.0)) < 1e-7;
 }
 
+static bool validTransactionTimestamp(const string &timestamp)
+{
+    if (timestamp == "unknown")
+        return true;
+    if (timestamp.size() != 19 || timestamp[4] != '-' || timestamp[7] != '-' ||
+        timestamp[10] != ' ' || timestamp[13] != ':' || timestamp[16] != ':')
+        return false;
+    for (size_t i = 0; i < timestamp.size(); ++i)
+        if (i != 4 && i != 7 && i != 10 && i != 13 && i != 16 &&
+            !isdigit(static_cast<unsigned char>(timestamp[i])))
+            return false;
+    return true;
+}
+
 static bool validTransaction(const TransactionRecord &transaction)
 {
     if (transaction.transactionId <= 0 || !hasCentPrecision(transaction.amount) || transaction.amount <= 0)
@@ -85,7 +100,7 @@ vector<TransactionRecord> readTransactions()
         const bool duplicateId = any_of(transactions.begin(), transactions.end(),
                                         [&transaction](const TransactionRecord &stored)
                                         { return stored.transactionId == transaction.transactionId; });
-        if (validTransaction(transaction) && !duplicateId)
+        if (validTransaction(transaction) && validTransactionTimestamp(transaction.timestamp) && !duplicateId)
             transactions.push_back(transaction);
     }
     return transactions;
