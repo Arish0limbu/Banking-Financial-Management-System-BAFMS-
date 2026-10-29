@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <limits>
 #include <sstream>
 #include "include/design.h"
 #include "include/employee.h"
@@ -184,7 +185,15 @@ static void addEmployee()
     int nextId = 1;
     for (const EmployeeRecord &employee : employees)
         if (employee.employeeId >= nextId)
+        {
+            if (employee.employeeId == numeric_limits<int>::max())
+            {
+                cout << "No more employee IDs are available.\n";
+                ps();
+                return;
+            }
             nextId = employee.employeeId + 1;
+        }
     employees.push_back({nextId, titleCase(name), age, phone, titleCase(role), salary, true});
     if (saveEmployees(employees))
         cout << "Employee registered with ID " << nextId << ".\n";
