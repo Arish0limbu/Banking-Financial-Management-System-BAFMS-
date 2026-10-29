@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -59,8 +60,12 @@ vector<AccountRecord> readAccounts()
             continue;
         account.accountType = type;
         account.active = (active == "1");
+        const bool duplicateNumber = any_of(accounts.begin(), accounts.end(),
+                                            [&account](const AccountRecord &stored)
+                                            { return stored.accountNumber == account.accountNumber; });
         if (account.accountNumber > 0 && account.customerSerial > 0 &&
-            account.balance >= 0 && (account.accountType == "Savings" || account.accountType == "Current"))
+            account.balance >= 0 && (account.accountType == "Savings" || account.accountType == "Current") &&
+            !duplicateNumber)
             accounts.push_back(account);
     }
 
@@ -69,12 +74,16 @@ vector<AccountRecord> readAccounts()
 
 bool saveAccounts(const vector<AccountRecord> &accounts)
 {
-    for (const AccountRecord &account : accounts)
+    for (size_t i = 0; i < accounts.size(); ++i)
     {
+        const AccountRecord &account = accounts[i];
         if (account.accountNumber <= 0 || account.customerSerial <= 0 ||
             !isfinite(account.balance) || account.balance < 0 ||
             (account.accountType != "Savings" && account.accountType != "Current"))
             return false;
+        for (size_t j = 0; j < i; ++j)
+            if (accounts[j].accountNumber == account.accountNumber)
+                return false;
     }
 
     ofstream file("data/accounts.txt", ios::trunc);
