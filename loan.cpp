@@ -77,7 +77,10 @@ vector<LoanRecord> readLoans()
             !parseLoanAmount(paid, loan.amountPaid))
             continue;
         loan.status = status;
-        if (validLoanRecord(loan))
+        const bool duplicateId = any_of(loans.begin(), loans.end(),
+                                        [&loan](const LoanRecord &stored)
+                                        { return stored.loanId == loan.loanId; });
+        if (validLoanRecord(loan) && !duplicateId)
             loans.push_back(loan);
     }
     return loans;
@@ -85,9 +88,14 @@ vector<LoanRecord> readLoans()
 
 bool saveLoans(const vector<LoanRecord> &loans)
 {
-    for (const LoanRecord &loan : loans)
-        if (!validLoanRecord(loan))
+    for (size_t i = 0; i < loans.size(); ++i)
+    {
+        if (!validLoanRecord(loans[i]))
             return false;
+        for (size_t j = 0; j < i; ++j)
+            if (loans[j].loanId == loans[i].loanId)
+                return false;
+    }
 
     ofstream file("data/loans.txt", ios::trunc);
     if (!file.is_open())
