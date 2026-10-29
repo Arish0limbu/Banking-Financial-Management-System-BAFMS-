@@ -610,21 +610,30 @@ bool readCustomerLine(const string &line, Customer &c)
 
     if (first == string::npos || second == string::npos ||
         third == string::npos || fourth == string::npos ||
-        fifth == string::npos || sixth == string::npos)
+        fifth == string::npos || sixth == string::npos ||
+        line.find('|', sixth + 1) != string::npos)
         return false;
 
     try
     {
-        string snText = line.substr(0, first);
+        auto parseIntegerColumn = [](string text, int &value)
+        {
+            size_t start = text.find_first_not_of(" \t");
+            if (start == string::npos)
+                return false;
+            size_t end = text.find_last_not_of(" \t");
+            text = text.substr(start, end - start + 1);
+            size_t consumed = 0;
+            value = stoi(text, &consumed);
+            return consumed == text.size();
+        };
 
-        size_t start = snText.find_first_not_of(" \t");
-        if (start == string::npos)
+        if (!parseIntegerColumn(line.substr(0, first), c.sn) || c.sn <= 0 ||
+            !parseIntegerColumn(line.substr(second + 1, third - second - 1), c.age) ||
+            !validage(c.age))
             return false;
 
-        c.sn = stoi(snText.substr(start));
-
         c.name = line.substr(first + 1, second - first - 1);
-        c.age = stoi(line.substr(second + 1, third - second - 1));
         c.address = line.substr(third + 1, fourth - third - 1);
         c.phone = line.substr(fourth + 1, fifth - fourth - 1);
         c.gmail = line.substr(fifth + 1, sixth - fifth - 1);
