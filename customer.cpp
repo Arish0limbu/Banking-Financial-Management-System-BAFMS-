@@ -365,8 +365,8 @@ bool validphone(string phone)
     return true;
 }
 
-void filesave(string customername, string address, string gmail,
-              int age, long long phone, int sn)
+static bool filesave(string customername, string address, string gmail,
+                     int age, long long phone, int sn)
 {
     vector<Customer> customers;
     string line;
@@ -379,7 +379,7 @@ void filesave(string customername, string address, string gmail,
             customers.push_back(customer);
     }
     customers.push_back({sn, customername, age, address, to_string(phone), gmail});
-    writeCustomerFile(customers);
+    return writeCustomerFile(customers);
 }
 
 void newcustomer()
@@ -519,7 +519,12 @@ void newcustomer()
             ps();
             return;
         }
-        filesave(customername, address, gmail, age, phone, sn);
+        if (!filesave(customername, address, gmail, age, phone, sn))
+        {
+            cout << "Unable to save customer details. Check the data folder.\n";
+            ps();
+            return;
+        }
 
         line();
         cout << "Do you want add another customer? Enter Y for Yes or N for NO (Y/N): ";
