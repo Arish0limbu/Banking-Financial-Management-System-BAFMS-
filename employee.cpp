@@ -81,6 +81,21 @@ vector<EmployeeRecord> readEmployees()
 
 bool saveEmployees(const vector<EmployeeRecord> &employees)
 {
+    for (size_t i = 0; i < employees.size(); ++i)
+    {
+        const EmployeeRecord &employee = employees[i];
+        if (employee.employeeId <= 0 || employee.age < 18 || employee.age > 90 ||
+            !isfinite(employee.salary) || employee.salary < 0 ||
+            !validEmployeeName(employee.name) || !validEmployeePhone(employee.phone) ||
+            employee.role.empty() || employee.role.find_first_of("|\r\n") != string::npos)
+            return false;
+
+        for (size_t j = 0; j < i; ++j)
+            if (employees[j].employeeId == employee.employeeId ||
+                employees[j].phone == employee.phone)
+                return false;
+    }
+
     ofstream file("data/employee.txt", ios::trunc);
     if (!file.is_open())
         return false;
