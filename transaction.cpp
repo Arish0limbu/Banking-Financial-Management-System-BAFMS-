@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <ctime>
 #include <cmath>
 #include <fstream>
@@ -76,7 +77,10 @@ vector<TransactionRecord> readTransactions()
             continue;
         transaction.type = type;
         transaction.timestamp = timestamp;
-        if (validTransaction(transaction))
+        const bool duplicateId = any_of(transactions.begin(), transactions.end(),
+                                        [&transaction](const TransactionRecord &stored)
+                                        { return stored.transactionId == transaction.transactionId; });
+        if (validTransaction(transaction) && !duplicateId)
             transactions.push_back(transaction);
     }
     return transactions;
