@@ -42,14 +42,19 @@ static bool parseLoanAmount(const string &text, double &value)
     }
 }
 
+static bool hasCentPrecision(double value)
+{
+    return isfinite(value) && fabs(value * 100.0 - round(value * 100.0)) < 1e-7;
+}
+
 static bool validLoanRecord(const LoanRecord &loan)
 {
     const bool knownStatus = loan.status == "Pending" || loan.status == "Approved" ||
                              loan.status == "Rejected" || loan.status == "Paid";
     const double due = totalDue(loan);
-    return loan.loanId > 0 && loan.customerSerial > 0 && isfinite(loan.principal) &&
+    return loan.loanId > 0 && loan.customerSerial > 0 && hasCentPrecision(loan.principal) &&
            loan.principal > 0 && isfinite(loan.annualRate) && loan.annualRate >= 0 &&
-           loan.termMonths > 0 && isfinite(loan.amountPaid) && loan.amountPaid >= 0 &&
+           loan.termMonths > 0 && hasCentPrecision(loan.amountPaid) && loan.amountPaid >= 0 &&
            isfinite(due) && loan.amountPaid <= due + 0.005 && knownStatus;
 }
 
