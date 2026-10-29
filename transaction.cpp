@@ -40,9 +40,14 @@ static bool parseTransactionAmount(const string &text, double &value)
     }
 }
 
+static bool hasCentPrecision(double value)
+{
+    return isfinite(value) && fabs(value * 100.0 - round(value * 100.0)) < 1e-7;
+}
+
 static bool validTransaction(const TransactionRecord &transaction)
 {
-    if (transaction.transactionId <= 0 || !isfinite(transaction.amount) || transaction.amount <= 0)
+    if (transaction.transactionId <= 0 || !hasCentPrecision(transaction.amount) || transaction.amount <= 0)
         return false;
 
     if (transaction.type == "DEPOSIT")
