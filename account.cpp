@@ -38,6 +38,11 @@ static bool parseAccountBalance(const string &text, double &value)
     }
 }
 
+static bool hasCentPrecision(double value)
+{
+    return isfinite(value) && fabs(value * 100.0 - round(value * 100.0)) < 1e-7;
+}
+
 vector<AccountRecord> readAccounts()
 {
     vector<AccountRecord> accounts;
@@ -56,7 +61,8 @@ vector<AccountRecord> readAccounts()
         AccountRecord account{};
         if (!parseAccountInteger(number, account.accountNumber) ||
             !parseAccountInteger(customer, account.customerSerial) ||
-            !parseAccountBalance(balance, account.balance))
+            !parseAccountBalance(balance, account.balance) ||
+            !hasCentPrecision(account.balance))
             continue;
         account.accountType = type;
         account.active = (active == "1");
@@ -78,7 +84,7 @@ bool saveAccounts(const vector<AccountRecord> &accounts)
     {
         const AccountRecord &account = accounts[i];
         if (account.accountNumber <= 0 || account.customerSerial <= 0 ||
-            !isfinite(account.balance) || account.balance < 0 ||
+            !hasCentPrecision(account.balance) || account.balance < 0 ||
             (account.accountType != "Savings" && account.accountType != "Current"))
             return false;
         for (size_t j = 0; j < i; ++j)
