@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <cmath>
+#include <algorithm>
 #include "include/design.h"
 #include <string>
 #include <sstream>
@@ -18,7 +19,7 @@ void line(int l)
 
 void center(int c)
 {
-    for (int i = 0; i < c; i++)
+    for (int i = 0; i < max(0, c); i++)
     {
         cout << " ";
     }
@@ -42,14 +43,14 @@ void heading(string header,int c)
 {
     cls();
     line(c);
-    center((c - header.length()) / 2);
+    center(max(0, (c - static_cast<int>(header.length())) / 2));
     cout << header << endl;
     line(c);
 }
 
 void centertxt(string ct,int l)
 {
-    center((l - ct.length()) / 2);
+    center(max(0, (l - static_cast<int>(ct.length())) / 2));
     cout << ct << endl;
     line(l);
 }
@@ -57,7 +58,7 @@ void centertxt(string ct,int l)
 void footer(string footbar)
 {
     line();
-    center((100 - footbar.length()) / 2);
+    center(max(0, (100 - static_cast<int>(footbar.length())) / 2));
     cout << footbar << endl;
     line();
 }
