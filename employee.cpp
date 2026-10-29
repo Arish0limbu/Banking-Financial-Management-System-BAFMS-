@@ -70,10 +70,14 @@ vector<EmployeeRecord> readEmployees()
         const bool duplicateId = any_of(employees.begin(), employees.end(),
                                         [&employee](const EmployeeRecord &stored)
                                         { return stored.employeeId == employee.employeeId; });
+        const bool duplicatePhone = any_of(employees.begin(), employees.end(),
+                                           [&employee](const EmployeeRecord &stored)
+                                           { return stored.phone == employee.phone; });
         if (employee.employeeId > 0 && employee.age >= 18 && employee.age <= 90 &&
             employee.salary >= 0 && validEmployeeName(employee.name) &&
             validEmployeePhone(employee.phone) && !employee.role.empty() &&
-            employee.role.find('|') == string::npos && !duplicateId)
+            employee.role.find_first_of("|\r\n") == string::npos &&
+            !duplicateId && !duplicatePhone)
             employees.push_back(employee);
     }
     return employees;
