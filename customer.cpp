@@ -311,6 +311,8 @@ static int nextCustomerSerial()
         if (readCustomerLine(row, customer))
             highestSerial = max(highestSerial, customer.sn);
     }
+    if (highestSerial == numeric_limits<int>::max())
+        return 0;
     return highestSerial + 1;
 }
 
@@ -511,6 +513,12 @@ void newcustomer()
         } while (validphone(phone) == false || customerPhoneExists(to_string(phone)));
 
         sn = nextCustomerSerial();
+        if (sn == 0)
+        {
+            cout << "No more customer serial numbers are available.\n";
+            ps();
+            return;
+        }
         filesave(customername, address, gmail, age, phone, sn);
 
         line();
