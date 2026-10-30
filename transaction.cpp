@@ -57,7 +57,20 @@ static bool validTransactionTimestamp(const string &timestamp)
         if (i != 4 && i != 7 && i != 10 && i != 13 && i != 16 &&
             !isdigit(static_cast<unsigned char>(timestamp[i])))
             return false;
-    return true;
+
+    const int year = stoi(timestamp.substr(0, 4));
+    const int month = stoi(timestamp.substr(5, 2));
+    const int day = stoi(timestamp.substr(8, 2));
+    const int hour = stoi(timestamp.substr(11, 2));
+    const int minute = stoi(timestamp.substr(14, 2));
+    const int second = stoi(timestamp.substr(17, 2));
+    if (year < 1 || month < 1 || month > 12 || hour > 23 || minute > 59 || second > 59)
+        return false;
+
+    const bool leapYear = year % 400 == 0 || (year % 4 == 0 && year % 100 != 0);
+    const int daysInMonth[] = {31, leapYear ? 29 : 28, 31, 30, 31, 30,
+                               31, 31, 30, 31, 30, 31};
+    return day >= 1 && day <= daysInMonth[month - 1];
 }
 
 static bool validTransaction(const TransactionRecord &transaction)
