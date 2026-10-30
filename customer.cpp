@@ -409,23 +409,8 @@ void newcustomer()
 
         } while (validname(customername) == false);
 
-        do
-        {
-            cout << "Age: ";
-            cin >> age;
-            if (validage(age) == false)
-            {
-                footer("Age is invalid!. Re Enter. ");
-                ps();
-                cin.clear();
-                cin.ignore(10000, '\n');
-
-                heading("|| Register Customer ||");
-                cout << "Enter Information of customer." << endl;
-                cout << "Full Name: " << customername << endl;
-            }
-
-        } while (validage(age) == false);
+        if (!readint("Age: ", age, 18, 90))
+            return;
 
         do
         {
