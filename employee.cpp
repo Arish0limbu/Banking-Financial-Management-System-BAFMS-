@@ -13,6 +13,7 @@ using namespace std;
 
 static bool validEmployeeName(const string &name);
 static bool validEmployeePhone(const string &phone);
+static bool validEmployeeRole(const string &role);
 
 static bool parseEmployeeInteger(const string &text, int &value)
 {
@@ -81,8 +82,7 @@ vector<EmployeeRecord> readEmployees()
         if (employee.employeeId > 0 && employee.age >= 18 && employee.age <= 90 &&
             hasCentPrecision(employee.salary) && employee.salary >= 0 &&
             validEmployeeName(employee.name) &&
-            validEmployeePhone(employee.phone) && !employee.role.empty() &&
-            employee.role.find_first_of("|\r\n") == string::npos &&
+            validEmployeePhone(employee.phone) && validEmployeeRole(employee.role) &&
             !duplicateId && !duplicatePhone)
             employees.push_back(employee);
     }
@@ -97,7 +97,7 @@ bool saveEmployees(const vector<EmployeeRecord> &employees)
         if (employee.employeeId <= 0 || employee.age < 18 || employee.age > 90 ||
             !hasCentPrecision(employee.salary) || employee.salary < 0 ||
             !validEmployeeName(employee.name) || !validEmployeePhone(employee.phone) ||
-            employee.role.empty() || employee.role.find_first_of("|\r\n") != string::npos)
+            !validEmployeeRole(employee.role))
             return false;
 
         for (size_t j = 0; j < i; ++j)
@@ -148,6 +148,23 @@ static bool validEmployeePhone(const string &phone)
     return true;
 }
 
+static bool validEmployeeRole(const string &role)
+{
+    if (role.empty() || role.front() == ' ' || role.back() == ' ')
+        return false;
+    bool previousSpace = false;
+    for (unsigned char ch : role)
+    {
+        if (isalpha(ch))
+            previousSpace = false;
+        else if (ch == ' ' && !previousSpace)
+            previousSpace = true;
+        else
+            return false;
+    }
+    return true;
+}
+
 static string titleCase(string text)
 {
     bool capitalize = true;
@@ -190,7 +207,7 @@ static void addEmployee()
     }
     cout << "Job title: ";
     getline(cin, role);
-    if (role.empty() || role.find('|') != string::npos || role.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ") != string::npos)
+    if (!validEmployeeRole(role))
     {
         cout << "Enter a job title using letters and spaces.\n";
         ps();
