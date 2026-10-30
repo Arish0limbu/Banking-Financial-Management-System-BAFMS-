@@ -385,7 +385,7 @@ static bool filesave(string customername, string address, string gmail,
 void newcustomer()
 {
 
-    string customername, address, gmail;
+    string customername, address, gmail, phoneText;
     char choice;
     int age, sn = 1;
     long long phone;
@@ -455,29 +455,10 @@ void newcustomer()
         do
         {
             cout << "Phone Number: ";
+            if (!getline(cin, phoneText))
+                return;
 
-            if (!(cin >> phone))
-            {
-                cin.clear();
-                cin.ignore(100000, '\n');
-
-                footer("Invalid input!. Enter numbers only.");
-                ps();
-
-                heading("|| Register Customer ||");
-                cout << "Enter Information of customer." << endl;
-                cout << "Full Name: " << customername << endl;
-                cout << "Age: " << age << endl;
-                cout << "Address (City-Ward no, District, Country): " << address << endl;
-                cout << "Gmail: " << gmail << endl;
-
-                phone = 0;
-                continue;
-            }
-
-            cin.ignore(100000, '\n');
-
-            if (validphone(phone) == false)
+            if (!validphone(phoneText))
             {
                 footer("Phone number is Invalid!. Re-enter.");
                 ps();
@@ -489,14 +470,15 @@ void newcustomer()
                 cout << "Address (City-Ward no, District, Country): " << address << endl;
                 cout << "Gmail: " << gmail << endl;
             }
-            else if (customerPhoneExists(to_string(phone)))
+            else if (customerPhoneExists(phoneText))
             {
                 footer("That phone number already belongs to a customer.");
                 ps();
             }
 
-        } while (validphone(phone) == false || customerPhoneExists(to_string(phone)));
+        } while (!validphone(phoneText) || customerPhoneExists(phoneText));
 
+        phone = stoll(phoneText);
         sn = nextCustomerSerial();
         if (sn == 0)
         {
