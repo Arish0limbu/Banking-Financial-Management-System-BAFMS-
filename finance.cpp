@@ -24,7 +24,14 @@ static int countCustomers()
             continue;
         try
         {
-            if (stoi(row.substr(0, separator)) > 0)
+            string serialText = row.substr(0, separator);
+            size_t start = serialText.find_first_not_of(" \t");
+            if (start == string::npos)
+                continue;
+            size_t end = serialText.find_last_not_of(" \t");
+            serialText = serialText.substr(start, end - start + 1);
+            size_t consumed = 0;
+            if (stoi(serialText, &consumed) > 0 && consumed == serialText.size())
                 ++count;
         }
         catch (...)
