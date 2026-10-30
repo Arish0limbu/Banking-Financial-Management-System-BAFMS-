@@ -272,6 +272,20 @@ static bool customerNameLess(const Customer &a, const Customer &b)
 
 static bool writeCustomerFile(vector<Customer> customers)
 {
+    for (size_t i = 0; i < customers.size(); ++i)
+    {
+        const Customer &customer = customers[i];
+        if (customer.sn <= 0 || !validname(customer.name) || !validage(customer.age) ||
+            !validaddress(customer.address) || !validphone(customer.phone) ||
+            !validgmail(customer.gmail))
+            return false;
+
+        for (size_t j = 0; j < i; ++j)
+            if (customers[j].sn == customer.sn || customers[j].phone == customer.phone ||
+                lowercase(customers[j].gmail) == lowercase(customer.gmail))
+                return false;
+    }
+
     sort(customers.begin(), customers.end(), customerNameLess);
 
     ofstream file("data/customer.txt", ios::trunc);
