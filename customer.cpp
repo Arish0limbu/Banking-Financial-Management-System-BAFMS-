@@ -494,9 +494,20 @@ void newcustomer()
         }
 
         line();
-        cout << "Do you want add another customer? Enter Y for Yes or N for NO (Y/N): ";
-        cin >> choice;
-        sn++;
+        string choiceText;
+        while (true)
+        {
+            cout << "Do you want add another customer? Enter Y for Yes or N for NO (Y/N): ";
+            if (!getline(cin, choiceText))
+                return;
+            if (choiceText == "Y" || choiceText == "y" ||
+                choiceText == "N" || choiceText == "n")
+            {
+                choice = choiceText[0];
+                break;
+            }
+            cout << "Enter Y or N.\n";
+        }
     } while (choice == 'Y' || choice == 'y');
 
 }
