@@ -1,6 +1,8 @@
 #include <fstream>
+#include <filesystem>
 #include <iostream>
 #include <string>
+#include <system_error>
 #include <utility>
 #ifdef _WIN32
 #include <conio.h>
@@ -12,11 +14,20 @@ using namespace std;
 
 static pair<string, string> readCredentials()
 {
-    ifstream file("data/admin.txt");
+    const string path = "data/admin.txt";
+    error_code status;
+    const bool credentialsExist = filesystem::exists(path, status);
+    if (status)
+        return {"", ""};
+    if (!credentialsExist)
+        return {"admin", "123"};
+
+    ifstream file(path);
     string id, password;
-    if (file.is_open() && getline(file, id, '|') && getline(file, password))
+    if (file.is_open() && getline(file, id, '|') && getline(file, password) &&
+        !id.empty() && !password.empty())
         return {id, password};
-    return {"admin", "123"};
+    return {"", ""};
 }
 
 static string readPassword()
@@ -70,7 +81,8 @@ bool adminlogin()
         string password = readPassword();
 
         pair<string, string> credentials = readCredentials();
-        if (id == credentials.first && password == credentials.second)
+        if (!credentials.first.empty() && !credentials.second.empty() &&
+            id == credentials.first && password == credentials.second)
         {
             footer("LOGIN SUCCESSFUL");
             ps();
