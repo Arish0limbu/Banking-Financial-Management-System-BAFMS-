@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <set>
 #include <string>
 #include "include/account.h"
 #include "include/design.h"
@@ -18,6 +19,7 @@ static int countCustomers()
     ifstream file("data/customer.txt");
     string row;
     int count = 0;
+    set<int> customerSerials;
     while (getline(file, row))
     {
         size_t separator = row.find('|');
@@ -32,7 +34,8 @@ static int countCustomers()
             size_t end = serialText.find_last_not_of(" \t");
             serialText = serialText.substr(start, end - start + 1);
             size_t consumed = 0;
-            if (stoi(serialText, &consumed) > 0 && consumed == serialText.size())
+            int serial = stoi(serialText, &consumed);
+            if (serial > 0 && consumed == serialText.size() && customerSerials.insert(serial).second)
                 ++count;
         }
         catch (...)
