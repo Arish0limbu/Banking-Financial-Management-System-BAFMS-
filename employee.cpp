@@ -42,6 +42,11 @@ static bool parseEmployeeSalary(const string &text, double &value)
     }
 }
 
+static bool hasCentPrecision(double value)
+{
+    return isfinite(value) && fabs(value * 100.0 - round(value * 100.0)) < 1e-7;
+}
+
 vector<EmployeeRecord> readEmployees()
 {
     vector<EmployeeRecord> employees;
@@ -74,7 +79,8 @@ vector<EmployeeRecord> readEmployees()
                                            [&employee](const EmployeeRecord &stored)
                                            { return stored.phone == employee.phone; });
         if (employee.employeeId > 0 && employee.age >= 18 && employee.age <= 90 &&
-            employee.salary >= 0 && validEmployeeName(employee.name) &&
+            hasCentPrecision(employee.salary) && employee.salary >= 0 &&
+            validEmployeeName(employee.name) &&
             validEmployeePhone(employee.phone) && !employee.role.empty() &&
             employee.role.find_first_of("|\r\n") == string::npos &&
             !duplicateId && !duplicatePhone)
@@ -89,7 +95,7 @@ bool saveEmployees(const vector<EmployeeRecord> &employees)
     {
         const EmployeeRecord &employee = employees[i];
         if (employee.employeeId <= 0 || employee.age < 18 || employee.age > 90 ||
-            !isfinite(employee.salary) || employee.salary < 0 ||
+            !hasCentPrecision(employee.salary) || employee.salary < 0 ||
             !validEmployeeName(employee.name) || !validEmployeePhone(employee.phone) ||
             employee.role.empty() || employee.role.find_first_of("|\r\n") != string::npos)
             return false;
