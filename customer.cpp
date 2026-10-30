@@ -330,14 +330,37 @@ static int nextCustomerSerial()
     return highestSerial + 1;
 }
 
+static string normalizeCustomerPhone(const string &input)
+{
+    size_t start = input.rfind("+977", 0) == 0 ? 4 : 0;
+    string digits;
+    for (size_t i = start; i < input.size(); ++i)
+    {
+        unsigned char ch = static_cast<unsigned char>(input[i]);
+        if (isdigit(ch))
+            digits.push_back(static_cast<char>(ch));
+        else if (ch != ' ' && ch != '\t' && ch != '\r' && ch != '\n' &&
+                 ch != '-' && ch != '(' && ch != ')')
+            return "";
+    }
+
+    if (start == 0 && digits.size() == 13 && digits.compare(0, 3, "977") == 0)
+        digits.erase(0, 3);
+    return digits;
+}
+
 static bool customerPhoneExists(const string &phone, int exceptSerial = 0)
 {
+    const string normalizedPhone = normalizeCustomerPhone(phone);
+    if (normalizedPhone.empty())
+        return false;
     ifstream file("data/customer.txt");
     string row;
     while (getline(file, row))
     {
         Customer customer{};
-        if (readCustomerLine(row, customer) && customer.sn != exceptSerial && customer.phone == phone)
+        if (readCustomerLine(row, customer) && customer.sn != exceptSerial &&
+            customer.phone == normalizedPhone)
             return true;
     }
     return false;
@@ -357,13 +380,9 @@ static bool customerEmailExists(const string &gmail, int exceptSerial = 0)
     return false;
 }
 
-bool validphone(long long phone)
-{
-    return phone > 9699999999LL && phone < 9900000000LL;
-}
-
 bool validphone(string phone)
 {
+    phone = normalizeCustomerPhone(phone);
     if (phone.length() != 10)
         return false;
 
@@ -380,7 +399,7 @@ bool validphone(string phone)
 }
 
 static bool filesave(string customername, string address, string gmail,
-                     int age, long long phone, int sn)
+                     int age, const string &phone, int sn)
 {
     vector<Customer> customers;
     string line;
@@ -392,7 +411,7 @@ static bool filesave(string customername, string address, string gmail,
         if (readCustomerLine(line, customer))
             customers.push_back(customer);
     }
-    customers.push_back({sn, customername, age, address, to_string(phone), gmail});
+    customers.push_back({sn, customername, age, address, phone, gmail});
     return writeCustomerFile(customers);
 }
 
@@ -402,7 +421,6 @@ void newcustomer()
     string customername, address, gmail, phoneText;
     char choice;
     int age, sn = 1;
-    long long phone;
 
     readcustomerfile();
     do
@@ -471,6 +489,7 @@ void newcustomer()
             cout << "Phone Number: ";
             if (!getline(cin, phoneText))
                 return;
+            phoneText = normalizeCustomerPhone(phoneText);
 
             if (!validphone(phoneText))
             {
@@ -492,7 +511,6 @@ void newcustomer()
 
         } while (!validphone(phoneText) || customerPhoneExists(phoneText));
 
-        phone = stoll(phoneText);
         sn = nextCustomerSerial();
         if (sn == 0)
         {
@@ -500,7 +518,7 @@ void newcustomer()
             ps();
             return;
         }
-        if (!filesave(customername, address, gmail, age, phone, sn))
+        if (!filesave(customername, address, gmail, age, phoneText, sn))
         {
             cout << "Unable to save customer details. Check the data folder.\n";
             ps();
@@ -562,6 +580,9 @@ void searchcustomer()
     getline(cin >> ws, name);
     cout << "Enter Phone Number: ";
     getline(cin >> ws, phone);
+    const string normalizedPhone = normalizeCustomerPhone(phone);
+    if (!normalizedPhone.empty())
+        phone = normalizedPhone;
     name = lowercase(name);
     ifstream file("data/customer.txt");
     if (!file.is_open())
@@ -652,6 +673,7 @@ bool readCustomerLine(const string &line, Customer &c)
         trim(c.address);
         trim(c.phone);
         trim(c.gmail);
+        c.phone = normalizeCustomerPhone(c.phone);
 
         return validname(c.name) && validaddress(c.address) &&
                validphone(c.phone) && validgmail(c.gmail);
@@ -695,6 +717,7 @@ void updatecustomer()
     {
         cout << "Enter Customer Phone: ";
         getline(cin >> ws, targetPhone);
+        targetPhone = normalizeCustomerPhone(targetPhone);
         if (validphone(targetPhone) == false)
         {
             footer("Enter only numbers!.Re-enter!..........");
@@ -787,6 +810,7 @@ void updatecustomer()
                 {
                     cout << "Enter New Phone: ";
                     getline(cin, input);
+                    input = normalizeCustomerPhone(input);
                 } while (!validphone(input));
 
                 customers[i].phone = input;
@@ -823,6 +847,7 @@ void updatecustomer()
                 {
                     cout << "Enter New Phone: ";
                     getline(cin, customers[i].phone);
+                    customers[i].phone = normalizeCustomerPhone(customers[i].phone);
                 } while (!validphone(customers[i].phone));
 
                 do
@@ -895,6 +920,7 @@ void deletecustomer()
     {
         cout << "Enter Customer Phone: ";
         getline(cin, targetPhone);
+        targetPhone = normalizeCustomerPhone(targetPhone);
         if (!validphone(targetPhone))
             cout << "Enter a valid 10 digit phone number.\n";
     } while (!validphone(targetPhone));
