@@ -142,7 +142,15 @@ void changeAdminPassword()
     else
     {
         file << credentials.first << '|' << newPassword << '\n';
-        cout << (file.good() ? "Password updated successfully.\n" : "Unable to save the password.\n");
+        file.flush();
+        if (!file.good())
+            cout << "Unable to save the password.\n";
+        else
+        {
+            file.close();
+            cout << (file.fail() ? "Unable to save the password.\n"
+                                 : "Password updated successfully.\n");
+        }
     }
     ps();
 }
