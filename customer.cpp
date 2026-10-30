@@ -639,7 +639,8 @@ bool readCustomerLine(const string &line, Customer &c)
         trim(c.phone);
         trim(c.gmail);
 
-        return true;
+        return validname(c.name) && validaddress(c.address) &&
+               validphone(c.phone) && validgmail(c.gmail);
     }
     catch (...)
     {
