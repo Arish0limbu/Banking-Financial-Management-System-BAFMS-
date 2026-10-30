@@ -263,6 +263,7 @@ struct Customer
     string gmail;
 };
 
+bool validphone(string phone);
 bool readCustomerLine(const string &line, Customer &c);
 
 static bool customerNameLess(const Customer &a, const Customer &b)
@@ -493,7 +494,7 @@ void newcustomer()
 
             if (!validphone(phoneText))
             {
-                footer("Phone number is Invalid!. Re-enter.");
+                footer("Use 10 local digits starting with 97 or 98; +977 and separators are accepted.");
                 ps();
 
                 heading("|| Register Customer ||");
@@ -720,7 +721,7 @@ void updatecustomer()
         targetPhone = normalizeCustomerPhone(targetPhone);
         if (validphone(targetPhone) == false)
         {
-            footer("Enter only numbers!.Re-enter!..........");
+            footer("Enter a valid 97/98 mobile number, optionally with the +977 prefix.");
             ps();
             heading("|| UPDATE CUSTOMER ||");
             cout << "Enter Customer Name:  " << targetName << endl;
@@ -922,7 +923,7 @@ void deletecustomer()
         getline(cin, targetPhone);
         targetPhone = normalizeCustomerPhone(targetPhone);
         if (!validphone(targetPhone))
-            cout << "Enter a valid 10 digit phone number.\n";
+            cout << "Enter a valid 97/98 mobile number, optionally with the +977 prefix.\n";
     } while (!validphone(targetPhone));
 
     ifstream file("data/customer.txt");

@@ -1,8 +1,8 @@
+#include <cerrno>
+#include <cstdio>
 #include <fstream>
-#include <filesystem>
 #include <iostream>
 #include <string>
-#include <system_error>
 #include <utility>
 #ifdef _WIN32
 #include <conio.h>
@@ -15,16 +15,20 @@ using namespace std;
 static pair<string, string> readCredentials()
 {
     const string path = "data/admin.txt";
-    error_code status;
-    const bool credentialsExist = filesystem::exists(path, status);
-    if (status)
-        return {"", ""};
-    if (!credentialsExist)
-        return {"admin", "123"};
-
     ifstream file(path);
+    if (!file.is_open())
+    {
+        errno = 0;
+        FILE *probe = fopen(path.c_str(), "rb");
+        if (probe)
+            fclose(probe);
+        else if (errno == ENOENT)
+            return {"admin", "123"};
+        return {"", ""};
+    }
+
     string id, password;
-    if (file.is_open() && getline(file, id, '|') && getline(file, password) &&
+    if (getline(file, id, '|') && getline(file, password) &&
         !id.empty() && !password.empty())
         return {id, password};
     return {"", ""};
