@@ -41,7 +41,7 @@ function runCppApi(args) {
   });
 
   if (result.error) {
-    throw new Error("Could not start the C++ API. Run start-web-demo.bat first.");
+    throw new Error("Could not start the C++ API. Run run-web-demo.bat first.");
   }
 
   let data;
@@ -62,19 +62,28 @@ function runCppApi(args) {
 function readRequestBody(request) {
   return new Promise((resolve, reject) => {
     let body = "";
+    let tooLarge = false;
     request.setEncoding("utf8");
     request.on("data", (chunk) => {
+      if (tooLarge)
+        return;
       body += chunk;
       if (body.length > 16_384) {
-        reject(new Error("Request body is too large."));
-        request.destroy();
+        tooLarge = true;
+        const error = new Error("Request body is too large.");
+        error.status = 413;
+        reject(error);
       }
     });
     request.on("end", () => {
+      if (tooLarge)
+        return;
       try {
         resolve(JSON.parse(body));
       } catch {
-        reject(new Error("Send a valid JSON request."));
+        const error = new Error("Send a valid JSON request.");
+        error.status = 400;
+        reject(error);
       }
     });
     request.on("error", reject);
