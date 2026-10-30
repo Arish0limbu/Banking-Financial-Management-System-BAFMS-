@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cmath>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -66,7 +67,11 @@ void showReports()
         if (loan.status == "Pending")
             ++pendingLoans;
         if (loan.status == "Approved")
-            outstandingLoans += max(0.0, loan.principal * (1.0 + loan.annualRate * loan.termMonths / 1200.0) - loan.amountPaid);
+        {
+            const double totalDue = round(loan.principal *
+                                           (1.0 + loan.annualRate * loan.termMonths / 1200.0) * 100.0) / 100.0;
+            outstandingLoans += max(0.0, totalDue - loan.amountPaid);
+        }
     }
 
     int activeEmployees = 0;
