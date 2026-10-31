@@ -905,11 +905,18 @@ void updatecustomer()
                 }
                 customers[i].phone = input;
             }
-            if (customerEmailExists(customers[i].gmail, customers[i].sn))
+            while (customerEmailExists(customers[i].gmail, customers[i].sn))
             {
                 cout << "That Gmail address already belongs to another customer.\n";
-                ps();
-                return;
+                cout << "Enter a different Gmail address: ";
+                if (!getline(cin, input))
+                    return;
+                if (!validgmail(input))
+                {
+                    cout << "Enter a valid Gmail address.\n";
+                    continue;
+                }
+                customers[i].gmail = input;
             }
 
             if (!writeCustomerFile(customers))
