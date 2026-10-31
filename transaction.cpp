@@ -146,7 +146,10 @@ bool saveTransaction(const string &type, int fromAccount, int toAccount, double 
     file << nextId << '|' << type << '|' << fromAccount << '|' << toAccount << '|'
          << fixed << setprecision(2) << amount << '|' << timestamp << '\n';
     file.flush();
-    return file.good();
+    if (!file.good())
+        return false;
+    file.close();
+    return !file.fail();
 }
 
 static void showHistory()
