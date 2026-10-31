@@ -321,7 +321,11 @@ static bool writeCustomerFile(vector<Customer> customers)
         file << left << setw(24) << customer.gmail << right << setw(1) << "|" << '\n';
     }
 
-    return file.good();
+    file.flush();
+    if (!file.good())
+        return false;
+    file.close();
+    return !file.fail();
 }
 
 static int nextCustomerSerial()
