@@ -160,6 +160,9 @@ bool validaddress(string address)
     trim(district);
     trim(country);
 
+    if (cityWard.empty() || district.empty() || country.empty())
+        return false;
+
     int hyphen = cityWard.find('-');
 
     if (hyphen == string::npos || hyphen == 0 || hyphen == cityWard.length() - 1)
@@ -167,6 +170,8 @@ bool validaddress(string address)
 
     string city = cityWard.substr(0, hyphen);
     string ward = cityWard.substr(hyphen + 1);
+    if (city.empty() || city.front() == ' ' || city.back() == ' ')
+        return false;
 
     bool previousSpace = false;
 
