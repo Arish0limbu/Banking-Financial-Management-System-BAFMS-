@@ -37,7 +37,7 @@ void readcustomerfile()
 
 bool validname(string name)
 {
-    if (name.empty() || name[0] == ' ' || name.back() == ' ')
+    if (name.empty() || name.size() > 29 || name[0] == ' ' || name.back() == ' ')
         return false;
 
     bool space = false;
@@ -114,7 +114,7 @@ bool validage(int age)
 bool validaddress(string address)
 {
 
-    if (address.empty())
+    if (address.empty() || address.size() > 37)
         return false;
 
     if (address.front() == ' ' || address.back() == ' ')
@@ -229,7 +229,7 @@ bool validaddress(string address)
 
 bool validgmail(string gmail)
 {
-    if (gmail.empty() || gmail.find(' ') != string::npos)
+    if (gmail.empty() || gmail.size() > 24 || gmail.find(' ') != string::npos)
         return false;
 
     if (gmail.find('@') == string::npos || gmail.find('@') != gmail.rfind('@'))
