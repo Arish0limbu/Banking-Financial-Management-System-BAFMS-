@@ -891,11 +891,19 @@ void updatecustomer()
                 return;
             }
 
-            if (customerPhoneExists(customers[i].phone, customers[i].sn))
+            while (customerPhoneExists(customers[i].phone, customers[i].sn))
             {
                 cout << "That phone number already belongs to another customer.\n";
-                ps();
-                return;
+                cout << "Enter a different phone number: ";
+                if (!getline(cin, input))
+                    return;
+                input = normalizeCustomerPhone(input);
+                if (!validphone(input))
+                {
+                    cout << "Enter a valid 97/98 phone number, optionally with the +977 prefix.\n";
+                    continue;
+                }
+                customers[i].phone = input;
             }
             if (customerEmailExists(customers[i].gmail, customers[i].sn))
             {
