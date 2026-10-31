@@ -273,7 +273,11 @@ bool readCustomerLine(const string &line, Customer &c);
 
 static bool customerNameLess(const Customer &a, const Customer &b)
 {
-    return lowercase(a.name) < lowercase(b.name);
+    const string leftName = lowercase(a.name);
+    const string rightName = lowercase(b.name);
+    if (leftName == rightName)
+        return a.sn < b.sn;
+    return leftName < rightName;
 }
 
 static bool writeCustomerFile(vector<Customer> customers)
