@@ -16,14 +16,6 @@ After signing in, the main menu provides:
 6. Administrator password and profile settings
 7. Logout
 
-## Local browser demo
-
-The repository also includes a small HTML/CSS/JavaScript dashboard backed by the existing C++ account and transaction functions. On Windows, install Node.js and MinGW g++, then run `run-web-demo.bat` and open [http://127.0.0.1:4173](http://127.0.0.1:4173). Keep the terminal window open while using the page; press Ctrl+C to stop it.
-
-The demo binds to your computer only and uses fictional records in `web-demo/runtime/data/`. Deposits, withdrawals, transfers, and their history update those demo files, not the regular `data/` records. To reset the demo, stop the server, delete `accounts.txt` and `transactions.txt` from `web-demo/runtime/data/`, and start it again. It does not include administrator login, customer management, loans, or employee management yet.
-
-This is a local prototype. It is not configured for public hosting or real banking data.
-
 ## Local data files
 
 Customer details use the existing formatted table in `data/customer.txt`. Account, transaction, loan, and employee records are stored as pipe-separated rows in their corresponding files under `data/`. Keep the records in place between runs to retain the application data. The administrator password is saved in `data/admin.txt` after it is changed; that local settings file is ignored by Git.
