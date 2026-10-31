@@ -102,7 +102,11 @@ bool saveAccounts(const vector<AccountRecord> &accounts)
              << account.accountType << '|' << account.balance << '|'
              << (account.active ? 1 : 0) << '\n';
 
-    return file.good();
+    file.flush();
+    if (!file.good())
+        return false;
+    file.close();
+    return !file.fail();
 }
 
 bool findAccount(int accountNumber, AccountRecord &account)
