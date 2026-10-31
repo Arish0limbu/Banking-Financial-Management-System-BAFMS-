@@ -114,7 +114,11 @@ bool saveEmployees(const vector<EmployeeRecord> &employees)
         file << employee.employeeId << '|' << employee.name << '|' << employee.age << '|'
              << employee.phone << '|' << employee.role << '|' << employee.salary << '|'
              << (employee.active ? 1 : 0) << '\n';
-    return file.good();
+    file.flush();
+    if (!file.good())
+        return false;
+    file.close();
+    return !file.fail();
 }
 
 static bool validEmployeeName(const string &name)
