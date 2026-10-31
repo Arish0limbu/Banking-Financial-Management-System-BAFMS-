@@ -715,7 +715,8 @@ void updatecustomer()
     {
 
         cout << "Enter Customer Name: ";
-        getline(cin >> ws, targetName);
+        if (!getline(cin >> ws, targetName))
+            return;
         if (validname(targetName) == false)
         {
             footer("Invalid name!.Try full name!.RE-enter1.......... ");
@@ -728,7 +729,8 @@ void updatecustomer()
     do
     {
         cout << "Enter Customer Phone: ";
-        getline(cin >> ws, targetPhone);
+        if (!getline(cin >> ws, targetPhone))
+            return;
         targetPhone = normalizeCustomerPhone(targetPhone);
         if (validphone(targetPhone) == false)
         {
@@ -795,7 +797,8 @@ void updatecustomer()
                 do
                 {
                     cout << "Enter New Name: ";
-                    getline(cin, input);
+                    if (!getline(cin, input))
+                        return;
                 } while (!validname(input));
 
                 customers[i].name = formatname(input);
@@ -811,7 +814,8 @@ void updatecustomer()
                 do
                 {
                     cout << "Enter New Address: ";
-                    getline(cin, input);
+                    if (!getline(cin, input))
+                        return;
                 } while (!validaddress(input));
 
                 customers[i].address = input;
@@ -821,7 +825,8 @@ void updatecustomer()
                 do
                 {
                     cout << "Enter New Phone: ";
-                    getline(cin, input);
+                    if (!getline(cin, input))
+                        return;
                     input = normalizeCustomerPhone(input);
                 } while (!validphone(input));
 
@@ -832,7 +837,8 @@ void updatecustomer()
                 do
                 {
                     cout << "Enter New Gmail: ";
-                    getline(cin, input);
+                    if (!getline(cin, input))
+                        return;
                 } while (!validgmail(input));
 
                 customers[i].gmail = input;
@@ -842,7 +848,8 @@ void updatecustomer()
                 do
                 {
                     cout << "Enter New Name: ";
-                    getline(cin, customers[i].name);
+                    if (!getline(cin, customers[i].name))
+                        return;
                 } while (!validname(customers[i].name));
                 customers[i].name = formatname(customers[i].name);
 
@@ -852,20 +859,23 @@ void updatecustomer()
                 do
                 {
                     cout << "Enter New Address: ";
-                    getline(cin, customers[i].address);
+                    if (!getline(cin, customers[i].address))
+                        return;
                 } while (!validaddress(customers[i].address));
 
                 do
                 {
                     cout << "Enter New Phone: ";
-                    getline(cin, customers[i].phone);
+                    if (!getline(cin, customers[i].phone))
+                        return;
                     customers[i].phone = normalizeCustomerPhone(customers[i].phone);
                 } while (!validphone(customers[i].phone));
 
                 do
                 {
                     cout << "Enter New Gmail: ";
-                    getline(cin, customers[i].gmail);
+                    if (!getline(cin, customers[i].gmail))
+                        return;
                 } while (!validgmail(customers[i].gmail));
 
                 break;
