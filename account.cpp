@@ -124,7 +124,7 @@ bool findAccount(int accountNumber, AccountRecord &account)
 
 bool updateAccountBalance(int accountNumber, double newBalance)
 {
-    if (!isfinite(newBalance) || newBalance < 0)
+    if (!hasCentPrecision(newBalance) || newBalance < 0)
         return false;
 
     vector<AccountRecord> accounts = readAccounts();
