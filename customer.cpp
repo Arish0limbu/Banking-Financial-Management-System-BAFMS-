@@ -415,12 +415,16 @@ static bool filesave(string customername, string address, string gmail,
     string line;
 
     ifstream infile("data/customer.txt");
+    if (!infile.is_open())
+        return false;
     while (getline(infile, line))
     {
         Customer customer{};
         if (readCustomerLine(line, customer))
             customers.push_back(customer);
     }
+    if (infile.bad())
+        return false;
     customers.push_back({sn, customername, age, address, phone, gmail});
     return writeCustomerFile(customers);
 }
