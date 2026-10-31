@@ -584,6 +584,12 @@ void searchcustomer()
     const string normalizedPhone = normalizeCustomerPhone(phone);
     if (!normalizedPhone.empty())
         phone = normalizedPhone;
+    if (!validname(name) || !validphone(phone))
+    {
+        cout << "Enter the customer's full name and a valid 97/98 phone number.\n";
+        ps();
+        return;
+    }
     name = lowercase(name);
     ifstream file("data/customer.txt");
     if (!file.is_open())
@@ -600,10 +606,10 @@ void searchcustomer()
     }
     while (getline(file, nline))
     {
-        if (nline.find('|') == string::npos)
+        Customer customer{};
+        if (!readCustomerLine(nline, customer))
             continue;
-        string lowerline = lowercase(nline);
-        if (lowerline.find(name) != string::npos && nline.find(phone) != string::npos)
+        if (lowercase(customer.name) == name && customer.phone == phone)
         {
             cout << nline << '\n';
             found = true;
