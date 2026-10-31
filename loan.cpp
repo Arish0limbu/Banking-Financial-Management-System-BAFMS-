@@ -110,7 +110,11 @@ bool saveLoans(const vector<LoanRecord> &loans)
         file << loan.loanId << '|' << loan.customerSerial << '|' << loan.principal << '|'
              << loan.annualRate << '|' << loan.termMonths << '|' << loan.amountPaid << '|'
              << loan.status << '\n';
-    return file.good();
+    file.flush();
+    if (!file.good())
+        return false;
+    file.close();
+    return !file.fail();
 }
 
 static bool loanCustomerExists(int serial)
