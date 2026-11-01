@@ -275,6 +275,12 @@ static void makeRepayment()
     }
 
     double outstanding = max(0.0, totalDue(*found) - found->amountPaid);
+    if (outstanding < 0.01)
+    {
+        cout << "This loan has no outstanding amount to repay.\n";
+        ps();
+        return;
+    }
     if (!readmoney("Payment amount: ", amount, 0.01, outstanding))
         return;
     if (amount > account.balance)
