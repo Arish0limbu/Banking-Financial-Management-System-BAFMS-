@@ -775,6 +775,12 @@ void updatecustomer()
             continue;
     }
 
+    if (file.bad())
+    {
+        cout << "Error reading customer file; no changes were saved.\n";
+        ps();
+        return;
+    }
     file.close();
 
     bool found = false;
