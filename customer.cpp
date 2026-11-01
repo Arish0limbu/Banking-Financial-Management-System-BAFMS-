@@ -448,7 +448,8 @@ void newcustomer()
             heading("|| Register Customer ||");
             cout << "Enter Information of customer." << endl;
             cout << "Full Name: ";
-            getline(cin >> ws, customername);
+            if (!getline(cin >> ws, customername))
+                return;
             customername = formatname(customername);
 
             if (validname(customername) == false)
@@ -466,7 +467,8 @@ void newcustomer()
         {
 
             cout << "Address (City-Ward no,District,Country): ";
-            getline(cin >> ws, address);
+            if (!getline(cin >> ws, address))
+                return;
             if (validaddress(address) == false)
             {
                 footer("Address is Invalid!. Re Enter as format.");
@@ -483,7 +485,8 @@ void newcustomer()
         do
         {
             cout << "Gmail: ";
-            getline(cin >> ws, gmail);
+            if (!getline(cin >> ws, gmail))
+                return;
             if (validgmail(gmail) == false)
             {
                 footer("Gmail is Invalid!. Re Enter.");
