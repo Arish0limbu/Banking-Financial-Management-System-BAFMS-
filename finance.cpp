@@ -64,6 +64,9 @@ void showReports()
         }
 
     int pendingLoans = 0;
+    int approvedLoans = 0;
+    int rejectedLoans = 0;
+    int paidLoans = 0;
     double outstandingLoans = 0;
     for (const LoanRecord &loan : loans)
     {
@@ -71,10 +74,15 @@ void showReports()
             ++pendingLoans;
         if (loan.status == "Approved")
         {
+            ++approvedLoans;
             const double totalDue = round(loan.principal *
                                            (1.0 + loan.annualRate * loan.termMonths / 1200.0) * 100.0) / 100.0;
             outstandingLoans += max(0.0, totalDue - loan.amountPaid);
         }
+        else if (loan.status == "Rejected")
+            ++rejectedLoans;
+        else if (loan.status == "Paid")
+            ++paidLoans;
     }
 
     int activeEmployees = 0;
@@ -110,8 +118,11 @@ void showReports()
          << "Withdrawal transaction volume: " << withdrawalVolume << '\n'
          << "Loan payment volume          : " << loanPaymentVolume << '\n'
          << "Transfer transaction volume  : " << transferVolume << '\n'
+         << "Approved loan applications  : " << approvedLoans << '\n'
          << "Approved loan outstanding   : " << outstandingLoans << '\n'
          << "Pending loan applications   : " << pendingLoans << '\n'
+         << "Rejected loan applications  : " << rejectedLoans << '\n'
+         << "Paid loan applications      : " << paidLoans << '\n'
          << "Transactions recorded        : " << transactions.size() << '\n'
          << "Active employees             : " << activeEmployees << " / " << employees.size() << '\n'
          << "Monthly payroll              : " << monthlyPayroll << '\n';
