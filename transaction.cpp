@@ -156,6 +156,9 @@ static void showHistory()
 {
     heading("|| TRANSACTION HISTORY ||");
     vector<TransactionRecord> transactions = readTransactions();
+    sort(transactions.begin(), transactions.end(),
+         [](const TransactionRecord &left, const TransactionRecord &right)
+         { return left.transactionId < right.transactionId; });
     if (transactions.empty())
         cout << "No transactions have been recorded.\n";
     else
