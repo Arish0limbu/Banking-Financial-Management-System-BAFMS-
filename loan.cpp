@@ -200,6 +200,9 @@ static void listLoans()
 {
     heading("|| LOAN REGISTER ||");
     vector<LoanRecord> loans = readLoans();
+    sort(loans.begin(), loans.end(),
+         [](const LoanRecord &left, const LoanRecord &right)
+         { return left.loanId < right.loanId; });
     if (loans.empty())
         cout << "No loan applications have been recorded.\n";
     else
