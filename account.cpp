@@ -217,6 +217,9 @@ static void listAccounts()
 {
     heading("|| BANK ACCOUNTS ||");
     vector<AccountRecord> accounts = readAccounts();
+    sort(accounts.begin(), accounts.end(),
+         [](const AccountRecord &left, const AccountRecord &right)
+         { return left.accountNumber < right.accountNumber; });
     if (accounts.empty())
         cout << "No accounts have been opened yet.\n";
     else
