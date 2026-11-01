@@ -1030,11 +1030,10 @@ void deletecustomer()
     }
 
     cout << "Customer: " << match->name << " | Phone: " << match->phone << '\n';
-    char confirm;
-    cout << "Delete this customer? (Y/N): ";
-    cin >> confirm;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    if (confirm != 'Y' && confirm != 'y')
+    bool confirmed;
+    if (!readconfirmation("Delete this customer? (Y/N): ", confirmed))
+        return;
+    if (!confirmed)
     {
         cout << "Deletion cancelled.\n";
         ps();
