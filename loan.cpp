@@ -52,10 +52,15 @@ static bool validLoanRecord(const LoanRecord &loan)
     const bool knownStatus = loan.status == "Pending" || loan.status == "Approved" ||
                              loan.status == "Rejected" || loan.status == "Paid";
     const double due = totalDue(loan);
+    const double outstanding = due - loan.amountPaid;
+    const bool paymentStateValid =
+        ((loan.status == "Pending" || loan.status == "Rejected") && loan.amountPaid == 0) ||
+        (loan.status == "Approved" && outstanding > 0.005) ||
+        (loan.status == "Paid" && fabs(outstanding) <= 0.005);
     return loan.loanId > 0 && loan.customerSerial > 0 && hasCentPrecision(loan.principal) &&
            loan.principal > 0 && isfinite(loan.annualRate) && loan.annualRate >= 0 &&
            loan.termMonths > 0 && hasCentPrecision(loan.amountPaid) && loan.amountPaid >= 0 &&
-           isfinite(due) && loan.amountPaid <= due + 0.005 && knownStatus;
+           isfinite(due) && loan.amountPaid <= due + 0.005 && knownStatus && paymentStateValid;
 }
 
 vector<LoanRecord> readLoans()
