@@ -192,7 +192,8 @@ static void addEmployee()
     int age;
     double salary;
     cout << "Full name: ";
-    getline(cin >> ws, name);
+    if (!getline(cin >> ws, name))
+        return;
     if (!validEmployeeName(name))
     {
         cout << "Enter a full name using letters and single spaces.\n";
@@ -202,7 +203,8 @@ static void addEmployee()
     if (!readint("Age: ", age, 18, 90))
         return;
     cout << "Phone number (10 digits): ";
-    getline(cin, phone);
+    if (!getline(cin, phone))
+        return;
     if (!validEmployeePhone(phone))
     {
         cout << "Enter a 10 digit phone number.\n";
@@ -210,7 +212,8 @@ static void addEmployee()
         return;
     }
     cout << "Job title: ";
-    getline(cin, role);
+    if (!getline(cin, role))
+        return;
     if (!validEmployeeRole(role))
     {
         cout << "Enter a job title using letters and spaces.\n";
