@@ -157,3 +157,25 @@ bool readmoney(const string &prompt, double &value, double minimum, double maxim
              << minimum << " to " << maximum << ".\n";
     }
 }
+
+bool readconfirmation(const string &prompt, bool &confirmed)
+{
+    while (true)
+    {
+        cout << prompt;
+        string input;
+        if (!getline(cin, input))
+            return false;
+        if (input == "Y" || input == "y")
+        {
+            confirmed = true;
+            return true;
+        }
+        if (input == "N" || input == "n")
+        {
+            confirmed = false;
+            return true;
+        }
+        cout << "Enter Y or N.\n";
+    }
+}

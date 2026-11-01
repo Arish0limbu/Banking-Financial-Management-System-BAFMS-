@@ -282,11 +282,10 @@ static void closeAccount()
         return;
     }
 
-    char confirm;
-    cout << "Close account " << number << "? (Y/N): ";
-    cin >> confirm;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    if (confirm != 'Y' && confirm != 'y')
+    bool confirmed;
+    if (!readconfirmation("Close account " + to_string(number) + "? (Y/N): ", confirmed))
+        return;
+    if (!confirmed)
     {
         cout << "Account closure cancelled.\n";
         ps();
