@@ -255,6 +255,9 @@ static void listEmployees()
 {
     heading("|| EMPLOYEE REGISTER ||");
     vector<EmployeeRecord> employees = readEmployees();
+    sort(employees.begin(), employees.end(),
+         [](const EmployeeRecord &left, const EmployeeRecord &right)
+         { return left.employeeId < right.employeeId; });
     if (employees.empty())
         cout << "No employees have been registered.\n";
     else
