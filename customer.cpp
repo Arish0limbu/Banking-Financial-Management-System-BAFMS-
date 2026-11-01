@@ -963,7 +963,8 @@ void deletecustomer()
     do
     {
         cout << "Enter Customer Name: ";
-        getline(cin >> ws, targetName);
+        if (!getline(cin >> ws, targetName))
+            return;
         if (!validname(targetName))
             cout << "Enter the customer's full name.\n";
     } while (!validname(targetName));
@@ -971,7 +972,8 @@ void deletecustomer()
     do
     {
         cout << "Enter Customer Phone: ";
-        getline(cin, targetPhone);
+        if (!getline(cin, targetPhone))
+            return;
         targetPhone = normalizeCustomerPhone(targetPhone);
         if (!validphone(targetPhone))
             cout << "Enter a valid 97/98 mobile number, optionally with the +977 prefix.\n";
