@@ -1005,6 +1005,12 @@ void deletecustomer()
         else
             continue;
     }
+    if (file.bad())
+    {
+        cout << "Error reading customer file; customer was not deleted.\n";
+        ps();
+        return;
+    }
     file.close();
 
     auto match = customers.end();
