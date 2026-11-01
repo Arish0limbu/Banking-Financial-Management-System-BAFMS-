@@ -568,25 +568,29 @@ void newcustomer()
 void viewcustomer()
 {
     ifstream file("data/customer.txt");
-    if (!file.is_open() || file.peek() == EOF)
+    heading("|| CUSTOMER DETAILS ||", 120);
+    if (!file.is_open())
     {
-        cls();
-        heading("|| CUSTOMER DETAILS ||");
-        centertxt("File is empty OR didn't exits.....!");
+        centertxt("Unable to open customer file.", 120);
+    }
+    else if (file.peek() == EOF)
+    {
+        centertxt("Customer file is empty.", 120);
     }
     else
     {
 
         string details;
 
-        cls();
         while (getline(file, details))
         {
             cout << details << endl;
         }
 
-        file.close();
-        line(120);
+        if (file.bad())
+            centertxt("Error reading customer file.", 120);
+        else
+            line(120);
     }
     ps();
 }
