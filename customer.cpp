@@ -437,6 +437,52 @@ bool configureCustomerLogin()
     return setupCustomerLogin(customerSerial);
 }
 
+bool customerlogin(int &customerSerial)
+{
+    vector<CustomerCredential> credentials;
+    if (!readCustomerCredentials(credentials))
+    {
+        cout << "Customer login storage could not be read. Contact the administrator.\n";
+        ps();
+        return false;
+    }
+
+    const int maximumAttempts = 4;
+    for (int attempt = 1; attempt <= maximumAttempts; ++attempt)
+    {
+        heading("|| CUSTOMER LOGIN ||");
+        int enteredSerial;
+        if (!readint("Customer ID (serial number): ", enteredSerial, 1, 2147483647))
+            return false;
+        const string password = readPassword("Password: ");
+        if (!cin)
+            return false;
+
+        bool passwordMatches = false;
+        if (customerSerialExists(enteredSerial))
+            for (const CustomerCredential &credential : credentials)
+                if (credential.customerSerial == enteredSerial && credential.password == password)
+                {
+                    passwordMatches = true;
+                    break;
+                }
+
+        if (passwordMatches)
+        {
+            customerSerial = enteredSerial;
+            footer("CUSTOMER LOGIN SUCCESSFUL");
+            ps();
+            return true;
+        }
+
+        cout << "Customer ID or password is incorrect.\n";
+        if (attempt < maximumAttempts)
+            cout << maximumAttempts - attempt << " attempts left.\n";
+        ps();
+    }
+    return false;
+}
+
 static bool customerNameLess(const Customer &a, const Customer &b)
 {
     const string leftName = lowercase(a.name);
