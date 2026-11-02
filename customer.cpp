@@ -7,6 +7,7 @@
 #include <fstream>
 #include <iomanip>
 #include <limits>
+#include <set>
 #include <sstream>
 #include <string>
 #include <cstdio>
@@ -17,6 +18,7 @@
 #include "include/design.h"
 #include "include/loan.h"
 #include "include/security.h"
+#include "include/transaction.h"
 
 using namespace std;
 
@@ -539,14 +541,56 @@ static void showCustomerAccounts(int customerSerial)
          << activeBalance << '\n';
 }
 
+static void showCustomerTransactions(int customerSerial)
+{
+    set<int> customerAccounts;
+    for (const AccountRecord &account : readAccounts())
+        if (account.customerSerial == customerSerial)
+            customerAccounts.insert(account.accountNumber);
+    if (customerAccounts.empty())
+    {
+        cout << "No account is linked to your customer ID yet.\n";
+        return;
+    }
+
+    vector<TransactionRecord> transactions = readTransactions();
+    sort(transactions.begin(), transactions.end(),
+         [](const TransactionRecord &left, const TransactionRecord &right)
+         { return left.transactionId > right.transactionId; });
+    bool found = false;
+    cout << left << setw(8) << "ID" << setw(18) << "TYPE" << setw(18) << "FROM"
+         << setw(18) << "TO" << setw(14) << "AMOUNT" << "DATE / TIME\n";
+    line();
+    cout << fixed << setprecision(2);
+    for (const TransactionRecord &transaction : transactions)
+    {
+        const bool fromCustomer = customerAccounts.count(transaction.fromAccount) != 0;
+        const bool toCustomer = customerAccounts.count(transaction.toAccount) != 0;
+        if (!fromCustomer && !toCustomer)
+            continue;
+
+        const string from = transaction.fromAccount == 0 ? "-" :
+                            (fromCustomer ? to_string(transaction.fromAccount) : "Other account");
+        const string to = transaction.toAccount == 0 ? "-" :
+                          (toCustomer ? to_string(transaction.toAccount) : "Other account");
+        cout << left << setw(8) << transaction.transactionId << setw(18) << transaction.type
+             << setw(18) << from << setw(18) << to << setw(14) << transaction.amount
+             << transaction.timestamp << '\n';
+        found = true;
+    }
+    if (!found)
+        cout << "No transactions have been recorded for your accounts.\n";
+}
+
 void customerPortal(int customerSerial)
 {
     int choice;
     do
     {
         heading("|| CUSTOMER PORTAL ||");
-        cout << "1. View my profile\n2. View my accounts\n3. Logout\n";
-        if (!readint("Select an option: ", choice, 1, 3))
+        cout << "1. View my profile\n2. View my accounts\n"
+             << "3. View my transaction history\n4. Logout\n";
+        if (!readint("Select an option: ", choice, 1, 4))
             return;
         if (choice == 1)
         {
@@ -558,7 +602,12 @@ void customerPortal(int customerSerial)
             showCustomerAccounts(customerSerial);
             ps();
         }
-    } while (choice != 3);
+        else if (choice == 3)
+        {
+            showCustomerTransactions(customerSerial);
+            ps();
+        }
+    } while (choice != 4);
     cout << "You have been logged out.\n";
 }
 
