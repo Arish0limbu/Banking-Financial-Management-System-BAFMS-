@@ -614,8 +614,9 @@ void customerPortal(int customerSerial)
     {
         heading("|| CUSTOMER PORTAL ||");
         cout << "1. View my profile\n2. View my accounts\n"
-             << "3. View my transaction history\n4. View my loan applications\n5. Logout\n";
-        if (!readint("Select an option: ", choice, 1, 5))
+             << "3. View my transaction history\n4. View my loan applications\n"
+             << "5. Apply for a loan\n6. Logout\n";
+        if (!readint("Select an option: ", choice, 1, 6))
             return;
         if (choice == 1)
         {
@@ -637,7 +638,9 @@ void customerPortal(int customerSerial)
             showCustomerLoans(customerSerial);
             ps();
         }
-    } while (choice != 5);
+        else if (choice == 5)
+            applyForCustomerLoan(customerSerial);
+    } while (choice != 6);
     cout << "You have been logged out.\n";
 }
 
