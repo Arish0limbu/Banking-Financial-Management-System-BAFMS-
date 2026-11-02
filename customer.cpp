@@ -536,14 +536,18 @@ bool customerlogin(int &customerSerial)
         if (!cin)
             return false;
 
-        bool passwordMatches = false;
-        if (customerSerialExists(enteredSerial))
-            for (const CustomerCredential &credential : credentials)
-                if (credential.customerSerial == enteredSerial && credential.password == password)
-                {
-                    passwordMatches = true;
-                    break;
-                }
+        auto credential = find_if(credentials.begin(), credentials.end(),
+                                  [enteredSerial](const CustomerCredential &item)
+                                  { return item.customerSerial == enteredSerial; });
+        if (credential == credentials.end() && customerSerialExists(enteredSerial))
+        {
+            cout << "Customer login has not been set up. Ask the administrator to create it.\n";
+            ps();
+            return false;
+        }
+        const bool passwordMatches = credential != credentials.end() &&
+                                     customerSerialExists(enteredSerial) &&
+                                     credential->password == password;
 
         if (passwordMatches)
         {
