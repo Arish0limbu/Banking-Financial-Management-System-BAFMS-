@@ -385,6 +385,26 @@ static bool saveCustomerPassword(int customerSerial, const string &password)
     return writeCustomerCredentials(credentials);
 }
 
+static bool removeCustomerPassword(int customerSerial, string &removedPassword, bool &hadPassword)
+{
+    vector<CustomerCredential> credentials;
+    if (!readCustomerCredentials(credentials))
+        return false;
+    auto credential = find_if(credentials.begin(), credentials.end(),
+                               [customerSerial](const CustomerCredential &item)
+                               { return item.customerSerial == customerSerial; });
+    if (credential == credentials.end())
+    {
+        hadPassword = false;
+        return true;
+    }
+
+    removedPassword = credential->password;
+    hadPassword = true;
+    credentials.erase(credential);
+    return writeCustomerCredentials(credentials);
+}
+
 static bool customerSerialExists(int customerSerial)
 {
     ifstream file("data/customer.txt");
@@ -1496,10 +1516,24 @@ void deletecustomer()
         return;
     }
 
+    const int deletedSerial = match->sn;
+    string removedPassword;
+    bool hadPassword = false;
+    if (!removeCustomerPassword(deletedSerial, removedPassword, hadPassword))
+    {
+        cout << "Unable to remove customer login details; customer was not deleted.\n";
+        ps();
+        return;
+    }
+
     customers.erase(match);
     if (!writeCustomerFile(customers))
     {
-        cout << "Unable to save customer file.\n";
+        const bool credentialsRestored = !hadPassword ||
+                                         saveCustomerPassword(deletedSerial, removedPassword);
+        cout << (credentialsRestored
+                     ? "Unable to save customer file; no customer changes were kept.\n"
+                     : "Unable to save customer file, and customer login restoration failed. Contact the administrator.\n");
         ps();
         return;
     }
