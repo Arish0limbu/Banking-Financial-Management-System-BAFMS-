@@ -582,6 +582,31 @@ static void showCustomerTransactions(int customerSerial)
         cout << "No transactions have been recorded for your accounts.\n";
 }
 
+static void showCustomerLoans(int customerSerial)
+{
+    vector<LoanRecord> loans;
+    for (const LoanRecord &loan : readLoans())
+        if (loan.customerSerial == customerSerial)
+            loans.push_back(loan);
+    sort(loans.begin(), loans.end(),
+         [](const LoanRecord &left, const LoanRecord &right)
+         { return left.loanId < right.loanId; });
+
+    if (loans.empty())
+    {
+        cout << "No loan applications are linked to your customer ID.\n";
+        return;
+    }
+    cout << left << setw(8) << "ID" << setw(14) << "PRINCIPAL"
+         << setw(14) << "PAID" << setw(16) << "OUTSTANDING" << "STATUS\n";
+    line();
+    cout << fixed << setprecision(2);
+    for (const LoanRecord &loan : loans)
+        cout << left << setw(8) << loan.loanId << setw(14) << loan.principal
+             << setw(14) << loan.amountPaid << setw(16) << loanOutstandingBalance(loan)
+             << loan.status << '\n';
+}
+
 void customerPortal(int customerSerial)
 {
     int choice;
@@ -589,8 +614,8 @@ void customerPortal(int customerSerial)
     {
         heading("|| CUSTOMER PORTAL ||");
         cout << "1. View my profile\n2. View my accounts\n"
-             << "3. View my transaction history\n4. Logout\n";
-        if (!readint("Select an option: ", choice, 1, 4))
+             << "3. View my transaction history\n4. View my loan applications\n5. Logout\n";
+        if (!readint("Select an option: ", choice, 1, 5))
             return;
         if (choice == 1)
         {
@@ -607,7 +632,12 @@ void customerPortal(int customerSerial)
             showCustomerTransactions(customerSerial);
             ps();
         }
-    } while (choice != 4);
+        else if (choice == 4)
+        {
+            showCustomerLoans(customerSerial);
+            ps();
+        }
+    } while (choice != 5);
     cout << "You have been logged out.\n";
 }
 
