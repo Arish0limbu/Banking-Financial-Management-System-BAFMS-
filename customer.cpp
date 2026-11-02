@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <vector>
 #include <cctype>
+#include <cerrno>
+#include <cstdio>
 #include <fstream>
 #include <iomanip>
 #include <limits>
@@ -14,6 +16,7 @@
 #include "include/customer.h"
 #include "include/design.h"
 #include "include/loan.h"
+#include "include/security.h"
 
 using namespace std;
 
@@ -268,8 +271,171 @@ struct Customer
     string gmail;
 };
 
+struct CustomerCredential
+{
+    int customerSerial;
+    string password;
+};
+
 bool validphone(string phone);
 bool readCustomerLine(const string &line, Customer &c);
+
+static bool validCustomerPassword(const string &password)
+{
+    if (password.size() < 8 || password.find('|') != string::npos)
+        return false;
+    for (unsigned char ch : password)
+        if (ch < 32 || ch > 126)
+            return false;
+    return true;
+}
+
+static bool readCustomerCredentials(vector<CustomerCredential> &credentials)
+{
+    credentials.clear();
+    const string path = "data/customer_credentials.txt";
+    ifstream file(path);
+    if (!file.is_open())
+    {
+        errno = 0;
+        FILE *probe = fopen(path.c_str(), "rb");
+        if (probe)
+        {
+            fclose(probe);
+            return false;
+        }
+        return errno == ENOENT;
+    }
+
+    string row;
+    while (getline(file, row))
+    {
+        const size_t separator = row.find('|');
+        if (separator == string::npos || row.find('|', separator + 1) != string::npos)
+            return false;
+
+        int customerSerial = 0;
+        try
+        {
+            const string serialText = row.substr(0, separator);
+            size_t consumed = 0;
+            customerSerial = stoi(serialText, &consumed);
+            if (consumed != serialText.size())
+                return false;
+        }
+        catch (...)
+        {
+            return false;
+        }
+
+        const string password = row.substr(separator + 1);
+        if (customerSerial <= 0 || !validCustomerPassword(password))
+            return false;
+        for (const CustomerCredential &credential : credentials)
+            if (credential.customerSerial == customerSerial)
+                return false;
+        credentials.push_back({customerSerial, password});
+    }
+    return !file.bad();
+}
+
+static bool writeCustomerCredentials(const vector<CustomerCredential> &credentials)
+{
+    for (size_t i = 0; i < credentials.size(); ++i)
+    {
+        if (credentials[i].customerSerial <= 0 || !validCustomerPassword(credentials[i].password))
+            return false;
+        for (size_t j = 0; j < i; ++j)
+            if (credentials[j].customerSerial == credentials[i].customerSerial)
+                return false;
+    }
+
+    vector<CustomerCredential> ordered = credentials;
+    sort(ordered.begin(), ordered.end(),
+         [](const CustomerCredential &left, const CustomerCredential &right)
+         { return left.customerSerial < right.customerSerial; });
+
+    ofstream file("data/customer_credentials.txt", ios::trunc);
+    if (!file.is_open())
+        return false;
+    for (const CustomerCredential &credential : ordered)
+        file << credential.customerSerial << '|' << credential.password << '\n';
+    file.flush();
+    if (!file.good())
+        return false;
+    file.close();
+    return !file.fail();
+}
+
+static bool saveCustomerPassword(int customerSerial, const string &password)
+{
+    vector<CustomerCredential> credentials;
+    if (!readCustomerCredentials(credentials))
+        return false;
+
+    for (CustomerCredential &credential : credentials)
+        if (credential.customerSerial == customerSerial)
+        {
+            credential.password = password;
+            return writeCustomerCredentials(credentials);
+        }
+    credentials.push_back({customerSerial, password});
+    return writeCustomerCredentials(credentials);
+}
+
+static bool customerSerialExists(int customerSerial)
+{
+    ifstream file("data/customer.txt");
+    string row;
+    while (getline(file, row))
+    {
+        Customer customer{};
+        if (readCustomerLine(row, customer) && customer.sn == customerSerial)
+            return true;
+    }
+    return false;
+}
+
+bool setupCustomerLogin(int customerSerial)
+{
+    if (!customerSerialExists(customerSerial))
+    {
+        cout << "Customer ID was not found.\n";
+        return false;
+    }
+
+    const string password = readPassword("Set customer password (at least 8 characters): ");
+    if (!cin)
+        return false;
+    if (!validCustomerPassword(password))
+    {
+        cout << "Use at least 8 printable characters and do not include |.\n";
+        return false;
+    }
+    const string confirmation = readPassword("Confirm customer password: ");
+    if (!cin)
+        return false;
+    if (password != confirmation)
+    {
+        cout << "The passwords did not match.\n";
+        return false;
+    }
+    if (!saveCustomerPassword(customerSerial, password))
+    {
+        cout << "Unable to save customer login details.\n";
+        return false;
+    }
+    cout << "Customer login is ready. Share the customer ID and password with the customer.\n";
+    return true;
+}
+
+bool configureCustomerLogin()
+{
+    int customerSerial;
+    if (!readint("Customer ID (serial number): ", customerSerial, 1, 2147483647))
+        return false;
+    return setupCustomerLogin(customerSerial);
+}
 
 static bool customerNameLess(const Customer &a, const Customer &b)
 {
