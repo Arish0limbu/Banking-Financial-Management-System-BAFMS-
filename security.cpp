@@ -34,8 +34,9 @@ static pair<string, string> readCredentials()
     return {"", ""};
 }
 
-static string readPassword()
+string readPassword(const string &prompt)
 {
+    cout << prompt;
 #ifdef _WIN32
     string password;
     while (true)
@@ -81,8 +82,7 @@ bool adminlogin()
         string id;
         if (!getline(cin, id))
             return false;
-        cout << "Enter password: ";
-        string password = readPassword();
+        string password = readPassword("Enter password: ");
 
         pair<string, string> credentials = readCredentials();
         if (!credentials.first.empty() && !credentials.second.empty() &&
@@ -114,8 +114,7 @@ void changeAdminPassword()
 {
     pair<string, string> credentials = readCredentials();
     heading("|| CHANGE ADMIN PASSWORD ||");
-    cout << "Current password: ";
-    string currentPassword = readPassword();
+    string currentPassword = readPassword("Current password: ");
     if (currentPassword != credentials.second)
     {
         cout << "Current password did not match.\n";
@@ -123,16 +122,14 @@ void changeAdminPassword()
         return;
     }
 
-    cout << "New password (at least 6 characters): ";
-    string newPassword = readPassword();
+    string newPassword = readPassword("New password (at least 6 characters): ");
     if (newPassword.size() < 6)
     {
         cout << "Use at least 6 characters.\n";
         ps();
         return;
     }
-    cout << "Confirm new password: ";
-    string confirmation = readPassword();
+    string confirmation = readPassword("Confirm new password: ");
     if (newPassword != confirmation)
     {
         cout << "The passwords did not match.\n";
