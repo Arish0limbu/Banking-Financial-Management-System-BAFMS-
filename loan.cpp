@@ -158,6 +158,11 @@ static double totalDue(const LoanRecord &loan)
     return round(amount * 100.0) / 100.0;
 }
 
+double loanOutstandingBalance(const LoanRecord &loan)
+{
+    return max(0.0, totalDue(loan) - loan.amountPaid);
+}
+
 static void applyForLoan()
 {
     int serial, term;
@@ -214,7 +219,7 @@ static void listLoans()
         for (const LoanRecord &loan : loans)
             cout << left << setw(8) << loan.loanId << setw(12) << loan.customerSerial
                  << setw(14) << loan.principal << setw(12) << loan.annualRate
-                 << setw(10) << loan.termMonths << setw(14) << max(0.0, totalDue(loan) - loan.amountPaid)
+                 << setw(10) << loan.termMonths << setw(14) << loanOutstandingBalance(loan)
                  << loan.status << '\n';
     }
     ps();
@@ -277,7 +282,7 @@ static void makeRepayment()
         return;
     }
 
-    double outstanding = max(0.0, totalDue(*found) - found->amountPaid);
+    double outstanding = loanOutstandingBalance(*found);
     if (outstanding < 0.01)
     {
         cout << "This loan has no outstanding amount to repay.\n";
@@ -325,7 +330,7 @@ static void makeRepayment()
         return;
     }
     cout << "Payment recorded. Remaining loan balance: "
-         << fixed << setprecision(2) << max(0.0, totalDue(*found) - found->amountPaid) << '\n';
+         << fixed << setprecision(2) << loanOutstandingBalance(*found) << '\n';
     ps();
 }
 

@@ -75,9 +75,7 @@ void showReports()
         if (loan.status == "Approved")
         {
             ++approvedLoans;
-            const double totalDue = round(loan.principal *
-                                           (1.0 + loan.annualRate * loan.termMonths / 1200.0) * 100.0) / 100.0;
-            outstandingLoans += max(0.0, totalDue - loan.amountPaid);
+            outstandingLoans += loanOutstandingBalance(loan);
         }
         else if (loan.status == "Rejected")
             ++rejectedLoans;
