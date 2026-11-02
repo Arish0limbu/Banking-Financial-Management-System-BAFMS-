@@ -1001,6 +1001,13 @@ void newcustomer()
             return;
         }
 
+        bool configureLogin = false;
+        if (readconfirmation("Set up a customer login now? (Y/N): ", configureLogin) && configureLogin)
+        {
+            setupCustomerLogin(sn);
+            ps();
+        }
+
         line();
         string choiceText;
         while (true)
