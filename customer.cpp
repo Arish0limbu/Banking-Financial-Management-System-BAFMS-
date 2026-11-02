@@ -439,6 +439,62 @@ bool configureCustomerLogin()
     return setupCustomerLogin(customerSerial);
 }
 
+bool changeCustomerPassword(int customerSerial)
+{
+    vector<CustomerCredential> credentials;
+    if (!readCustomerCredentials(credentials))
+    {
+        cout << "Customer login storage could not be read.\n";
+        return false;
+    }
+    auto credential = find_if(credentials.begin(), credentials.end(),
+                              [customerSerial](const CustomerCredential &item)
+                              { return item.customerSerial == customerSerial; });
+    if (credential == credentials.end())
+    {
+        cout << "Customer login was not found. Contact the administrator.\n";
+        return false;
+    }
+
+    const string currentPassword = readPassword("Current password: ");
+    if (!cin)
+        return false;
+    if (currentPassword != credential->password)
+    {
+        cout << "Current password did not match.\n";
+        return false;
+    }
+
+    const string newPassword = readPassword("New password (at least 8 characters): ");
+    if (!cin)
+        return false;
+    if (!validCustomerPassword(newPassword))
+    {
+        cout << "Use at least 8 printable characters and do not include |.\n";
+        return false;
+    }
+    if (newPassword == currentPassword)
+    {
+        cout << "Choose a password different from the current one.\n";
+        return false;
+    }
+    const string confirmation = readPassword("Confirm new password: ");
+    if (!cin)
+        return false;
+    if (newPassword != confirmation)
+    {
+        cout << "The passwords did not match.\n";
+        return false;
+    }
+    if (!saveCustomerPassword(customerSerial, newPassword))
+    {
+        cout << "Unable to save the new password.\n";
+        return false;
+    }
+    cout << "Customer password changed successfully.\n";
+    return true;
+}
+
 bool customerlogin(int &customerSerial)
 {
     vector<CustomerCredential> credentials;

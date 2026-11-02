@@ -5,6 +5,7 @@ void customermanagement();
 bool configureCustomerLogin();
 bool setupCustomerLogin(int customerSerial);
 bool customerlogin(int &customerSerial);
+bool changeCustomerPassword(int customerSerial);
 void customerPortal(int customerSerial);
 
 #endif
