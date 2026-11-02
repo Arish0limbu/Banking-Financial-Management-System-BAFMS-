@@ -163,12 +163,13 @@ double loanOutstandingBalance(const LoanRecord &loan)
     return max(0.0, totalDue(loan) - loan.amountPaid);
 }
 
-static void applyForLoan()
+static void applyForLoan(int customerSerial = 0)
 {
-    int serial, term;
+    int serial = customerSerial;
+    int term;
     double principal;
     heading("|| LOAN APPLICATION ||");
-    if (!readint("Customer serial number: ", serial, 1, 1000000))
+    if (serial <= 0 && !readint("Customer serial number: ", serial, 1, 1000000))
         return;
     if (!loanCustomerExists(serial))
     {
@@ -199,6 +200,12 @@ static void applyForLoan()
     else
         cout << "Application " << nextId << " submitted at 10% annual simple interest.\n";
     ps();
+}
+
+void applyForCustomerLoan(int customerSerial)
+{
+    if (customerSerial > 0)
+        applyForLoan(customerSerial);
 }
 
 static void listLoans()

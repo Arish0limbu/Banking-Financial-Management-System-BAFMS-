@@ -18,6 +18,7 @@ struct LoanRecord
 std::vector<LoanRecord> readLoans();
 bool saveLoans(const std::vector<LoanRecord> &loans);
 double loanOutstandingBalance(const LoanRecord &loan);
+void applyForCustomerLoan(int customerSerial);
 void loanmanagement();
 
 #endif
