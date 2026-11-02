@@ -1250,8 +1250,9 @@ void customermanagement()
              << "3. Search customer\n"
              << "4. Update customer details\n"
              << "5. Delete customer\n"
-             << "6. Back\n";
-        if (!readint("Select an option: ", choice, 1, 6))
+             << "6. Create or reset customer login\n"
+             << "7. Back\n";
+        if (!readint("Select an option: ", choice, 1, 7))
             return;
         switch (choice)
         {
@@ -1271,6 +1272,10 @@ void customermanagement()
             deletecustomer();
             break;
         case 6:
+            configureCustomerLogin();
+            ps();
+            break;
+        case 7:
             return;
         }
     }
