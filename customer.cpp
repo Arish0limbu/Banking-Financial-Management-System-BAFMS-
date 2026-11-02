@@ -503,21 +503,62 @@ static void showCustomerProfile(int customerSerial)
     cout << "Customer profile could not be found. Contact the administrator.\n";
 }
 
+static void showCustomerAccounts(int customerSerial)
+{
+    vector<AccountRecord> accounts;
+    for (const AccountRecord &account : readAccounts())
+        if (account.customerSerial == customerSerial)
+            accounts.push_back(account);
+    sort(accounts.begin(), accounts.end(),
+         [](const AccountRecord &left, const AccountRecord &right)
+         { return left.accountNumber < right.accountNumber; });
+
+    if (accounts.empty())
+    {
+        cout << "No account has been opened for your customer ID yet.\n";
+        return;
+    }
+
+    int activeCount = 0;
+    double activeBalance = 0.0;
+    cout << left << setw(14) << "ACCOUNT" << setw(14) << "TYPE"
+         << setw(16) << "BALANCE" << "STATUS\n";
+    line();
+    cout << fixed << setprecision(2);
+    for (const AccountRecord &account : accounts)
+    {
+        cout << left << setw(14) << account.accountNumber << setw(14) << account.accountType
+             << setw(16) << account.balance << (account.active ? "Active" : "Closed") << '\n';
+        if (account.active)
+        {
+            ++activeCount;
+            activeBalance += account.balance;
+        }
+    }
+    cout << "Active accounts: " << activeCount << " | Combined active balance: "
+         << activeBalance << '\n';
+}
+
 void customerPortal(int customerSerial)
 {
     int choice;
     do
     {
         heading("|| CUSTOMER PORTAL ||");
-        cout << "1. View my profile\n2. Logout\n";
-        if (!readint("Select an option: ", choice, 1, 2))
+        cout << "1. View my profile\n2. View my accounts\n3. Logout\n";
+        if (!readint("Select an option: ", choice, 1, 3))
             return;
         if (choice == 1)
         {
             showCustomerProfile(customerSerial);
             ps();
         }
-    } while (choice != 2);
+        else if (choice == 2)
+        {
+            showCustomerAccounts(customerSerial);
+            ps();
+        }
+    } while (choice != 3);
     cout << "You have been logged out.\n";
 }
 
