@@ -483,6 +483,44 @@ bool customerlogin(int &customerSerial)
     return false;
 }
 
+static void showCustomerProfile(int customerSerial)
+{
+    ifstream file("data/customer.txt");
+    string row;
+    while (getline(file, row))
+    {
+        Customer customer{};
+        if (!readCustomerLine(row, customer) || customer.sn != customerSerial)
+            continue;
+        cout << "Customer ID : " << customer.sn << '\n'
+             << "Name        : " << customer.name << '\n'
+             << "Age         : " << customer.age << '\n'
+             << "Address     : " << customer.address << '\n'
+             << "Phone       : " << customer.phone << '\n'
+             << "Email       : " << customer.gmail << '\n';
+        return;
+    }
+    cout << "Customer profile could not be found. Contact the administrator.\n";
+}
+
+void customerPortal(int customerSerial)
+{
+    int choice;
+    do
+    {
+        heading("|| CUSTOMER PORTAL ||");
+        cout << "1. View my profile\n2. Logout\n";
+        if (!readint("Select an option: ", choice, 1, 2))
+            return;
+        if (choice == 1)
+        {
+            showCustomerProfile(customerSerial);
+            ps();
+        }
+    } while (choice != 2);
+    cout << "You have been logged out.\n";
+}
+
 static bool customerNameLess(const Customer &a, const Customer &b)
 {
     const string leftName = lowercase(a.name);

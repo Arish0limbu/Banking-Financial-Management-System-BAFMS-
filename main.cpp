@@ -13,13 +13,25 @@ using namespace std;
 int main()
 
 {
-    if (adminlogin())
+    int choice;
+    while (true)
     {
-        adminmain();
+        heading("|| BANKING & FINANCIAL MANAGEMENT SYSTEM ||");
+        cout << "1. Administrator login\n2. Customer login\n3. Exit\n";
+        if (!readint("Select an option: ", choice, 1, 3))
+            return 0;
+        if (choice == 1)
+        {
+            if (adminlogin())
+                adminmain();
+        }
+        else if (choice == 2)
+        {
+            int customerSerial;
+            if (customerlogin(customerSerial))
+                customerPortal(customerSerial);
+        }
+        else
+            return 0;
     }
-    else
-    {
-        return 0;
-    }
-    return 0;
 }
