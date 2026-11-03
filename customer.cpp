@@ -558,47 +558,39 @@ bool changeCustomerPassword(int customerSerial)
 
 bool customerlogin(int &customerSerial)
 {
-    vector<CustomerCredential> credentials;
-    if (!readCustomerCredentials(credentials))
-    {
-        cout << "Customer login storage could not be read. Contact the administrator.\n";
-        ps();
-        return false;
-    }
-
     const int maximumAttempts = 4;
     for (int attempt = 1; attempt <= maximumAttempts; ++attempt)
     {
         heading("|| CUSTOMER LOGIN ||");
-        int enteredSerial;
-        if (!readint("Customer ID (serial number): ", enteredSerial, 1, 2147483647))
+        cout << "Customer ID: ";
+        string id;
+        if (!getline(cin, id))
             return false;
         const string password = readPassword("Password: ");
         if (!cin)
             return false;
 
-        auto credential = find_if(credentials.begin(), credentials.end(),
-                                  [enteredSerial](const CustomerCredential &item)
-                                  { return item.customerSerial == enteredSerial; });
-        if (credential == credentials.end() && customerSerialExists(enteredSerial))
+        const CustomerAuthentication result = authenticateCustomer(id, password, customerSerial);
+        if (result == CustomerAuthentication::Authenticated)
+        {
+            footer("CUSTOMER LOGIN SUCCESSFUL");
+            ps();
+            return true;
+        }
+        if (result == CustomerAuthentication::LoginNotConfigured)
         {
             cout << "Customer login has not been set up. Ask the administrator to create it.\n";
             ps();
             return false;
         }
-        const bool passwordMatches = credential != credentials.end() &&
-                                     customerSerialExists(enteredSerial) &&
-                                     credential->password == password;
-
-        if (passwordMatches)
+        if (result == CustomerAuthentication::StorageError)
         {
-            customerSerial = enteredSerial;
-            footer("CUSTOMER LOGIN SUCCESSFUL");
+            cout << "Customer login storage could not be read. Contact the administrator.\n";
             ps();
-            return true;
+            return false;
         }
 
-        cout << "Customer ID or password is incorrect.\n";
+        cout << "ID or password is incorrect.\n";
         if (attempt < maximumAttempts)
             cout << maximumAttempts - attempt << " attempts left.\n";
         ps();
