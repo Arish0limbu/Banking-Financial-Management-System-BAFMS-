@@ -556,48 +556,6 @@ bool changeCustomerPassword(int customerSerial)
     return true;
 }
 
-bool customerlogin(int &customerSerial)
-{
-    const int maximumAttempts = 4;
-    for (int attempt = 1; attempt <= maximumAttempts; ++attempt)
-    {
-        heading("|| CUSTOMER LOGIN ||");
-        cout << "Customer ID: ";
-        string id;
-        if (!getline(cin, id))
-            return false;
-        const string password = readPassword("Password: ");
-        if (!cin)
-            return false;
-
-        const CustomerAuthentication result = authenticateCustomer(id, password, customerSerial);
-        if (result == CustomerAuthentication::Authenticated)
-        {
-            footer("CUSTOMER LOGIN SUCCESSFUL");
-            ps();
-            return true;
-        }
-        if (result == CustomerAuthentication::LoginNotConfigured)
-        {
-            cout << "Customer login has not been set up. Ask the administrator to create it.\n";
-            ps();
-            return false;
-        }
-        if (result == CustomerAuthentication::StorageError)
-        {
-            cout << "Customer login storage could not be read. Contact the administrator.\n";
-            ps();
-            return false;
-        }
-
-        cout << "ID or password is incorrect.\n";
-        if (attempt < maximumAttempts)
-            cout << maximumAttempts - attempt << " attempts left.\n";
-        ps();
-    }
-    return false;
-}
-
 static void showCustomerProfile(int customerSerial)
 {
     ifstream file("data/customer.txt");
