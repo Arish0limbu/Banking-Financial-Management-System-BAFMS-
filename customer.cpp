@@ -422,10 +422,6 @@ CustomerAuthentication authenticateCustomer(const string &id,
                                             const string &password,
                                             int &customerSerial)
 {
-    vector<CustomerCredential> credentials;
-    if (!readCustomerCredentials(credentials))
-        return CustomerAuthentication::StorageError;
-
     if (id.empty() || !all_of(id.begin(), id.end(),
                               [](unsigned char ch)
                               { return isdigit(ch); }))
@@ -443,6 +439,10 @@ CustomerAuthentication authenticateCustomer(const string &id,
     {
         return CustomerAuthentication::InvalidCredentials;
     }
+
+    vector<CustomerCredential> credentials;
+    if (!readCustomerCredentials(credentials))
+        return CustomerAuthentication::StorageError;
 
     if (!customerSerialExists(enteredSerial))
         return CustomerAuthentication::InvalidCredentials;
