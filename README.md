@@ -18,7 +18,7 @@ After administrator sign-in, the administrator menu provides:
 
 ## Customer access
 
-Customer IDs are the serial numbers shown in `data/customer.txt`. An administrator can set a customer's initial password during registration or choose **Customer management → Create or reset customer login** for an existing customer. Give the customer their serial number and the password they set.
+Customer IDs are the serial numbers shown in `data/customer.txt`. An administrator can set a customer's initial password during registration or choose **Customer management → Create or reset customer login** for an existing customer. Give the customer their serial number and the password they set. On the shared login page, administrator credentials are checked first; otherwise, the ID and password are checked against configured customer logins. A customer whose login has not been set up must ask the administrator to create it.
 
 After signing in, customers can view their profile, account balances, transaction history for their own accounts, and loan applications. They can also submit a loan application and change their password. Customer accounts do not have access to administrator actions such as transfers, withdrawals, customer records, or reports.
 
