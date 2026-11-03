@@ -418,6 +418,47 @@ static bool customerSerialExists(int customerSerial)
     return false;
 }
 
+CustomerAuthentication authenticateCustomer(const string &id,
+                                            const string &password,
+                                            int &customerSerial)
+{
+    vector<CustomerCredential> credentials;
+    if (!readCustomerCredentials(credentials))
+        return CustomerAuthentication::StorageError;
+
+    if (id.empty() || !all_of(id.begin(), id.end(),
+                              [](unsigned char ch)
+                              { return isdigit(ch); }))
+        return CustomerAuthentication::InvalidCredentials;
+
+    int enteredSerial = 0;
+    try
+    {
+        size_t consumed = 0;
+        enteredSerial = stoi(id, &consumed);
+        if (consumed != id.size() || enteredSerial <= 0)
+            return CustomerAuthentication::InvalidCredentials;
+    }
+    catch (...)
+    {
+        return CustomerAuthentication::InvalidCredentials;
+    }
+
+    if (!customerSerialExists(enteredSerial))
+        return CustomerAuthentication::InvalidCredentials;
+
+    const auto credential = find_if(credentials.begin(), credentials.end(),
+                                     [enteredSerial](const CustomerCredential &item)
+                                     { return item.customerSerial == enteredSerial; });
+    if (credential == credentials.end())
+        return CustomerAuthentication::LoginNotConfigured;
+    if (credential->password != password)
+        return CustomerAuthentication::InvalidCredentials;
+
+    customerSerial = enteredSerial;
+    return CustomerAuthentication::Authenticated;
+}
+
 bool setupCustomerLogin(int customerSerial)
 {
     if (!customerSerialExists(customerSerial))
