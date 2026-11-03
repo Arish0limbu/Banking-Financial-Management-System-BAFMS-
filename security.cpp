@@ -72,6 +72,13 @@ string readPassword(const string &prompt)
 #endif
 }
 
+bool authenticateAdministrator(const string &id, const string &password)
+{
+    const pair<string, string> credentials = readCredentials();
+    return !credentials.first.empty() && !credentials.second.empty() &&
+           id == credentials.first && password == credentials.second;
+}
+
 bool adminlogin()
 {
     const int maximumAttempts = 4;
@@ -84,9 +91,7 @@ bool adminlogin()
             return false;
         string password = readPassword("Enter password: ");
 
-        pair<string, string> credentials = readCredentials();
-        if (!credentials.first.empty() && !credentials.second.empty() &&
-            id == credentials.first && password == credentials.second)
+        if (authenticateAdministrator(id, password))
         {
             footer("LOGIN SUCCESSFUL");
             ps();
