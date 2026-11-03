@@ -7,6 +7,7 @@
 #ifdef _WIN32
 #include <conio.h>
 #endif
+#include "include/customer.h"
 #include "include/design.h"
 #include "include/security.h"
 
@@ -77,6 +78,32 @@ bool authenticateAdministrator(const string &id, const string &password)
     const pair<string, string> credentials = readCredentials();
     return !credentials.first.empty() && !credentials.second.empty() &&
            id == credentials.first && password == credentials.second;
+}
+
+LoginResult authenticateUser(const string &id, const string &password,
+                             AuthenticatedUser &user)
+{
+    if (authenticateAdministrator(id, password))
+    {
+        user.role = UserRole::Administrator;
+        user.customerSerial = 0;
+        return LoginResult::Authenticated;
+    }
+
+    int customerSerial = 0;
+    const CustomerAuthentication customerResult =
+        authenticateCustomer(id, password, customerSerial);
+    if (customerResult == CustomerAuthentication::Authenticated)
+    {
+        user.role = UserRole::Customer;
+        user.customerSerial = customerSerial;
+        return LoginResult::Authenticated;
+    }
+    if (customerResult == CustomerAuthentication::LoginNotConfigured)
+        return LoginResult::CustomerLoginNotConfigured;
+    if (customerResult == CustomerAuthentication::StorageError)
+        return LoginResult::StorageError;
+    return LoginResult::InvalidCredentials;
 }
 
 bool adminlogin()
