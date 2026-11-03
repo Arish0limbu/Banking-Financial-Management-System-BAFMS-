@@ -114,7 +114,8 @@ bool signIn(AuthenticatedUser &user)
     for (int attempt = 1; attempt <= maximumAttempts; ++attempt)
     {
         heading("|| BANK LOGIN PAGE ||");
-        cout << "Type exit as the ID to close the program.\nID: ";
+        cout << "Enter your administrator or customer ID; your role is detected automatically.\n"
+             << "Type exit as the ID to close the program.\nID: ";
         string id;
         if (!getline(cin, id))
             return false;
