@@ -4,9 +4,9 @@ A C++17 console application for managing customers, accounts, transactions, loan
 
 ## Run on Windows
 
-Install a C++17 compiler such as MinGW g++, then run `run.bat` from File Explorer or a Command Prompt. The script compiles the application sources and starts the program. The default administrator login is `admin` with password `123`.
+Install a C++17 compiler such as MinGW g++, then run `run.bat` from File Explorer or a Command Prompt. The script compiles the application sources and starts the program. At the login page, enter one ID and password; the system detects whether the matching account is an administrator or customer. Type `exit` at the ID prompt to close the program. The default administrator login is ID `admin` and password `123`.
 
-When the program starts, choose administrator login or customer login. The administrator menu provides:
+After administrator sign-in, the administrator menu provides:
 
 1. Customer and account management
 2. Deposits, withdrawals, transfers, and transaction history
