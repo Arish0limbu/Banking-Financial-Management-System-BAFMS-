@@ -156,32 +156,6 @@ bool signIn(AuthenticatedUser &user)
     return false;
 }
 
-bool adminlogin()
-{
-    const int maximumAttempts = 4;
-    for (int attempt = 1; attempt <= maximumAttempts; ++attempt)
-    {
-        heading("|| ADMIN LOGIN PAGE ||");
-        cout << "Enter ID: ";
-        string id;
-        if (!getline(cin, id))
-            return false;
-        string password = readPassword("Enter password: ");
-
-        if (authenticateAdministrator(id, password))
-        {
-            footer("LOGIN SUCCESSFUL");
-            ps();
-            return true;
-        }
-        footer("ID or password is incorrect.");
-        if (attempt < maximumAttempts)
-            centertxt(to_string(maximumAttempts - attempt) + " attempts left.");
-        ps();
-    }
-    return false;
-}
-
 void showAdminProfile()
 {
     pair<string, string> credentials = readCredentials();

@@ -15,7 +15,6 @@ struct AuthenticatedUser
     int customerSerial = 0;
 };
 
-bool adminlogin();
 bool authenticateAdministrator(const std::string &id, const std::string &password);
 enum class LoginResult
 {
