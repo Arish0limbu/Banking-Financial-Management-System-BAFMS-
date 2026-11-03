@@ -118,6 +118,14 @@ bool signIn(AuthenticatedUser &user)
         string id;
         if (!getline(cin, id))
             return false;
+        if (id.empty())
+        {
+            cout << "ID is required.\n";
+            if (attempt < maximumAttempts)
+                cout << maximumAttempts - attempt << " attempts left.\n";
+            ps();
+            continue;
+        }
         string normalizedId = id;
         transform(normalizedId.begin(), normalizedId.end(), normalizedId.begin(),
                   [](unsigned char ch)
