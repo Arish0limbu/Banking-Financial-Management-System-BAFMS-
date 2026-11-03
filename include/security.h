@@ -3,8 +3,30 @@
 
 #include <string>
 
+enum class UserRole
+{
+    Administrator,
+    Customer
+};
+
+struct AuthenticatedUser
+{
+    UserRole role = UserRole::Administrator;
+    int customerSerial = 0;
+};
+
 bool adminlogin();
 bool authenticateAdministrator(const std::string &id, const std::string &password);
+enum class LoginResult
+{
+    Authenticated,
+    InvalidCredentials,
+    CustomerLoginNotConfigured,
+    StorageError
+};
+
+LoginResult authenticateUser(const std::string &id, const std::string &password,
+                             AuthenticatedUser &user);
 void showAdminProfile();
 void changeAdminPassword();
 std::string readPassword(const std::string &prompt);
