@@ -10,6 +10,8 @@
 #include "include/customer.h"
 #include "include/design.h"
 #include "include/security.h"
+#include <algorithm>
+#include <cctype>
 
 using namespace std;
 
@@ -104,6 +106,54 @@ LoginResult authenticateUser(const string &id, const string &password,
     if (customerResult == CustomerAuthentication::StorageError)
         return LoginResult::StorageError;
     return LoginResult::InvalidCredentials;
+}
+
+bool signIn(AuthenticatedUser &user)
+{
+    const int maximumAttempts = 4;
+    for (int attempt = 1; attempt <= maximumAttempts; ++attempt)
+    {
+        heading("|| BANK LOGIN PAGE ||");
+        cout << "Type exit as the ID to close the program.\nID: ";
+        string id;
+        if (!getline(cin, id))
+            return false;
+        string normalizedId = id;
+        transform(normalizedId.begin(), normalizedId.end(), normalizedId.begin(),
+                  [](unsigned char ch)
+                  { return static_cast<char>(tolower(ch)); });
+        if (normalizedId == "exit")
+            return false;
+
+        const string password = readPassword("Password: ");
+        if (!cin)
+            return false;
+
+        const LoginResult result = authenticateUser(id, password, user);
+        if (result == LoginResult::Authenticated)
+        {
+            footer(user.role == UserRole::Administrator
+                       ? "ADMINISTRATOR LOGIN SUCCESSFUL"
+                       : "CUSTOMER LOGIN SUCCESSFUL");
+            ps();
+            return true;
+        }
+        if (result == LoginResult::CustomerLoginNotConfigured)
+            cout << "Customer login has not been set up. Ask the administrator to create it.\n";
+        else if (result == LoginResult::StorageError)
+        {
+            cout << "Customer login storage could not be read. Contact the administrator.\n";
+            ps();
+            return false;
+        }
+        else
+            cout << "ID or password is incorrect.\n";
+
+        if (attempt < maximumAttempts)
+            cout << maximumAttempts - attempt << " attempts left.\n";
+        ps();
+    }
+    return false;
 }
 
 bool adminlogin()

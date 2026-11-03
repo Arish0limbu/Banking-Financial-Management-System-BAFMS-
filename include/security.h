@@ -27,6 +27,7 @@ enum class LoginResult
 
 LoginResult authenticateUser(const std::string &id, const std::string &password,
                              AuthenticatedUser &user);
+bool signIn(AuthenticatedUser &user);
 void showAdminProfile();
 void changeAdminPassword();
 std::string readPassword(const std::string &prompt);
