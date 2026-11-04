@@ -163,6 +163,23 @@ double loanOutstandingBalance(const LoanRecord &loan)
     return max(0.0, totalDue(loan) - loan.amountPaid);
 }
 
+bool estimateSimpleInterestLoan(double principal, int termMonths, LoanEstimate &estimate)
+{
+    if (!hasCentPrecision(principal) || principal <= 0 || termMonths < 1 || termMonths > 360)
+        return false;
+
+    const double totalRepayment = round(
+        principal * (1.0 + STANDARD_LOAN_ANNUAL_RATE * termMonths / 1200.0) * 100.0) / 100.0;
+    if (!isfinite(totalRepayment))
+        return false;
+
+    estimate.principal = principal;
+    estimate.interest = totalRepayment - principal;
+    estimate.totalRepayment = totalRepayment;
+    estimate.estimatedMonthlyPayment = round(totalRepayment / termMonths * 100.0) / 100.0;
+    return true;
+}
+
 static void applyForLoan(int customerSerial = 0)
 {
     int serial = customerSerial;
@@ -194,11 +211,13 @@ static void applyForLoan(int customerSerial = 0)
             }
             nextId = loan.loanId + 1;
         }
-    loans.push_back({nextId, serial, principal, 10.0, term, 0.0, "Pending"});
+    loans.push_back({nextId, serial, principal, STANDARD_LOAN_ANNUAL_RATE,
+                     term, 0.0, "Pending"});
     if (!saveLoans(loans))
         cout << "Unable to save the loan application.\n";
     else
-        cout << "Application " << nextId << " submitted at 10% annual simple interest.\n";
+        cout << "Application " << nextId << " submitted at "
+             << STANDARD_LOAN_ANNUAL_RATE << "% annual simple interest.\n";
     ps();
 }
 

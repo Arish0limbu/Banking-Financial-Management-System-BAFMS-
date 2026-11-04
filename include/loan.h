@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+constexpr double STANDARD_LOAN_ANNUAL_RATE = 10.0;
+
 struct LoanRecord
 {
     int loanId;
@@ -15,9 +17,18 @@ struct LoanRecord
     std::string status;
 };
 
+struct LoanEstimate
+{
+    double principal;
+    double interest;
+    double totalRepayment;
+    double estimatedMonthlyPayment;
+};
+
 std::vector<LoanRecord> readLoans();
 bool saveLoans(const std::vector<LoanRecord> &loans);
 double loanOutstandingBalance(const LoanRecord &loan);
+bool estimateSimpleInterestLoan(double principal, int termMonths, LoanEstimate &estimate);
 void applyForCustomerLoan(int customerSerial);
 void loanmanagement();
 
