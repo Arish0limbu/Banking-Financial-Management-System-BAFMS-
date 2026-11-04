@@ -19,6 +19,8 @@ After administrator sign-in, the administrator menu provides:
 
 Reconciliation is read-only and assumes account balances started at zero. It lists stored balance differences and transaction references to missing accounts.
 
+The analytics report also groups deposit, withdrawal, loan payment, and transfer volumes by month for transactions with valid timestamps.
+
 ## Customer access
 
 Customer IDs are the serial numbers shown in `data/customer.txt`. An administrator can set a customer's initial password during registration or choose **Customer management → Create or reset customer login** for an existing customer. Give the customer their serial number and the password they set. On the shared login page, administrator credentials are checked first; otherwise, the ID and password are checked against configured customer logins. A customer whose login has not been set up must ask the administrator to create it.
