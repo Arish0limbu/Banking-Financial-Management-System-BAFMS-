@@ -176,6 +176,47 @@ static void showHistory()
     ps();
 }
 
+static void showAccountHistory()
+{
+    int accountNumber;
+    heading("|| ACCOUNT TRANSACTION HISTORY ||");
+    if (!readint("Account number: ", accountNumber, 1, 2147483647))
+        return;
+
+    AccountRecord account;
+    if (!findAccount(accountNumber, account))
+    {
+        cout << "Account was not found.\n";
+        ps();
+        return;
+    }
+
+    vector<TransactionRecord> transactions = readTransactions();
+    sort(transactions.begin(), transactions.end(),
+         [](const TransactionRecord &left, const TransactionRecord &right)
+         { return left.transactionId > right.transactionId; });
+    bool found = false;
+    cout << "Account " << accountNumber << " | Customer " << account.customerSerial
+         << " | " << (account.active ? "Active" : "Closed") << '\n';
+    cout << left << setw(8) << "ID" << setw(18) << "TYPE" << setw(14) << "FROM"
+         << setw(14) << "TO" << setw(14) << "AMOUNT" << "DATE / TIME\n";
+    line();
+    cout << fixed << setprecision(2);
+    for (const TransactionRecord &transaction : transactions)
+    {
+        if (transaction.fromAccount != accountNumber && transaction.toAccount != accountNumber)
+            continue;
+        cout << left << setw(8) << transaction.transactionId << setw(18) << transaction.type
+             << setw(14) << (transaction.fromAccount == 0 ? "-" : to_string(transaction.fromAccount))
+             << setw(14) << (transaction.toAccount == 0 ? "-" : to_string(transaction.toAccount))
+             << setw(14) << transaction.amount << transaction.timestamp << '\n';
+        found = true;
+    }
+    if (!found)
+        cout << "No transactions have been recorded for this account.\n";
+    ps();
+}
+
 static void depositFunds()
 {
     int number;
