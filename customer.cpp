@@ -459,6 +459,62 @@ CustomerAuthentication authenticateCustomer(const string &id,
     return CustomerAuthentication::Authenticated;
 }
 
+static string csvCell(const string &value)
+{
+    string escaped = "\"";
+    for (char ch : value)
+    {
+        if (ch == '\"')
+            escaped += '\"';
+        escaped += ch;
+    }
+    escaped += '\"';
+    return escaped;
+}
+
+bool exportCustomerStatement(int customerSerial)
+{
+    if (customerSerial <= 0 || !customerSerialExists(customerSerial))
+        return false;
+
+    set<int> customerAccounts;
+    for (const AccountRecord &account : readAccounts())
+        if (account.customerSerial == customerSerial)
+            customerAccounts.insert(account.accountNumber);
+
+    vector<TransactionRecord> transactions = readTransactions();
+    sort(transactions.begin(), transactions.end(),
+         [](const TransactionRecord &left, const TransactionRecord &right)
+         { return left.transactionId < right.transactionId; });
+
+    const string path = "data/customer_statement_" + to_string(customerSerial) + ".csv";
+    ofstream file(path, ios::trunc);
+    if (!file.is_open())
+        return false;
+
+    file << "transaction_id,timestamp,type,account_number,direction,amount\n";
+    file << fixed << setprecision(2);
+    for (const TransactionRecord &transaction : transactions)
+    {
+        auto writeRow = [&](int accountNumber, const string &direction)
+        {
+            file << transaction.transactionId << ',' << csvCell(transaction.timestamp) << ','
+                 << csvCell(transaction.type) << ',' << accountNumber << ',' << direction << ','
+                 << transaction.amount << '\n';
+        };
+
+        if (customerAccounts.count(transaction.fromAccount) != 0)
+            writeRow(transaction.fromAccount, "DEBIT");
+        if (customerAccounts.count(transaction.toAccount) != 0)
+            writeRow(transaction.toAccount, "CREDIT");
+    }
+    file.flush();
+    if (!file.good())
+        return false;
+    file.close();
+    return !file.fail();
+}
+
 bool setupCustomerLogin(int customerSerial)
 {
     if (!customerSerialExists(customerSerial))
