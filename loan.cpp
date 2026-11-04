@@ -180,6 +180,32 @@ bool estimateSimpleInterestLoan(double principal, int termMonths, LoanEstimate &
     return true;
 }
 
+void estimateCustomerLoan()
+{
+    heading("|| LOAN PAYMENT ESTIMATE ||");
+    double principal;
+    int termMonths;
+    if (!readmoney("Requested principal: ", principal, 1.0, 10000000.0) ||
+        !readint("Term in months (1-360): ", termMonths, 1, 360))
+        return;
+
+    LoanEstimate estimate{};
+    if (!estimateSimpleInterestLoan(principal, termMonths, estimate))
+    {
+        cout << "Unable to calculate an estimate for those values.\n";
+        ps();
+        return;
+    }
+
+    cout << fixed << setprecision(2)
+         << "Annual simple interest rate: " << STANDARD_LOAN_ANNUAL_RATE << "%\n"
+         << "Estimated interest         : " << estimate.interest << '\n'
+         << "Estimated total repayment  : " << estimate.totalRepayment << '\n'
+         << "Estimated monthly payment  : " << estimate.estimatedMonthlyPayment << '\n'
+         << "Monthly payment is rounded to cents; the final installment may differ slightly.\n";
+    ps();
+}
+
 static void applyForLoan(int customerSerial = 0)
 {
     int serial = customerSerial;
