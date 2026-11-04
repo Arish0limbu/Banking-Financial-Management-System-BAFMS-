@@ -14,7 +14,10 @@ After administrator sign-in, the administrator menu provides:
 4. Employee register and salary maintenance
 5. Reports and analytics
 6. Administrator password and profile settings
-7. Logout
+7. Account balance reconciliation against the transaction ledger
+8. Logout
+
+Reconciliation is read-only and assumes account balances started at zero. It lists stored balance differences and transaction references to missing accounts.
 
 ## Customer access
 
