@@ -55,9 +55,10 @@ void adminmain()
              << "4. Employee management\n"
              << "5. Reports & analytics\n"
              << "6. Admin settings\n"
-             << "7. Logout\n";
+             << "7. Account reconciliation\n"
+             << "8. Logout\n";
 
-        if (!readint("Select an option: ", choice, 1, 7))
+        if (!readint("Select an option: ", choice, 1, 8))
             return;
         switch (choice)
         {
@@ -80,6 +81,9 @@ void adminmain()
             adminsettings();
             break;
         case 7:
+            showAccountReconciliation();
+            break;
+        case 8:
             cout << "You have been logged out.\n";
             return;
         }
