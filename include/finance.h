@@ -2,5 +2,6 @@
 #define BAFMS_FINANCE_H
 
 void showReports();
+void showAccountReconciliation();
 
 #endif

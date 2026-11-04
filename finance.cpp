@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <map>
 #include <set>
 #include <string>
 #include "include/account.h"
@@ -126,5 +127,74 @@ void showReports()
          << "Monthly payroll              : " << monthlyPayroll << '\n';
     line();
     cout << "Loan amounts use simple interest over the selected term.\n";
+    ps();
+}
+
+void showAccountReconciliation()
+{
+    heading("|| ACCOUNT BALANCE RECONCILIATION ||");
+    const vector<AccountRecord> accounts = readAccounts();
+    if (accounts.empty())
+    {
+        cout << "No account records are available to reconcile.\n";
+        ps();
+        return;
+    }
+
+    map<int, const AccountRecord *> accountByNumber;
+    map<int, double> ledgerBalances;
+    for (const AccountRecord &account : accounts)
+    {
+        accountByNumber[account.accountNumber] = &account;
+        ledgerBalances[account.accountNumber] = 0.0;
+    }
+
+    int missingAccountReferences = 0;
+    for (const TransactionRecord &transaction : readTransactions())
+    {
+        if (transaction.fromAccount > 0)
+        {
+            auto account = ledgerBalances.find(transaction.fromAccount);
+            if (account == ledgerBalances.end())
+                ++missingAccountReferences;
+            else
+                account->second -= transaction.amount;
+        }
+        if (transaction.toAccount > 0)
+        {
+            auto account = ledgerBalances.find(transaction.toAccount);
+            if (account == ledgerBalances.end())
+                ++missingAccountReferences;
+            else
+                account->second += transaction.amount;
+        }
+    }
+
+    int matchedAccounts = 0;
+    int mismatchedAccounts = 0;
+    cout << left << setw(14) << "ACCOUNT" << setw(14) << "CUSTOMER SN"
+         << setw(16) << "LEDGER" << setw(16) << "STORED" << "DIFFERENCE\n";
+    line();
+    cout << fixed << setprecision(2);
+    for (const auto &entry : accountByNumber)
+    {
+        const AccountRecord &account = *entry.second;
+        const double ledgerBalance = round(ledgerBalances[entry.first] * 100.0) / 100.0;
+        const double difference = round((account.balance - ledgerBalance) * 100.0) / 100.0;
+        if (fabs(difference) <= 0.005)
+        {
+            ++matchedAccounts;
+            continue;
+        }
+        ++mismatchedAccounts;
+        cout << left << setw(14) << account.accountNumber << setw(14) << account.customerSerial
+             << setw(16) << ledgerBalance << setw(16) << account.balance << difference << '\n';
+    }
+    if (mismatchedAccounts == 0)
+        cout << "All account balances match the recorded transaction ledger.\n";
+    cout << "Accounts checked: " << accounts.size() << " | Matching: " << matchedAccounts
+         << " | Mismatched: " << mismatchedAccounts << '\n'
+         << "Transaction references to missing accounts: " << missingAccountReferences << '\n';
+    cout << "This comparison assumes each account started with a zero balance.\n";
     ps();
 }
