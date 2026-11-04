@@ -763,8 +763,8 @@ void customerPortal(int customerSerial)
         cout << "1. View my profile\n2. View my accounts\n"
              << "3. View my transaction history\n4. View my loan applications\n"
              << "5. Apply for a loan\n6. Change my password\n"
-             << "7. Export my statement to CSV\n8. Logout\n";
-        if (!readint("Select an option: ", choice, 1, 8))
+             << "7. Estimate a loan payment\n8. Export my statement to CSV\n9. Logout\n";
+        if (!readint("Select an option: ", choice, 1, 9))
             return;
         if (choice == 1)
         {
@@ -795,6 +795,8 @@ void customerPortal(int customerSerial)
             ps();
         }
         else if (choice == 7)
+            estimateCustomerLoan();
+        else if (choice == 8)
         {
             heading("|| EXPORT CUSTOMER STATEMENT ||");
             if (exportCustomerStatement(customerSerial))
@@ -804,7 +806,7 @@ void customerPortal(int customerSerial)
                 cout << "Unable to save the statement. Check the data folder.\n";
             ps();
         }
-    } while (choice != 8);
+    } while (choice != 9);
     cout << "You have been logged out.\n";
 }
 
