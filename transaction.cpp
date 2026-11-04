@@ -366,8 +366,8 @@ void transactionmanagement()
     {
         heading("|| TRANSACTION MANAGEMENT ||");
         cout << "1. Deposit funds\n2. Withdraw funds\n3. Transfer funds\n"
-             << "4. View transaction history\n5. Back\n";
-        if (!readint("Select an option: ", choice, 1, 5))
+             << "4. View transaction history\n5. View history for one account\n6. Back\n";
+        if (!readint("Select an option: ", choice, 1, 6))
             return;
         if (choice == 1)
             depositFunds();
@@ -377,5 +377,7 @@ void transactionmanagement()
             transferFunds();
         else if (choice == 4)
             showHistory();
-    } while (choice != 5);
+        else if (choice == 5)
+            showAccountHistory();
+    } while (choice != 6);
 }
