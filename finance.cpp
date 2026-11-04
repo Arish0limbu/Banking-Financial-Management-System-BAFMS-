@@ -93,20 +93,47 @@ void showReports()
             monthlyPayroll += employee.salary;
         }
 
+    struct MonthlyVolumes
+    {
+        double deposits = 0;
+        double withdrawals = 0;
+        double loanPayments = 0;
+        double transfers = 0;
+    };
     double depositVolume = 0;
     double withdrawalVolume = 0;
     double loanPaymentVolume = 0;
     double transferVolume = 0;
+    map<string, MonthlyVolumes> monthlyVolumes;
     for (const TransactionRecord &transaction : transactions)
     {
+        MonthlyVolumes *month = nullptr;
+        if (transaction.timestamp != "unknown" && transaction.timestamp.size() >= 7)
+            month = &monthlyVolumes[transaction.timestamp.substr(0, 7)];
         if (transaction.type == "DEPOSIT")
+        {
             depositVolume += transaction.amount;
+            if (month)
+                month->deposits += transaction.amount;
+        }
         else if (transaction.type == "WITHDRAWAL")
+        {
             withdrawalVolume += transaction.amount;
+            if (month)
+                month->withdrawals += transaction.amount;
+        }
         else if (transaction.type == "LOAN_PAYMENT")
+        {
             loanPaymentVolume += transaction.amount;
+            if (month)
+                month->loanPayments += transaction.amount;
+        }
         else if (transaction.type == "TRANSFER")
+        {
             transferVolume += transaction.amount;
+            if (month)
+                month->transfers += transaction.amount;
+        }
     }
 
     cout << fixed << setprecision(2);
@@ -127,6 +154,20 @@ void showReports()
          << "Monthly payroll              : " << monthlyPayroll << '\n';
     line();
     cout << "Loan amounts use simple interest over the selected term.\n";
+    cout << "\nMonthly transaction volume (records with timestamps):\n";
+    if (monthlyVolumes.empty())
+        cout << "No dated transactions are available.\n";
+    else
+    {
+        cout << left << setw(12) << "MONTH" << setw(14) << "DEPOSITS"
+             << setw(14) << "WITHDRAWALS" << setw(16) << "LOAN PAYMENTS"
+             << "TRANSFERS\n";
+        line();
+        for (const auto &entry : monthlyVolumes)
+            cout << left << setw(12) << entry.first << setw(14) << entry.second.deposits
+                 << setw(14) << entry.second.withdrawals << setw(16) << entry.second.loanPayments
+                 << entry.second.transfers << '\n';
+    }
     ps();
 }
 
