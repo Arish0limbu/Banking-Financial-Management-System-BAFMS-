@@ -745,11 +745,13 @@ static void showCustomerLoans(int customerSerial)
         return;
     }
     cout << left << setw(8) << "ID" << setw(14) << "PRINCIPAL"
-         << setw(14) << "PAID" << setw(16) << "OUTSTANDING" << "STATUS\n";
+         << setw(10) << "RATE %" << setw(8) << "MONTHS" << setw(14) << "PAID"
+         << setw(16) << "OUTSTANDING" << "STATUS\n";
     line();
     cout << fixed << setprecision(2);
     for (const LoanRecord &loan : loans)
         cout << left << setw(8) << loan.loanId << setw(14) << loan.principal
+             << setw(10) << loan.annualRate << setw(8) << loan.termMonths
              << setw(14) << loan.amountPaid << setw(16) << loanOutstandingBalance(loan)
              << loan.status << '\n';
 }
