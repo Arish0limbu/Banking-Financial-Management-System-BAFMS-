@@ -680,6 +680,22 @@ static void showCustomerTransactions(int customerSerial)
         return;
     }
 
+    int selectedAccount = 0;
+    if (customerAccounts.size() > 1)
+    {
+        cout << "Your accounts (enter 0 to view all): ";
+        for (int accountNumber : customerAccounts)
+            cout << accountNumber << ' ';
+        cout << '\n';
+        if (!readint("Account number: ", selectedAccount, 0, 2147483647))
+            return;
+        if (selectedAccount != 0 && customerAccounts.count(selectedAccount) == 0)
+        {
+            cout << "That account is not linked to your customer ID.\n";
+            return;
+        }
+    }
+
     vector<TransactionRecord> transactions = readTransactions();
     sort(transactions.begin(), transactions.end(),
          [](const TransactionRecord &left, const TransactionRecord &right)
@@ -691,8 +707,12 @@ static void showCustomerTransactions(int customerSerial)
     cout << fixed << setprecision(2);
     for (const TransactionRecord &transaction : transactions)
     {
-        const bool fromCustomer = customerAccounts.count(transaction.fromAccount) != 0;
-        const bool toCustomer = customerAccounts.count(transaction.toAccount) != 0;
+        const bool fromCustomer = selectedAccount == 0
+                                      ? customerAccounts.count(transaction.fromAccount) != 0
+                                      : transaction.fromAccount == selectedAccount;
+        const bool toCustomer = selectedAccount == 0
+                                    ? customerAccounts.count(transaction.toAccount) != 0
+                                    : transaction.toAccount == selectedAccount;
         if (!fromCustomer && !toCustomer)
             continue;
 
