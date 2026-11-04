@@ -191,6 +191,11 @@ static void showAccountHistory()
         return;
     }
 
+    int typeFilter;
+    cout << "1. All activity\n2. Deposits\n3. Withdrawals\n4. Transfers\n5. Loan payments\n";
+    if (!readint("Transaction type: ", typeFilter, 1, 5))
+        return;
+
     vector<TransactionRecord> transactions = readTransactions();
     sort(transactions.begin(), transactions.end(),
          [](const TransactionRecord &left, const TransactionRecord &right)
@@ -205,6 +210,13 @@ static void showAccountHistory()
     for (const TransactionRecord &transaction : transactions)
     {
         if (transaction.fromAccount != accountNumber && transaction.toAccount != accountNumber)
+            continue;
+        const bool matchesType = typeFilter == 1 ||
+                                 (typeFilter == 2 && transaction.type == "DEPOSIT") ||
+                                 (typeFilter == 3 && transaction.type == "WITHDRAWAL") ||
+                                 (typeFilter == 4 && transaction.type == "TRANSFER") ||
+                                 (typeFilter == 5 && transaction.type == "LOAN_PAYMENT");
+        if (!matchesType)
             continue;
         cout << left << setw(8) << transaction.transactionId << setw(18) << transaction.type
              << setw(14) << (transaction.fromAccount == 0 ? "-" : to_string(transaction.fromAccount))
