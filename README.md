@@ -19,6 +19,8 @@ After administrator sign-in, the administrator menu provides:
 
 Reconciliation is read-only and assumes account balances started at zero. It lists stored balance differences and transaction references to missing accounts.
 
+Administrators can inspect one account's transaction history and filter it by transaction type. Customers can view history for all their accounts or select one account. Exported statement files are ignored by Git to keep local financial records out of commits.
+
 The analytics report also groups deposit, withdrawal, loan payment, and transfer volumes by month for transactions with valid timestamps.
 
 ## Customer access
