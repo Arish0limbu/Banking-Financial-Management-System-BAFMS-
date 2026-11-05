@@ -198,6 +198,8 @@ void estimateCustomerLoan()
     }
 
     cout << fixed << setprecision(2)
+         << "Requested principal        : " << estimate.principal << '\n'
+         << "Term                       : " << termMonths << " months\n"
          << "Annual simple interest rate: " << STANDARD_LOAN_ANNUAL_RATE << "%\n"
          << "Estimated interest         : " << estimate.interest << '\n'
          << "Estimated total repayment  : " << estimate.totalRepayment << '\n'
