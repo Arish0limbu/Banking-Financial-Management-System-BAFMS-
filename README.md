@@ -21,7 +21,7 @@ Reconciliation is read-only and assumes account balances started at zero. It lis
 
 Administrators can inspect one account's transaction history and filter it by transaction type. Customers can view history for all their accounts or select one account. Exported statement files are ignored by Git to keep local financial records out of commits.
 
-The analytics report also groups deposit, withdrawal, loan payment, and transfer volumes by month for transactions with valid timestamps.
+The analytics report also groups transaction counts and deposit, withdrawal, loan payment, and transfer volumes by month for transactions with valid timestamps. Monthly net flow adds deposits and subtracts withdrawals and loan payments; transfers do not change total cash held by the system.
 
 ## Customer access
 
