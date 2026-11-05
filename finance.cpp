@@ -174,13 +174,13 @@ void showReports()
     {
         cout << left << setw(12) << "MONTH" << setw(10) << "COUNT" << setw(14) << "DEPOSITS"
              << setw(14) << "WITHDRAWALS" << setw(16) << "LOAN PAYMENTS"
-             << "TRANSFERS\n";
+             << setw(14) << "TRANSFERS" << "NET FLOW\n";
         line();
         for (const auto &entry : monthlyVolumes)
             cout << left << setw(12) << entry.first << setw(10) << entry.second.transactionCount
                  << setw(14) << entry.second.deposits
                  << setw(14) << entry.second.withdrawals << setw(16) << entry.second.loanPayments
-                 << entry.second.transfers << '\n';
+                 << setw(14) << entry.second.transfers << entry.second.netCashFlow << '\n';
     }
     ps();
 }
