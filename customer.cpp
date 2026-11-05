@@ -696,6 +696,11 @@ static void showCustomerTransactions(int customerSerial)
         }
     }
 
+    int typeFilter;
+    cout << "1. All activity\n2. Deposits\n3. Withdrawals\n4. Transfers\n5. Loan payments\n";
+    if (!readint("Transaction type: ", typeFilter, 1, 5))
+        return;
+
     vector<TransactionRecord> transactions = readTransactions();
     sort(transactions.begin(), transactions.end(),
          [](const TransactionRecord &left, const TransactionRecord &right)
@@ -714,6 +719,14 @@ static void showCustomerTransactions(int customerSerial)
                                     ? customerAccounts.count(transaction.toAccount) != 0
                                     : transaction.toAccount == selectedAccount;
         if (!fromCustomer && !toCustomer)
+            continue;
+
+        const bool matchesType = typeFilter == 1 ||
+                                 (typeFilter == 2 && transaction.type == "DEPOSIT") ||
+                                 (typeFilter == 3 && transaction.type == "WITHDRAWAL") ||
+                                 (typeFilter == 4 && transaction.type == "TRANSFER") ||
+                                 (typeFilter == 5 && transaction.type == "LOAN_PAYMENT");
+        if (!matchesType)
             continue;
 
         const string from = transaction.fromAccount == 0 ? "-" :
