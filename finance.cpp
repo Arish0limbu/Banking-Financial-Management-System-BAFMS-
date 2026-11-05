@@ -162,12 +162,13 @@ void showReports()
         cout << "No dated transactions are available.\n";
     else
     {
-        cout << left << setw(12) << "MONTH" << setw(14) << "DEPOSITS"
+        cout << left << setw(12) << "MONTH" << setw(10) << "COUNT" << setw(14) << "DEPOSITS"
              << setw(14) << "WITHDRAWALS" << setw(16) << "LOAN PAYMENTS"
              << "TRANSFERS\n";
         line();
         for (const auto &entry : monthlyVolumes)
-            cout << left << setw(12) << entry.first << setw(14) << entry.second.deposits
+            cout << left << setw(12) << entry.first << setw(10) << entry.second.transactionCount
+                 << setw(14) << entry.second.deposits
                  << setw(14) << entry.second.withdrawals << setw(16) << entry.second.loanPayments
                  << entry.second.transfers << '\n';
     }
