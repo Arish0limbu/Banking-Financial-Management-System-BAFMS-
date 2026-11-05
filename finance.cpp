@@ -95,6 +95,7 @@ void showReports()
 
     struct MonthlyVolumes
     {
+        int transactionCount = 0;
         double deposits = 0;
         double withdrawals = 0;
         double loanPayments = 0;
@@ -110,6 +111,8 @@ void showReports()
         MonthlyVolumes *month = nullptr;
         if (transaction.timestamp != "unknown" && transaction.timestamp.size() >= 7)
             month = &monthlyVolumes[transaction.timestamp.substr(0, 7)];
+        if (month)
+            ++month->transactionCount;
         if (transaction.type == "DEPOSIT")
         {
             depositVolume += transaction.amount;
