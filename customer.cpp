@@ -480,11 +480,13 @@ bool exportCustomerStatement(int customerSerial)
 
     set<int> customerAccounts;
     map<int, string> accountTypes;
+    map<int, double> runningBalances;
     for (const AccountRecord &account : readAccounts())
         if (account.customerSerial == customerSerial)
         {
             customerAccounts.insert(account.accountNumber);
             accountTypes[account.accountNumber] = account.accountType;
+            runningBalances[account.accountNumber] = 0.0;
         }
 
     vector<TransactionRecord> transactions = readTransactions();
@@ -497,22 +499,28 @@ bool exportCustomerStatement(int customerSerial)
     if (!file.is_open())
         return false;
 
-    file << "transaction_id,timestamp,type,account_number,account_type,direction,amount\n";
+    file << "transaction_id,timestamp,type,account_number,account_type,direction,amount,balance_after\n";
     file << fixed << setprecision(2);
     for (const TransactionRecord &transaction : transactions)
     {
-        auto writeRow = [&](int accountNumber, const string &direction)
+        auto writeRow = [&](int accountNumber, const string &direction, double balanceAfter)
         {
             file << transaction.transactionId << ',' << csvCell(transaction.timestamp) << ','
                  << csvCell(transaction.type) << ',' << accountNumber << ','
                  << csvCell(accountTypes.at(accountNumber)) << ',' << direction << ','
-                 << transaction.amount << '\n';
+                 << transaction.amount << ',' << balanceAfter << '\n';
         };
 
         if (customerAccounts.count(transaction.fromAccount) != 0)
-            writeRow(transaction.fromAccount, "DEBIT");
+        {
+            runningBalances[transaction.fromAccount] -= transaction.amount;
+            writeRow(transaction.fromAccount, "DEBIT", runningBalances[transaction.fromAccount]);
+        }
         if (customerAccounts.count(transaction.toAccount) != 0)
-            writeRow(transaction.toAccount, "CREDIT");
+        {
+            runningBalances[transaction.toAccount] += transaction.amount;
+            writeRow(transaction.toAccount, "CREDIT", runningBalances[transaction.toAccount]);
+        }
     }
     file.flush();
     if (!file.good())
