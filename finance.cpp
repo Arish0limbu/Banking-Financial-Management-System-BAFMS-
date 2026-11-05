@@ -86,11 +86,15 @@ void showReports()
 
     int activeEmployees = 0;
     double monthlyPayroll = 0;
+    map<string, pair<int, double>> payrollByRole;
     for (const EmployeeRecord &employee : employees)
         if (employee.active)
         {
             ++activeEmployees;
             monthlyPayroll += employee.salary;
+            pair<int, double> &roleSummary = payrollByRole[employee.role];
+            ++roleSummary.first;
+            roleSummary.second += employee.salary;
         }
 
     struct MonthlyVolumes
