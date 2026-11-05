@@ -23,6 +23,8 @@ Administrators can inspect one account's transaction history and filter it by tr
 
 The analytics report also groups transaction counts and deposit, withdrawal, loan payment, and transfer volumes by month for transactions with valid timestamps. Monthly net flow adds deposits and subtracts withdrawals and loan payments; transfers do not change total cash held by the system.
 
+Active employee counts and monthly payroll totals are also grouped by job role in the analytics report.
+
 ## Customer access
 
 Customer IDs are the serial numbers shown in `data/customer.txt`. An administrator can set a customer's initial password during registration or choose **Customer management → Create or reset customer login** for an existing customer. Give the customer their serial number and the password they set. On the shared login page, administrator credentials are checked first; otherwise, the ID and password are checked against configured customer logins. A customer whose login has not been set up must ask the administrator to create it.
