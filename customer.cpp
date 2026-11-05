@@ -7,6 +7,7 @@
 #include <fstream>
 #include <iomanip>
 #include <limits>
+#include <map>
 #include <set>
 #include <sstream>
 #include <string>
@@ -478,9 +479,13 @@ bool exportCustomerStatement(int customerSerial)
         return false;
 
     set<int> customerAccounts;
+    map<int, string> accountTypes;
     for (const AccountRecord &account : readAccounts())
         if (account.customerSerial == customerSerial)
+        {
             customerAccounts.insert(account.accountNumber);
+            accountTypes[account.accountNumber] = account.accountType;
+        }
 
     vector<TransactionRecord> transactions = readTransactions();
     sort(transactions.begin(), transactions.end(),
@@ -492,14 +497,15 @@ bool exportCustomerStatement(int customerSerial)
     if (!file.is_open())
         return false;
 
-    file << "transaction_id,timestamp,type,account_number,direction,amount\n";
+    file << "transaction_id,timestamp,type,account_number,account_type,direction,amount\n";
     file << fixed << setprecision(2);
     for (const TransactionRecord &transaction : transactions)
     {
         auto writeRow = [&](int accountNumber, const string &direction)
         {
             file << transaction.transactionId << ',' << csvCell(transaction.timestamp) << ','
-                 << csvCell(transaction.type) << ',' << accountNumber << ',' << direction << ','
+                 << csvCell(transaction.type) << ',' << accountNumber << ','
+                 << csvCell(accountTypes.at(accountNumber)) << ',' << direction << ','
                  << transaction.amount << '\n';
         };
 
