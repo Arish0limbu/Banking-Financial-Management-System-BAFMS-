@@ -100,6 +100,7 @@ void showReports()
         double withdrawals = 0;
         double loanPayments = 0;
         double transfers = 0;
+        double netCashFlow = 0;
     };
     double depositVolume = 0;
     double withdrawalVolume = 0;
@@ -117,19 +118,28 @@ void showReports()
         {
             depositVolume += transaction.amount;
             if (month)
+            {
                 month->deposits += transaction.amount;
+                month->netCashFlow += transaction.amount;
+            }
         }
         else if (transaction.type == "WITHDRAWAL")
         {
             withdrawalVolume += transaction.amount;
             if (month)
+            {
                 month->withdrawals += transaction.amount;
+                month->netCashFlow -= transaction.amount;
+            }
         }
         else if (transaction.type == "LOAN_PAYMENT")
         {
             loanPaymentVolume += transaction.amount;
             if (month)
+            {
                 month->loanPayments += transaction.amount;
+                month->netCashFlow -= transaction.amount;
+            }
         }
         else if (transaction.type == "TRANSFER")
         {
