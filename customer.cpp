@@ -682,6 +682,18 @@ static void showCustomerAccounts(int customerSerial)
          << activeBalance << '\n';
 }
 
+static bool validYearMonth(const string &value)
+{
+    if (value.size() != 7 || value[4] != '-')
+        return false;
+    for (size_t i = 0; i < value.size(); ++i)
+        if (i != 4 && !isdigit(static_cast<unsigned char>(value[i])))
+            return false;
+    const int year = stoi(value.substr(0, 4));
+    const int month = stoi(value.substr(5, 2));
+    return year > 0 && month >= 1 && month <= 12;
+}
+
 static void showCustomerTransactions(int customerSerial)
 {
     set<int> customerAccounts;
@@ -718,7 +730,19 @@ static void showCustomerTransactions(int customerSerial)
     const string accountScope = selectedAccount == 0
                                     ? "all your accounts"
                                     : "account " + to_string(selectedAccount);
-    cout << "Showing " << typeNames[typeFilter - 1] << " for " << accountScope << ".\n";
+    cout << "Month filter (YYYY-MM, blank for all): ";
+    string monthFilter;
+    if (!getline(cin, monthFilter))
+        return;
+    if (!monthFilter.empty() && !validYearMonth(monthFilter))
+    {
+        cout << "Enter a month in YYYY-MM format, such as 2026-11.\n";
+        return;
+    }
+    cout << "Showing " << typeNames[typeFilter - 1] << " for " << accountScope;
+    if (!monthFilter.empty())
+        cout << " during " << monthFilter;
+    cout << ".\n";
 
     vector<TransactionRecord> transactions = readTransactions();
     sort(transactions.begin(), transactions.end(),
@@ -747,6 +771,10 @@ static void showCustomerTransactions(int customerSerial)
                                  (typeFilter == 5 && transaction.type == "LOAN_PAYMENT");
         if (!matchesType)
             continue;
+        if (!monthFilter.empty() &&
+            (transaction.timestamp == "unknown" ||
+             transaction.timestamp.substr(0, 7) != monthFilter))
+            continue;
 
         const string from = transaction.fromAccount == 0 ? "-" :
                             (fromCustomer ? to_string(transaction.fromAccount) : "Other account");
@@ -758,7 +786,12 @@ static void showCustomerTransactions(int customerSerial)
         found = true;
     }
     if (!found)
-        cout << "No " << typeNames[typeFilter - 1] << " were found for " << accountScope << ".\n";
+    {
+        cout << "No " << typeNames[typeFilter - 1] << " were found for " << accountScope;
+        if (!monthFilter.empty())
+            cout << " during " << monthFilter;
+        cout << ".\n";
+    }
 }
 
 static void showCustomerLoans(int customerSerial)
