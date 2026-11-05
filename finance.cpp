@@ -170,6 +170,17 @@ void showReports()
          << "Active employees             : " << activeEmployees << " / " << employees.size() << '\n'
          << "Monthly payroll              : " << monthlyPayroll << '\n';
     line();
+    cout << "Active payroll by role:\n";
+    if (payrollByRole.empty())
+        cout << "No active employees are registered.\n";
+    else
+    {
+        cout << left << setw(28) << "ROLE" << setw(12) << "EMPLOYEES" << "MONTHLY PAYROLL\n";
+        line();
+        for (const auto &entry : payrollByRole)
+            cout << left << setw(28) << entry.first << setw(12) << entry.second.first
+                 << entry.second.second << '\n';
+    }
     cout << "Loan amounts use simple interest over the selected term.\n";
     cout << "\nMonthly transaction volume (records with timestamps):\n";
     if (monthlyVolumes.empty())
