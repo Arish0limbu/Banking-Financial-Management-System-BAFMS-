@@ -700,6 +700,11 @@ static void showCustomerTransactions(int customerSerial)
     cout << "1. All activity\n2. Deposits\n3. Withdrawals\n4. Transfers\n5. Loan payments\n";
     if (!readint("Transaction type: ", typeFilter, 1, 5))
         return;
+    const string typeNames[] = {"all activity", "deposits", "withdrawals", "transfers", "loan payments"};
+    const string accountScope = selectedAccount == 0
+                                    ? "all your accounts"
+                                    : "account " + to_string(selectedAccount);
+    cout << "Showing " << typeNames[typeFilter - 1] << " for " << accountScope << ".\n";
 
     vector<TransactionRecord> transactions = readTransactions();
     sort(transactions.begin(), transactions.end(),
@@ -739,7 +744,7 @@ static void showCustomerTransactions(int customerSerial)
         found = true;
     }
     if (!found)
-        cout << "No transactions have been recorded for your accounts.\n";
+        cout << "No " << typeNames[typeFilter - 1] << " were found for " << accountScope << ".\n";
 }
 
 static void showCustomerLoans(int customerSerial)
