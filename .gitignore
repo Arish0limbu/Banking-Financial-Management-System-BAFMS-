@@ -3,3 +3,4 @@ data/customer_credentials.txt
 data/customer_statement_*.csv
 data/monthly_analytics.csv
 data/payroll_by_role.csv
+data/loan_portfolio.csv

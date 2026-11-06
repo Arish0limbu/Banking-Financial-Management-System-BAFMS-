@@ -17,7 +17,8 @@ After administrator sign-in, the administrator menu provides:
 7. Account balance reconciliation against the transaction ledger
 8. Export monthly analytics as CSV
 9. Export payroll by role as CSV
-10. Logout
+10. Export loan portfolio as CSV
+11. Logout
 
 Reconciliation is read-only and assumes account balances started at zero. It lists stored balance differences and transaction references to missing accounts.
 
@@ -30,6 +31,8 @@ Administrators can export those monthly metrics to `data/monthly_analytics.csv`.
 Active employee counts and monthly payroll totals are also grouped by job role in the analytics report.
 
 Administrators can save that summary to `data/payroll_by_role.csv`, which contains active headcount, monthly payroll, and annualized payroll for each role. Generated exports are ignored by Git.
+
+The loan portfolio export is saved to `data/loan_portfolio.csv` and contains each loan's customer ID, principal, rate, term, paid amount, outstanding balance, and status. Generated exports are ignored by Git.
 
 ## Customer access
 
