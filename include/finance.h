@@ -3,5 +3,6 @@
 
 void showReports();
 void showAccountReconciliation();
+bool exportMonthlyAnalyticsCsv();
 
 #endif

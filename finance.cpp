@@ -270,3 +270,27 @@ void showAccountReconciliation()
     cout << "This comparison assumes each account started with a zero balance.\n";
     ps();
 }
+
+bool exportMonthlyAnalyticsCsv()
+{
+    const map<string, MonthlyVolumes> monthlyVolumes =
+        summarizeTransactionsByMonth(readTransactions());
+    ofstream file("data/monthly_analytics.csv", ios::trunc);
+    if (!file.is_open())
+        return false;
+
+    file << "month,transaction_count,deposits,withdrawals,loan_payments,transfers,net_flow\n";
+    file << fixed << setprecision(2);
+    for (const auto &entry : monthlyVolumes)
+    {
+        const MonthlyVolumes &month = entry.second;
+        file << entry.first << ',' << month.transactionCount << ',' << month.deposits << ','
+             << month.withdrawals << ',' << month.loanPayments << ',' << month.transfers << ','
+             << month.netCashFlow << '\n';
+    }
+    file.flush();
+    if (!file.good())
+        return false;
+    file.close();
+    return !file.fail();
+}
