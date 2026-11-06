@@ -88,6 +88,20 @@ static map<string, MonthlyVolumes> summarizeTransactionsByMonth(
     return monthlyVolumes;
 }
 
+static map<string, pair<int, double>> summarizePayrollByRole(
+    const vector<EmployeeRecord> &employees)
+{
+    map<string, pair<int, double>> payrollByRole;
+    for (const EmployeeRecord &employee : employees)
+        if (employee.active)
+        {
+            pair<int, double> &summary = payrollByRole[employee.role];
+            ++summary.first;
+            summary.second += employee.salary;
+        }
+    return payrollByRole;
+}
+
 void showReports()
 {
     heading("|| REPORTS & ANALYTICS ||");
@@ -125,18 +139,14 @@ void showReports()
             ++paidLoans;
     }
 
+    const map<string, pair<int, double>> payrollByRole = summarizePayrollByRole(employees);
     int activeEmployees = 0;
     double monthlyPayroll = 0;
-    map<string, pair<int, double>> payrollByRole;
-    for (const EmployeeRecord &employee : employees)
-        if (employee.active)
-        {
-            ++activeEmployees;
-            monthlyPayroll += employee.salary;
-            pair<int, double> &roleSummary = payrollByRole[employee.role];
-            ++roleSummary.first;
-            roleSummary.second += employee.salary;
-        }
+    for (const auto &entry : payrollByRole)
+    {
+        activeEmployees += entry.second.first;
+        monthlyPayroll += entry.second.second;
+    }
 
     double depositVolume = 0;
     double withdrawalVolume = 0;
