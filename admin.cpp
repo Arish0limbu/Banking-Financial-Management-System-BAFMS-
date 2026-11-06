@@ -57,9 +57,10 @@ void adminmain()
              << "6. Admin settings\n"
              << "7. Account reconciliation\n"
              << "8. Export monthly analytics CSV\n"
-             << "9. Logout\n";
+             << "9. Export payroll by role CSV\n"
+             << "10. Logout\n";
 
-        if (!readint("Select an option: ", choice, 1, 9))
+        if (!readint("Select an option: ", choice, 1, 10))
             return;
         switch (choice)
         {
@@ -91,6 +92,12 @@ void adminmain()
             ps();
             break;
         case 9:
+            cout << (exportPayrollByRoleCsv()
+                         ? "Payroll summary saved to data/payroll_by_role.csv.\n"
+                         : "Unable to export payroll summary. Check the data folder.\n");
+            ps();
+            break;
+        case 10:
             cout << "You have been logged out.\n";
             return;
         }
