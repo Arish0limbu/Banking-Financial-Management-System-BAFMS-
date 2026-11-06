@@ -56,9 +56,10 @@ void adminmain()
              << "5. Reports & analytics\n"
              << "6. Admin settings\n"
              << "7. Account reconciliation\n"
-             << "8. Logout\n";
+             << "8. Export monthly analytics CSV\n"
+             << "9. Logout\n";
 
-        if (!readint("Select an option: ", choice, 1, 8))
+        if (!readint("Select an option: ", choice, 1, 9))
             return;
         switch (choice)
         {
@@ -84,6 +85,12 @@ void adminmain()
             showAccountReconciliation();
             break;
         case 8:
+            cout << (exportMonthlyAnalyticsCsv()
+                         ? "Monthly analytics saved to data/monthly_analytics.csv.\n"
+                         : "Unable to export monthly analytics. Check the data folder.\n");
+            ps();
+            break;
+        case 9:
             cout << "You have been logged out.\n";
             return;
         }
