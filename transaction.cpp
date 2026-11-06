@@ -275,7 +275,7 @@ static void showAccountHistory()
         found = true;
     }
     if (!found)
-        cout << "No transactions have been recorded for this account.\n";
+        cout << "No transactions matched the selected account, type, and month filters.\n";
     ps();
 }
 
