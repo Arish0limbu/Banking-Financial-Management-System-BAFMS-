@@ -73,6 +73,18 @@ static bool validTransactionTimestamp(const string &timestamp)
     return day >= 1 && day <= daysInMonth[month - 1];
 }
 
+static bool validHistoryMonth(const string &month)
+{
+    if (month.size() != 7 || month[4] != '-')
+        return false;
+    for (size_t i = 0; i < month.size(); ++i)
+        if (i != 4 && !isdigit(static_cast<unsigned char>(month[i])))
+            return false;
+    const int year = stoi(month.substr(0, 4));
+    const int monthNumber = stoi(month.substr(5, 2));
+    return year > 0 && monthNumber >= 1 && monthNumber <= 12;
+}
+
 static bool validTransaction(const TransactionRecord &transaction)
 {
     if (transaction.transactionId <= 0 || !hasCentPrecision(transaction.amount) || transaction.amount <= 0)
@@ -195,6 +207,16 @@ static void showAccountHistory()
     cout << "1. All activity\n2. Deposits\n3. Withdrawals\n4. Transfers\n5. Loan payments\n";
     if (!readint("Transaction type: ", typeFilter, 1, 5))
         return;
+    cout << "Start date (YYYY-MM, blank for any): ";
+    string startMonth;
+    if (!getline(cin, startMonth))
+        return;
+    if (!startMonth.empty() && !validHistoryMonth(startMonth))
+    {
+        cout << "Enter the start month as YYYY-MM or leave it blank.\n";
+        ps();
+        return;
+    }
 
     vector<TransactionRecord> transactions = readTransactions();
     sort(transactions.begin(), transactions.end(),
@@ -217,6 +239,10 @@ static void showAccountHistory()
                                  (typeFilter == 4 && transaction.type == "TRANSFER") ||
                                  (typeFilter == 5 && transaction.type == "LOAN_PAYMENT");
         if (!matchesType)
+            continue;
+        if (!startMonth.empty() &&
+            (transaction.timestamp == "unknown" ||
+             transaction.timestamp.substr(0, 7) < startMonth))
             continue;
         cout << left << setw(8) << transaction.transactionId << setw(18) << transaction.type
              << setw(14) << (transaction.fromAccount == 0 ? "-" : to_string(transaction.fromAccount))
