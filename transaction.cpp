@@ -217,6 +217,22 @@ static void showAccountHistory()
         ps();
         return;
     }
+    cout << "End month (YYYY-MM, blank for any): ";
+    string endMonth;
+    if (!getline(cin, endMonth))
+        return;
+    if (!endMonth.empty() && !validHistoryMonth(endMonth))
+    {
+        cout << "Enter the end month as YYYY-MM or leave it blank.\n";
+        ps();
+        return;
+    }
+    if (!startMonth.empty() && !endMonth.empty() && endMonth < startMonth)
+    {
+        cout << "End month must be the same as or later than the start month.\n";
+        ps();
+        return;
+    }
 
     vector<TransactionRecord> transactions = readTransactions();
     sort(transactions.begin(), transactions.end(),
@@ -243,6 +259,10 @@ static void showAccountHistory()
         if (!startMonth.empty() &&
             (transaction.timestamp == "unknown" ||
              transaction.timestamp.substr(0, 7) < startMonth))
+            continue;
+        if (!endMonth.empty() &&
+            (transaction.timestamp == "unknown" ||
+             transaction.timestamp.substr(0, 7) > endMonth))
             continue;
         cout << left << setw(8) << transaction.transactionId << setw(18) << transaction.type
              << setw(14) << (transaction.fromAccount == 0 ? "-" : to_string(transaction.fromAccount))
