@@ -15,13 +15,16 @@ After administrator sign-in, the administrator menu provides:
 5. Reports and analytics
 6. Administrator password and profile settings
 7. Account balance reconciliation against the transaction ledger
-8. Logout
+8. Export monthly analytics as CSV
+9. Logout
 
 Reconciliation is read-only and assumes account balances started at zero. It lists stored balance differences and transaction references to missing accounts.
 
 Administrators can inspect one account's transaction history and filter it by transaction type. Customers can view history for all their accounts or select one account. Exported statement files are ignored by Git to keep local financial records out of commits.
 
 The analytics report also groups transaction counts and deposit, withdrawal, loan payment, and transfer volumes by month for transactions with valid timestamps. Monthly net flow adds deposits and subtracts withdrawals and loan payments; transfers do not change total cash held by the system.
+
+Administrators can export those monthly metrics to `data/monthly_analytics.csv`. The generated report stays local and is ignored by Git.
 
 Active employee counts and monthly payroll totals are also grouped by job role in the analytics report.
 
