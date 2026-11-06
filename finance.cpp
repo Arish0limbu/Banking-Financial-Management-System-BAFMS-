@@ -324,3 +324,27 @@ bool exportPayrollByRoleCsv()
     file.close();
     return !file.fail();
 }
+
+bool exportLoanPortfolioCsv()
+{
+    vector<LoanRecord> loans = readLoans();
+    sort(loans.begin(), loans.end(),
+         [](const LoanRecord &left, const LoanRecord &right)
+         { return left.loanId < right.loanId; });
+
+    ofstream file("data/loan_portfolio.csv", ios::trunc);
+    if (!file.is_open())
+        return false;
+
+    file << "loan_id,customer_id,principal,annual_rate,term_months,amount_paid,outstanding,status\n";
+    file << fixed << setprecision(2);
+    for (const LoanRecord &loan : loans)
+        file << loan.loanId << ',' << loan.customerSerial << ',' << loan.principal << ','
+             << loan.annualRate << ',' << loan.termMonths << ',' << loan.amountPaid << ','
+             << loanOutstandingBalance(loan) << ',' << loan.status << '\n';
+    file.flush();
+    if (!file.good())
+        return false;
+    file.close();
+    return !file.fail();
+}
