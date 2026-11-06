@@ -304,3 +304,23 @@ bool exportMonthlyAnalyticsCsv()
     file.close();
     return !file.fail();
 }
+
+bool exportPayrollByRoleCsv()
+{
+    const map<string, pair<int, double>> payrollByRole =
+        summarizePayrollByRole(readEmployees());
+    ofstream file("data/payroll_by_role.csv", ios::trunc);
+    if (!file.is_open())
+        return false;
+
+    file << "job_title,active_employee_count,monthly_payroll,annualized_payroll\n";
+    file << fixed << setprecision(2);
+    for (const auto &entry : payrollByRole)
+        file << '"' << entry.first << "\"," << entry.second.first << ','
+             << entry.second.second << ',' << entry.second.second * 12.0 << '\n';
+    file.flush();
+    if (!file.good())
+        return false;
+    file.close();
+    return !file.fail();
+}

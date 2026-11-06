@@ -4,5 +4,6 @@
 void showReports();
 void showAccountReconciliation();
 bool exportMonthlyAnalyticsCsv();
+bool exportPayrollByRoleCsv();
 
 #endif
