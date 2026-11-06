@@ -47,6 +47,47 @@ static int countCustomers()
     return count;
 }
 
+struct MonthlyVolumes
+{
+    int transactionCount = 0;
+    double deposits = 0;
+    double withdrawals = 0;
+    double loanPayments = 0;
+    double transfers = 0;
+    double netCashFlow = 0;
+};
+
+static map<string, MonthlyVolumes> summarizeTransactionsByMonth(
+    const vector<TransactionRecord> &transactions)
+{
+    map<string, MonthlyVolumes> monthlyVolumes;
+    for (const TransactionRecord &transaction : transactions)
+    {
+        if (transaction.timestamp == "unknown" || transaction.timestamp.size() < 7)
+            continue;
+        MonthlyVolumes &month = monthlyVolumes[transaction.timestamp.substr(0, 7)];
+        ++month.transactionCount;
+        if (transaction.type == "DEPOSIT")
+        {
+            month.deposits += transaction.amount;
+            month.netCashFlow += transaction.amount;
+        }
+        else if (transaction.type == "WITHDRAWAL")
+        {
+            month.withdrawals += transaction.amount;
+            month.netCashFlow -= transaction.amount;
+        }
+        else if (transaction.type == "LOAN_PAYMENT")
+        {
+            month.loanPayments += transaction.amount;
+            month.netCashFlow -= transaction.amount;
+        }
+        else if (transaction.type == "TRANSFER")
+            month.transfers += transaction.amount;
+    }
+    return monthlyVolumes;
+}
+
 void showReports()
 {
     heading("|| REPORTS & ANALYTICS ||");
@@ -97,61 +138,22 @@ void showReports()
             roleSummary.second += employee.salary;
         }
 
-    struct MonthlyVolumes
-    {
-        int transactionCount = 0;
-        double deposits = 0;
-        double withdrawals = 0;
-        double loanPayments = 0;
-        double transfers = 0;
-        double netCashFlow = 0;
-    };
     double depositVolume = 0;
     double withdrawalVolume = 0;
     double loanPaymentVolume = 0;
     double transferVolume = 0;
-    map<string, MonthlyVolumes> monthlyVolumes;
     for (const TransactionRecord &transaction : transactions)
     {
-        MonthlyVolumes *month = nullptr;
-        if (transaction.timestamp != "unknown" && transaction.timestamp.size() >= 7)
-            month = &monthlyVolumes[transaction.timestamp.substr(0, 7)];
-        if (month)
-            ++month->transactionCount;
         if (transaction.type == "DEPOSIT")
-        {
             depositVolume += transaction.amount;
-            if (month)
-            {
-                month->deposits += transaction.amount;
-                month->netCashFlow += transaction.amount;
-            }
-        }
         else if (transaction.type == "WITHDRAWAL")
-        {
             withdrawalVolume += transaction.amount;
-            if (month)
-            {
-                month->withdrawals += transaction.amount;
-                month->netCashFlow -= transaction.amount;
-            }
-        }
         else if (transaction.type == "LOAN_PAYMENT")
-        {
             loanPaymentVolume += transaction.amount;
-            if (month)
-            {
-                month->loanPayments += transaction.amount;
-                month->netCashFlow -= transaction.amount;
-            }
-        }
         else if (transaction.type == "TRANSFER")
-        {
             transferVolume += transaction.amount;
-            if (month)
-                month->transfers += transaction.amount;
-        }
     }
+    const map<string, MonthlyVolumes> monthlyVolumes = summarizeTransactionsByMonth(transactions);
 
     cout << fixed << setprecision(2);
     cout << "Customers                    : " << countCustomers() << '\n'
