@@ -58,9 +58,10 @@ void adminmain()
              << "7. Account reconciliation\n"
              << "8. Export monthly analytics CSV\n"
              << "9. Export payroll by role CSV\n"
-             << "10. Logout\n";
+             << "10. Export loan portfolio CSV\n"
+             << "11. Logout\n";
 
-        if (!readint("Select an option: ", choice, 1, 10))
+        if (!readint("Select an option: ", choice, 1, 11))
             return;
         switch (choice)
         {
@@ -98,6 +99,12 @@ void adminmain()
             ps();
             break;
         case 10:
+            cout << (exportLoanPortfolioCsv()
+                         ? "Loan portfolio saved to data/loan_portfolio.csv.\n"
+                         : "Unable to export the loan portfolio. Check the data folder.\n");
+            ps();
+            break;
+        case 11:
             cout << "You have been logged out.\n";
             return;
         }
