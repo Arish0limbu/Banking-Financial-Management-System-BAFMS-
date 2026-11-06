@@ -16,7 +16,8 @@ After administrator sign-in, the administrator menu provides:
 6. Administrator password and profile settings
 7. Account balance reconciliation against the transaction ledger
 8. Export monthly analytics as CSV
-9. Logout
+9. Export payroll by role as CSV
+10. Logout
 
 Reconciliation is read-only and assumes account balances started at zero. It lists stored balance differences and transaction references to missing accounts.
 
@@ -27,6 +28,8 @@ The analytics report also groups transaction counts and deposit, withdrawal, loa
 Administrators can export those monthly metrics to `data/monthly_analytics.csv`. The generated report stays local and is ignored by Git.
 
 Active employee counts and monthly payroll totals are also grouped by job role in the analytics report.
+
+Administrators can save that summary to `data/payroll_by_role.csv`, which contains active headcount, monthly payroll, and annualized payroll for each role. Generated exports are ignored by Git.
 
 ## Customer access
 
