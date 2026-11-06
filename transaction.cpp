@@ -241,6 +241,10 @@ static void showAccountHistory()
     bool found = false;
     cout << "Account " << accountNumber << " | Customer " << account.customerSerial
          << " | " << (account.active ? "Active" : "Closed") << '\n';
+    const string typeNames[] = {"All activity", "Deposits", "Withdrawals", "Transfers", "Loan payments"};
+    cout << "Type: " << typeNames[typeFilter - 1] << " | Period: "
+         << (startMonth.empty() ? "any" : startMonth) << " through "
+         << (endMonth.empty() ? "any" : endMonth) << '\n';
     cout << left << setw(8) << "ID" << setw(18) << "TYPE" << setw(14) << "FROM"
          << setw(14) << "TO" << setw(14) << "AMOUNT" << "DATE / TIME\n";
     line();
