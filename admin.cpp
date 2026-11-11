@@ -51,8 +51,9 @@ static void exportdatamenu()
         heading("|| DATA EXPORTS ||");
         cout << "1. Monthly analytics CSV\n2. Payroll by role CSV\n"
              << "3. Loan portfolio CSV\n4. Customer records CSV\n"
-             << "5. Account register CSV\n6. Transaction ledger CSV\n7. Back\n";
-        if (!readint("Select an option: ", choice, 1, 7))
+             << "5. Account register CSV\n6. Transaction ledger CSV\n"
+             << "7. Employee register CSV\n8. Back\n";
+        if (!readint("Select an option: ", choice, 1, 8))
             return;
         if (choice == 1)
             cout << (exportMonthlyAnalyticsCsv()
@@ -78,9 +79,13 @@ static void exportdatamenu()
             cout << (exportTransactionsCsv()
                          ? "Transaction ledger saved to data/transaction_ledger.csv.\n"
                          : "Unable to export the transaction ledger. Check the data folder.\n");
-        if (choice != 7)
+        else if (choice == 7)
+            cout << (exportEmployeesCsv()
+                         ? "Employee register saved to data/employee_register.csv.\n"
+                         : "Unable to export the employee register. Check the data folder.\n");
+        if (choice != 8)
             ps();
-    } while (choice != 7);
+    } while (choice != 8);
 }
 
 void adminmain()
