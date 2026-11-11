@@ -32,6 +32,8 @@ The export menu can also save customer profile data to `data/customer_records.cs
 
 The account register export is saved as `data/account_register.csv` and includes each account's customer ID, type, current balance, and status. This local file is also ignored by Git.
 
+The transaction ledger can be exported to `data/transaction_ledger.csv`, sorted by transaction ID. Exported ledger files are ignored by Git.
+
 Active employee counts and monthly payroll totals are also grouped by job role in the analytics report.
 
 Administrators can save that summary to `data/payroll_by_role.csv`, which contains active headcount, monthly payroll, and annualized payroll for each role. Generated exports are ignored by Git.
