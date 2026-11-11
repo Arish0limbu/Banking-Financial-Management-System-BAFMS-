@@ -50,8 +50,8 @@ static void exportdatamenu()
     {
         heading("|| DATA EXPORTS ||");
         cout << "1. Monthly analytics CSV\n2. Payroll by role CSV\n"
-             << "3. Loan portfolio CSV\n4. Back\n";
-        if (!readint("Select an option: ", choice, 1, 4))
+             << "3. Loan portfolio CSV\n4. Customer records CSV\n5. Back\n";
+        if (!readint("Select an option: ", choice, 1, 5))
             return;
         if (choice == 1)
             cout << (exportMonthlyAnalyticsCsv()
@@ -65,9 +65,13 @@ static void exportdatamenu()
             cout << (exportLoanPortfolioCsv()
                          ? "Loan portfolio saved to data/loan_portfolio.csv.\n"
                          : "Unable to export the loan portfolio. Check the data folder.\n");
-        if (choice != 4)
+        else if (choice == 4)
+            cout << (exportCustomerRecordsCsv()
+                         ? "Customer records saved to data/customer_records.csv.\n"
+                         : "Unable to export customer records. Check the data folder.\n");
+        if (choice != 5)
             ps();
-    } while (choice != 4);
+    } while (choice != 5);
 }
 
 void adminmain()
