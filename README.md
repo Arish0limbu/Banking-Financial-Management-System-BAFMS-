@@ -28,6 +28,8 @@ The analytics report also groups transaction counts and deposit, withdrawal, loa
 
 Administrators can export those monthly metrics to `data/monthly_analytics.csv`. The generated report stays local and is ignored by Git.
 
+The export menu can also save customer profile data to `data/customer_records.csv`; login passwords are not included. Customer records contain personal information, so keep the generated file private. The file is ignored by Git.
+
 Active employee counts and monthly payroll totals are also grouped by job role in the analytics report.
 
 Administrators can save that summary to `data/payroll_by_role.csv`, which contains active headcount, monthly payroll, and annualized payroll for each role. Generated exports are ignored by Git.
