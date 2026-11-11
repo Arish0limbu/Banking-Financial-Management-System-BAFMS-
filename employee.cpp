@@ -121,6 +121,29 @@ bool saveEmployees(const vector<EmployeeRecord> &employees)
     return !file.fail();
 }
 
+bool exportEmployeesCsv()
+{
+    vector<EmployeeRecord> employees = readEmployees();
+    sort(employees.begin(), employees.end(),
+         [](const EmployeeRecord &left, const EmployeeRecord &right)
+         { return left.employeeId < right.employeeId; });
+
+    ofstream file("data/employee_register.csv", ios::trunc);
+    if (!file.is_open())
+        return false;
+    file << "employee_id,name,age,phone,job_title,monthly_salary,status\n";
+    file << fixed << setprecision(2);
+    for (const EmployeeRecord &employee : employees)
+        file << employee.employeeId << ",\"" << employee.name << "\"," << employee.age << ','
+             << employee.phone << ",\"" << employee.role << "\"," << employee.salary << ','
+             << (employee.active ? "Active" : "Inactive") << '\n';
+    file.flush();
+    if (!file.good())
+        return false;
+    file.close();
+    return !file.fail();
+}
+
 static bool validEmployeeName(const string &name)
 {
     if (name.empty() || name.front() == ' ' || name.back() == ' ')

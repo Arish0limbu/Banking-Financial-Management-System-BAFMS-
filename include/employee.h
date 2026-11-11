@@ -17,6 +17,7 @@ struct EmployeeRecord
 
 std::vector<EmployeeRecord> readEmployees();
 bool saveEmployees(const std::vector<EmployeeRecord> &employees);
+bool exportEmployeesCsv();
 void employeemanagement();
 
 #endif
