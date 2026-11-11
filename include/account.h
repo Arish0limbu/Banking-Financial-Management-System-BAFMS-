@@ -17,6 +17,7 @@ std::vector<AccountRecord> readAccounts();
 bool saveAccounts(const std::vector<AccountRecord> &accounts);
 bool findAccount(int accountNumber, AccountRecord &account);
 bool updateAccountBalance(int accountNumber, double newBalance);
+bool exportAccountsCsv();
 void accountmanagement();
 
 #endif
