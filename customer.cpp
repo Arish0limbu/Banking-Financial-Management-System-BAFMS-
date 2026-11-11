@@ -529,6 +529,42 @@ bool exportCustomerStatement(int customerSerial)
     return !file.fail();
 }
 
+bool exportCustomerRecordsCsv()
+{
+    ifstream source("data/customer.txt");
+    if (!source.is_open())
+        return false;
+
+    vector<Customer> customers;
+    string row;
+    while (getline(source, row))
+    {
+        Customer customer{};
+        if (readCustomerLine(row, customer))
+            customers.push_back(customer);
+    }
+    if (source.bad())
+        return false;
+
+    sort(customers.begin(), customers.end(),
+         [](const Customer &left, const Customer &right)
+         { return left.sn < right.sn; });
+    ofstream file("data/customer_records.csv", ios::trunc);
+    if (!file.is_open())
+        return false;
+
+    file << "customer_id,name,age,address,phone,email\n";
+    for (const Customer &customer : customers)
+        file << customer.sn << ',' << csvCell(customer.name) << ',' << customer.age << ','
+             << csvCell(customer.address) << ',' << csvCell(customer.phone) << ','
+             << csvCell(customer.gmail) << '\n';
+    file.flush();
+    if (!file.good())
+        return false;
+    file.close();
+    return !file.fail();
+}
+
 bool setupCustomerLogin(int customerSerial)
 {
     if (!customerSerialExists(customerSerial))

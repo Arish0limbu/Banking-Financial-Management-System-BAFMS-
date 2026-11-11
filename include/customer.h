@@ -18,6 +18,7 @@ CustomerAuthentication authenticateCustomer(const std::string &id,
                                             const std::string &password,
                                             int &customerSerial);
 bool exportCustomerStatement(int customerSerial);
+bool exportCustomerRecordsCsv();
 bool changeCustomerPassword(int customerSerial);
 void customerPortal(int customerSerial);
 
