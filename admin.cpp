@@ -43,6 +43,33 @@ static void adminsettings()
     } while (choice != 3);
 }
 
+static void exportdatamenu()
+{
+    int choice;
+    do
+    {
+        heading("|| DATA EXPORTS ||");
+        cout << "1. Monthly analytics CSV\n2. Payroll by role CSV\n"
+             << "3. Loan portfolio CSV\n4. Back\n";
+        if (!readint("Select an option: ", choice, 1, 4))
+            return;
+        if (choice == 1)
+            cout << (exportMonthlyAnalyticsCsv()
+                         ? "Monthly analytics saved to data/monthly_analytics.csv.\n"
+                         : "Unable to export monthly analytics. Check the data folder.\n");
+        else if (choice == 2)
+            cout << (exportPayrollByRoleCsv()
+                         ? "Payroll summary saved to data/payroll_by_role.csv.\n"
+                         : "Unable to export payroll summary. Check the data folder.\n");
+        else if (choice == 3)
+            cout << (exportLoanPortfolioCsv()
+                         ? "Loan portfolio saved to data/loan_portfolio.csv.\n"
+                         : "Unable to export the loan portfolio. Check the data folder.\n");
+        if (choice != 4)
+            ps();
+    } while (choice != 4);
+}
+
 void adminmain()
 {
     int choice;
@@ -56,12 +83,10 @@ void adminmain()
              << "5. Reports & analytics\n"
              << "6. Admin settings\n"
              << "7. Account reconciliation\n"
-             << "8. Export monthly analytics CSV\n"
-             << "9. Export payroll by role CSV\n"
-             << "10. Export loan portfolio CSV\n"
-             << "11. Logout\n";
+             << "8. Data exports\n"
+             << "9. Logout\n";
 
-        if (!readint("Select an option: ", choice, 1, 11))
+        if (!readint("Select an option: ", choice, 1, 9))
             return;
         switch (choice)
         {
@@ -87,24 +112,9 @@ void adminmain()
             showAccountReconciliation();
             break;
         case 8:
-            cout << (exportMonthlyAnalyticsCsv()
-                         ? "Monthly analytics saved to data/monthly_analytics.csv.\n"
-                         : "Unable to export monthly analytics. Check the data folder.\n");
-            ps();
+            exportdatamenu();
             break;
         case 9:
-            cout << (exportPayrollByRoleCsv()
-                         ? "Payroll summary saved to data/payroll_by_role.csv.\n"
-                         : "Unable to export payroll summary. Check the data folder.\n");
-            ps();
-            break;
-        case 10:
-            cout << (exportLoanPortfolioCsv()
-                         ? "Loan portfolio saved to data/loan_portfolio.csv.\n"
-                         : "Unable to export the loan portfolio. Check the data folder.\n");
-            ps();
-            break;
-        case 11:
             cout << "You have been logged out.\n";
             return;
         }
