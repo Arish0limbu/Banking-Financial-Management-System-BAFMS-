@@ -18,6 +18,7 @@ bool saveAccounts(const std::vector<AccountRecord> &accounts);
 bool findAccount(int accountNumber, AccountRecord &account);
 bool updateAccountBalance(int accountNumber, double newBalance);
 bool exportAccountsCsv();
+bool exportFilteredAccountsCsv();
 void accountmanagement();
 
 #endif

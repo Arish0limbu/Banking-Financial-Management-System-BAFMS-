@@ -139,14 +139,13 @@ bool updateAccountBalance(int accountNumber, double newBalance)
     return false;
 }
 
-bool exportAccountsCsv()
+static bool writeAccountsCsv(vector<AccountRecord> accounts, const string &path)
 {
-    vector<AccountRecord> accounts = readAccounts();
     sort(accounts.begin(), accounts.end(),
          [](const AccountRecord &left, const AccountRecord &right)
          { return left.accountNumber < right.accountNumber; });
 
-    ofstream file("data/account_register.csv", ios::trunc);
+    ofstream file(path, ios::trunc);
     if (!file.is_open())
         return false;
 
@@ -161,6 +160,11 @@ bool exportAccountsCsv()
         return false;
     file.close();
     return !file.fail();
+}
+
+bool exportAccountsCsv()
+{
+    return writeAccountsCsv(readAccounts(), "data/account_register.csv");
 }
 
 static bool customerSerialExists(int serial)
