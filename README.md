@@ -40,6 +40,8 @@ Administrators can save that summary to `data/payroll_by_role.csv`, which contai
 
 The loan portfolio export is saved to `data/loan_portfolio.csv` and contains each loan's customer ID, principal, rate, term, paid amount, outstanding balance, and status. Generated exports are ignored by Git.
 
+Administrators can also export the loan portfolio for one status (pending, approved, rejected, or paid) to `data/filtered_loan_portfolio.csv`. The export is local and ignored by Git.
+
 ## Customer access
 
 Customer IDs are the serial numbers shown in `data/customer.txt`. An administrator can set a customer's initial password during registration or choose **Customer management → Create or reset customer login** for an existing customer. Give the customer their serial number and the password they set. On the shared login page, administrator credentials are checked first; otherwise, the ID and password are checked against configured customer logins. A customer whose login has not been set up must ask the administrator to create it.

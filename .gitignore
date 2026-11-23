@@ -8,3 +8,4 @@ data/customer_records.csv
 data/account_register.csv
 data/transaction_ledger.csv
 data/filtered_transaction_ledger.csv
+data/filtered_loan_portfolio.csv
