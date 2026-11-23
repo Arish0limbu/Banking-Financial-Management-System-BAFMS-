@@ -42,6 +42,8 @@ Administrators can save that summary to `data/payroll_by_role.csv`, which contai
 
 The loan portfolio export is saved to `data/loan_portfolio.csv` and contains each loan's customer ID, principal, rate, term, paid amount, outstanding balance, and status. Generated exports are ignored by Git.
 
+The employee register export includes employee contact and salary details. Administrators can filter it to active or inactive staff; the filtered file is saved as `data/filtered_employee_register.csv`. Keep these files private; generated exports are ignored by Git.
+
 Administrators can also export the loan portfolio for one status (pending, approved, rejected, or paid) to `data/filtered_loan_portfolio.csv`. The export is local and ignored by Git.
 
 ## Customer access
