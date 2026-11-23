@@ -6,5 +6,6 @@ void showAccountReconciliation();
 bool exportMonthlyAnalyticsCsv();
 bool exportPayrollByRoleCsv();
 bool exportLoanPortfolioCsv();
+bool exportFilteredLoanPortfolioCsv();
 
 #endif

@@ -352,3 +352,18 @@ bool exportLoanPortfolioCsv()
 {
     return writeLoanPortfolioCsv(readLoans(), "data/loan_portfolio.csv");
 }
+
+bool exportFilteredLoanPortfolioCsv()
+{
+    int statusFilter;
+    cout << "1. All applications\n2. Pending\n3. Approved\n4. Rejected\n5. Paid\n";
+    if (!readint("Loan status: ", statusFilter, 1, 5))
+        return false;
+
+    const string statuses[] = {"", "Pending", "Approved", "Rejected", "Paid"};
+    vector<LoanRecord> filtered;
+    for (const LoanRecord &loan : readLoans())
+        if (statusFilter == 1 || loan.status == statuses[statusFilter - 1])
+            filtered.push_back(loan);
+    return writeLoanPortfolioCsv(filtered, "data/filtered_loan_portfolio.csv");
+}
