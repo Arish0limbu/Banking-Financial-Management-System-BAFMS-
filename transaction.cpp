@@ -131,20 +131,13 @@ vector<TransactionRecord> readTransactions()
     return transactions;
 }
 
-bool exportTransactionsCsv()
+static bool writeTransactionsCsv(vector<TransactionRecord> transactions, const string &path)
 {
-    ifstream source("data/transactions.txt");
-    if (!source.is_open())
-        return false;
-    if (source.bad())
-        return false;
-
-    vector<TransactionRecord> transactions = readTransactions();
     sort(transactions.begin(), transactions.end(),
          [](const TransactionRecord &left, const TransactionRecord &right)
          { return left.transactionId < right.transactionId; });
 
-    ofstream file("data/transaction_ledger.csv", ios::trunc);
+    ofstream file(path, ios::trunc);
     if (!file.is_open())
         return false;
     file << "transaction_id,type,from_account,to_account,amount,timestamp\n";
@@ -158,6 +151,17 @@ bool exportTransactionsCsv()
         return false;
     file.close();
     return !file.fail();
+}
+
+bool exportTransactionsCsv()
+{
+    ifstream source("data/transactions.txt");
+    if (!source.is_open())
+        return false;
+    if (source.bad())
+        return false;
+
+    return writeTransactionsCsv(readTransactions(), "data/transaction_ledger.csv");
 }
 
 bool saveTransaction(const string &type, int fromAccount, int toAccount, double amount)

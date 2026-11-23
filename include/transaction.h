@@ -17,6 +17,7 @@ struct TransactionRecord
 std::vector<TransactionRecord> readTransactions();
 bool saveTransaction(const std::string &type, int fromAccount, int toAccount, double amount);
 bool exportTransactionsCsv();
+bool exportFilteredTransactionsCsv();
 void transactionmanagement();
 
 #endif
