@@ -167,6 +167,22 @@ bool exportAccountsCsv()
     return writeAccountsCsv(readAccounts(), "data/account_register.csv");
 }
 
+bool exportFilteredAccountsCsv()
+{
+    int statusFilter;
+    cout << "1. All accounts\n2. Active accounts\n3. Closed accounts\n";
+    if (!readint("Account status: ", statusFilter, 1, 3))
+        return false;
+
+    vector<AccountRecord> filtered;
+    for (const AccountRecord &account : readAccounts())
+        if (statusFilter == 1 ||
+            (statusFilter == 2 && account.active) ||
+            (statusFilter == 3 && !account.active))
+            filtered.push_back(account);
+    return writeAccountsCsv(filtered, "data/filtered_account_register.csv");
+}
+
 static bool customerSerialExists(int serial)
 {
     ifstream file("data/customer.txt");
