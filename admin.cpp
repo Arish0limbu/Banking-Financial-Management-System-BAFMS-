@@ -52,8 +52,9 @@ static void exportdatamenu()
         cout << "1. Monthly analytics CSV\n2. Payroll by role CSV\n"
              << "3. Loan portfolio CSV\n4. Customer records CSV\n"
              << "5. Account register CSV\n6. Transaction ledger CSV\n"
-             << "7. Employee register CSV\n8. Filtered transaction CSV\n9. Back\n";
-        if (!readint("Select an option: ", choice, 1, 9))
+             << "7. Employee register CSV\n8. Filtered transaction CSV\n"
+             << "9. Filtered loan portfolio CSV\n10. Back\n";
+        if (!readint("Select an option: ", choice, 1, 10))
             return;
         if (choice == 1)
             cout << (exportMonthlyAnalyticsCsv()
@@ -87,9 +88,13 @@ static void exportdatamenu()
             cout << (exportFilteredTransactionsCsv()
                          ? "Filtered ledger saved to data/filtered_transaction_ledger.csv.\n"
                          : "Unable to export the filtered ledger. Check the selected filters and data folder.\n");
-        if (choice != 9)
+        else if (choice == 9)
+            cout << (exportFilteredLoanPortfolioCsv()
+                         ? "Filtered loan portfolio saved to data/filtered_loan_portfolio.csv.\n"
+                         : "Unable to export the filtered loan portfolio. Check the data folder.\n");
+        if (choice != 10)
             ps();
-    } while (choice != 9);
+    } while (choice != 10);
 }
 
 void adminmain()
