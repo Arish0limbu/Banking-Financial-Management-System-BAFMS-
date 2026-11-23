@@ -148,6 +148,22 @@ bool exportEmployeesCsv()
     return writeEmployeesCsv(readEmployees(), "data/employee_register.csv");
 }
 
+bool exportFilteredEmployeesCsv()
+{
+    int statusFilter;
+    cout << "1. All employees\n2. Active employees\n3. Inactive employees\n";
+    if (!readint("Employee status: ", statusFilter, 1, 3))
+        return false;
+
+    vector<EmployeeRecord> filtered;
+    for (const EmployeeRecord &employee : readEmployees())
+        if (statusFilter == 1 ||
+            (statusFilter == 2 && employee.active) ||
+            (statusFilter == 3 && !employee.active))
+            filtered.push_back(employee);
+    return writeEmployeesCsv(filtered, "data/filtered_employee_register.csv");
+}
+
 static bool validEmployeeName(const string &name)
 {
     if (name.empty() || name.front() == ' ' || name.back() == ' ')
