@@ -325,14 +325,13 @@ bool exportPayrollByRoleCsv()
     return !file.fail();
 }
 
-bool exportLoanPortfolioCsv()
+static bool writeLoanPortfolioCsv(vector<LoanRecord> loans, const string &path)
 {
-    vector<LoanRecord> loans = readLoans();
     sort(loans.begin(), loans.end(),
          [](const LoanRecord &left, const LoanRecord &right)
          { return left.loanId < right.loanId; });
 
-    ofstream file("data/loan_portfolio.csv", ios::trunc);
+    ofstream file(path, ios::trunc);
     if (!file.is_open())
         return false;
 
@@ -347,4 +346,9 @@ bool exportLoanPortfolioCsv()
         return false;
     file.close();
     return !file.fail();
+}
+
+bool exportLoanPortfolioCsv()
+{
+    return writeLoanPortfolioCsv(readLoans(), "data/loan_portfolio.csv");
 }
