@@ -15,10 +15,8 @@ After administrator sign-in, the administrator menu provides:
 5. Reports and analytics
 6. Administrator password and profile settings
 7. Account balance reconciliation against the transaction ledger
-8. Export monthly analytics as CSV
-9. Export payroll by role as CSV
-10. Export loan portfolio as CSV
-11. Logout
+8. Data exports
+9. Logout
 
 Reconciliation is read-only and assumes account balances started at zero. It lists stored balance differences and transaction references to missing accounts.
 
@@ -33,6 +31,8 @@ The export menu can also save customer profile data to `data/customer_records.cs
 The account register export is saved as `data/account_register.csv` and includes each account's customer ID, type, current balance, and status. This local file is also ignored by Git.
 
 The transaction ledger can be exported to `data/transaction_ledger.csv`, sorted by transaction ID. Exported ledger files are ignored by Git.
+
+The export menu can create a filtered transaction ledger by type and inclusive month range at `data/filtered_transaction_ledger.csv`. Leave the start or end month blank to make that side of the range open. This generated file is ignored by Git.
 
 Active employee counts and monthly payroll totals are also grouped by job role in the analytics report.
 
