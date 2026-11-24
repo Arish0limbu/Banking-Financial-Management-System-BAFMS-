@@ -219,6 +219,27 @@ bool exportFilteredTransactionsCsv()
     return writeTransactionsCsv(filtered, "data/filtered_transaction_ledger.csv");
 }
 
+bool exportAccountTransactionsCsv()
+{
+    int accountNumber;
+    if (!readint("Account number: ", accountNumber, 1, 2147483647))
+        return false;
+
+    AccountRecord account;
+    if (!findAccount(accountNumber, account))
+    {
+        cout << "Account was not found.\n";
+        return false;
+    }
+
+    vector<TransactionRecord> accountTransactions;
+    for (const TransactionRecord &transaction : readTransactions())
+        if (transaction.fromAccount == accountNumber || transaction.toAccount == accountNumber)
+            accountTransactions.push_back(transaction);
+    const string path = "data/account_" + to_string(accountNumber) + "_transaction_ledger.csv";
+    return writeTransactionsCsv(accountTransactions, path);
+}
+
 bool saveTransaction(const string &type, int fromAccount, int toAccount, double amount)
 {
     TransactionRecord newTransaction{1, type, fromAccount, toAccount, amount, ""};
