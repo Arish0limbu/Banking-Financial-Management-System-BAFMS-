@@ -54,8 +54,9 @@ static void exportdatamenu()
              << "5. Account register CSV\n6. Transaction ledger CSV\n"
              << "7. Employee register CSV\n8. Filtered transaction CSV\n"
              << "9. Filtered loan portfolio CSV\n10. Filtered account register CSV\n"
-             << "11. Filtered employee register CSV\n12. Accounts for one customer CSV\n13. Back\n";
-        if (!readint("Select an option: ", choice, 1, 13))
+             << "11. Filtered employee register CSV\n12. Accounts for one customer CSV\n"
+             << "13. Loans for one customer CSV\n14. Back\n";
+        if (!readint("Select an option: ", choice, 1, 14))
             return;
         if (choice == 1)
             cout << (exportMonthlyAnalyticsCsv()
@@ -105,9 +106,13 @@ static void exportdatamenu()
             cout << (exportCustomerAccountsCsv()
                          ? "Customer account register exported.\n"
                          : "Unable to export customer accounts. Check the ID and data folder.\n");
-        if (choice != 13)
+        else if (choice == 13)
+            cout << (exportCustomerLoanPortfolioCsv()
+                         ? "Customer loan portfolio exported.\n"
+                         : "Unable to export customer loans. Check the ID and data folder.\n");
+        if (choice != 14)
             ps();
-    } while (choice != 13);
+    } while (choice != 14);
 }
 
 void adminmain()
