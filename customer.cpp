@@ -473,6 +473,8 @@ static string csvCell(const string &value)
     return escaped;
 }
 
+static bool validYearMonth(const string &value);
+
 bool exportCustomerStatement(int customerSerial)
 {
     if (customerSerial <= 0 || !customerSerialExists(customerSerial))
@@ -522,6 +524,112 @@ bool exportCustomerStatement(int customerSerial)
             writeRow(transaction.toAccount, "CREDIT", runningBalances[transaction.toAccount]);
         }
     }
+    file.flush();
+    if (!file.good())
+        return false;
+    file.close();
+    return !file.fail();
+}
+
+bool exportFilteredCustomerStatement(int customerSerial)
+{
+    if (customerSerial <= 0 || !customerSerialExists(customerSerial))
+        return false;
+
+    set<int> customerAccounts;
+    map<int, string> accountTypes;
+    map<int, double> runningBalances;
+    for (const AccountRecord &account : readAccounts())
+        if (account.customerSerial == customerSerial)
+        {
+            customerAccounts.insert(account.accountNumber);
+            accountTypes[account.accountNumber] = account.accountType;
+            runningBalances[account.accountNumber] = 0.0;
+        }
+    if (customerAccounts.empty())
+    {
+        cout << "No account is linked to your customer ID yet.\n";
+        return false;
+    }
+
+    cout << "Your accounts (enter 0 for all): ";
+    for (int accountNumber : customerAccounts)
+        cout << accountNumber << ' ';
+    cout << '\n';
+    int selectedAccount;
+    if (!readint("Account number: ", selectedAccount, 0, 2147483647))
+        return false;
+    if (selectedAccount != 0 && customerAccounts.count(selectedAccount) == 0)
+    {
+        cout << "That account is not linked to your customer ID.\n";
+        return false;
+    }
+
+    int typeFilter;
+    cout << "1. All activity\n2. Deposits\n3. Withdrawals\n4. Transfers\n5. Loan payments\n";
+    if (!readint("Transaction type: ", typeFilter, 1, 5))
+        return false;
+    cout << "Start month (YYYY-MM, blank for any): ";
+    string startMonth;
+    if (!getline(cin, startMonth))
+        return false;
+    cout << "End month (YYYY-MM, blank for any): ";
+    string endMonth;
+    if (!getline(cin, endMonth))
+        return false;
+    if ((!startMonth.empty() && !validYearMonth(startMonth)) ||
+        (!endMonth.empty() && !validYearMonth(endMonth)) ||
+        (!startMonth.empty() && !endMonth.empty() && endMonth < startMonth))
+    {
+        cout << "Enter valid YYYY-MM months and make sure the end is not before the start.\n";
+        return false;
+    }
+
+    vector<TransactionRecord> transactions = readTransactions();
+    sort(transactions.begin(), transactions.end(),
+         [](const TransactionRecord &left, const TransactionRecord &right)
+         { return left.transactionId < right.transactionId; });
+    const string path = "data/customer_statement_" + to_string(customerSerial) + "_filtered.csv";
+    ofstream file(path, ios::trunc);
+    if (!file.is_open())
+        return false;
+    file << "transaction_id,timestamp,type,account_number,account_type,direction,amount,balance_after\n";
+    file << fixed << setprecision(2);
+
+    for (const TransactionRecord &transaction : transactions)
+    {
+        const bool typeMatches = typeFilter == 1 ||
+                                 (typeFilter == 2 && transaction.type == "DEPOSIT") ||
+                                 (typeFilter == 3 && transaction.type == "WITHDRAWAL") ||
+                                 (typeFilter == 4 && transaction.type == "TRANSFER") ||
+                                 (typeFilter == 5 && transaction.type == "LOAN_PAYMENT");
+        const bool monthMatches =
+            (startMonth.empty() || (transaction.timestamp != "unknown" &&
+                                    transaction.timestamp.substr(0, 7) >= startMonth)) &&
+            (endMonth.empty() || (transaction.timestamp != "unknown" &&
+                                  transaction.timestamp.substr(0, 7) <= endMonth));
+        const bool matchesFilters = typeMatches && monthMatches;
+
+        auto writeRow = [&](int accountNumber, const string &direction)
+        {
+            const double amount = transaction.amount;
+            runningBalances[accountNumber] += direction == "CREDIT" ? amount : -amount;
+            if (selectedAccount != 0 && selectedAccount != accountNumber)
+                return;
+            if (!matchesFilters)
+                return;
+            file << transaction.transactionId << ',' << csvCell(transaction.timestamp) << ','
+                 << csvCell(transaction.type) << ',' << accountNumber << ','
+                 << csvCell(accountTypes.at(accountNumber)) << ',' << direction << ','
+                 << amount << ',' << runningBalances[accountNumber] << '\n';
+        };
+
+        if (customerAccounts.count(transaction.fromAccount) != 0)
+            writeRow(transaction.fromAccount, "DEBIT");
+        if (customerAccounts.count(transaction.toAccount) != 0)
+            writeRow(transaction.toAccount, "CREDIT");
+    }
+
     file.flush();
     if (!file.good())
         return false;
