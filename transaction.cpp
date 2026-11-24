@@ -232,10 +232,58 @@ bool exportAccountTransactionsCsv()
         return false;
     }
 
+    int typeFilter;
+    cout << "1. All activity\n2. Deposits\n3. Withdrawals\n4. Transfers\n5. Loan payments\n";
+    if (!readint("Transaction type: ", typeFilter, 1, 5))
+        return false;
+
+    cout << "Start month (YYYY-MM, blank for any): ";
+    string startMonth;
+    if (!getline(cin, startMonth))
+        return false;
+    if (!startMonth.empty() && !validHistoryMonth(startMonth))
+    {
+        cout << "Enter the start month as YYYY-MM or leave it blank.\n";
+        return false;
+    }
+
+    cout << "End month (YYYY-MM, blank for any): ";
+    string endMonth;
+    if (!getline(cin, endMonth))
+        return false;
+    if (!endMonth.empty() && !validHistoryMonth(endMonth))
+    {
+        cout << "Enter the end month as YYYY-MM or leave it blank.\n";
+        return false;
+    }
+    if (!startMonth.empty() && !endMonth.empty() && endMonth < startMonth)
+    {
+        cout << "End month must be the same as or later than the start month.\n";
+        return false;
+    }
+
     vector<TransactionRecord> accountTransactions;
     for (const TransactionRecord &transaction : readTransactions())
-        if (transaction.fromAccount == accountNumber || transaction.toAccount == accountNumber)
-            accountTransactions.push_back(transaction);
+    {
+        if (transaction.fromAccount != accountNumber && transaction.toAccount != accountNumber)
+            continue;
+        const bool matchesType = typeFilter == 1 ||
+                                 (typeFilter == 2 && transaction.type == "DEPOSIT") ||
+                                 (typeFilter == 3 && transaction.type == "WITHDRAWAL") ||
+                                 (typeFilter == 4 && transaction.type == "TRANSFER") ||
+                                 (typeFilter == 5 && transaction.type == "LOAN_PAYMENT");
+        if (!matchesType)
+            continue;
+        if (!startMonth.empty() &&
+            (transaction.timestamp == "unknown" ||
+             transaction.timestamp.substr(0, 7) < startMonth))
+            continue;
+        if (!endMonth.empty() &&
+            (transaction.timestamp == "unknown" ||
+             transaction.timestamp.substr(0, 7) > endMonth))
+            continue;
+        accountTransactions.push_back(transaction);
+    }
     const string path = "data/account_" + to_string(accountNumber) + "_transaction_ledger.csv";
     return writeTransactionsCsv(accountTransactions, path);
 }
