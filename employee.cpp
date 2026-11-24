@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <iterator>
 #include <limits>
 #include <sstream>
 #include "include/design.h"
@@ -162,6 +163,35 @@ bool exportFilteredEmployeesCsv()
             (statusFilter == 3 && !employee.active))
             filtered.push_back(employee);
     return writeEmployeesCsv(filtered, "data/filtered_employee_register.csv");
+}
+
+bool exportEmployeesByRoleCsv()
+{
+    const vector<EmployeeRecord> employees = readEmployees();
+    set<string> roles;
+    for (const EmployeeRecord &employee : employees)
+        roles.insert(employee.role);
+
+    cout << "1. All job roles\n";
+    int choice = 2;
+    for (const string &role : roles)
+        cout << choice++ << ". " << role << '\n';
+    int roleChoice;
+    if (!readint("Job role: ", roleChoice, 1, static_cast<int>(roles.size()) + 1))
+        return false;
+
+    vector<EmployeeRecord> filtered;
+    if (roleChoice == 1)
+        filtered = employees;
+    else
+    {
+        auto selectedRole = roles.begin();
+        advance(selectedRole, roleChoice - 2);
+        for (const EmployeeRecord &employee : employees)
+            if (employee.role == *selectedRole)
+                filtered.push_back(employee);
+    }
+    return writeEmployeesCsv(filtered, "data/role_filtered_employee_register.csv");
 }
 
 static bool validEmployeeName(const string &name)

@@ -19,6 +19,7 @@ std::vector<EmployeeRecord> readEmployees();
 bool saveEmployees(const std::vector<EmployeeRecord> &employees);
 bool exportEmployeesCsv();
 bool exportFilteredEmployeesCsv();
+bool exportEmployeesByRoleCsv();
 void employeemanagement();
 
 #endif
