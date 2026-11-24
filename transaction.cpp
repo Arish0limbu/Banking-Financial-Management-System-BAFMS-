@@ -285,7 +285,10 @@ bool exportAccountTransactionsCsv()
         accountTransactions.push_back(transaction);
     }
     const string path = "data/account_" + to_string(accountNumber) + "_transaction_ledger.csv";
-    return writeTransactionsCsv(accountTransactions, path);
+    if (!writeTransactionsCsv(accountTransactions, path))
+        return false;
+    cout << "Exported " << accountTransactions.size() << " transaction(s) to " << path << ".\n";
+    return true;
 }
 
 bool saveTransaction(const string &type, int fromAccount, int toAccount, double amount)
