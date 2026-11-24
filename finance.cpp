@@ -367,3 +367,18 @@ bool exportFilteredLoanPortfolioCsv()
             filtered.push_back(loan);
     return writeLoanPortfolioCsv(filtered, "data/filtered_loan_portfolio.csv");
 }
+
+bool exportCustomerLoanPortfolioCsv()
+{
+    int customerSerial;
+    if (!readint("Customer ID: ", customerSerial, 1, 2147483647))
+        return false;
+
+    vector<LoanRecord> customerLoans;
+    for (const LoanRecord &loan : readLoans())
+        if (loan.customerSerial == customerSerial)
+            customerLoans.push_back(loan);
+
+    const string path = "data/customer_" + to_string(customerSerial) + "_loan_portfolio.csv";
+    return writeLoanPortfolioCsv(customerLoans, path);
+}

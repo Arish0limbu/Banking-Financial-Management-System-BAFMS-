@@ -7,5 +7,6 @@ bool exportMonthlyAnalyticsCsv();
 bool exportPayrollByRoleCsv();
 bool exportLoanPortfolioCsv();
 bool exportFilteredLoanPortfolioCsv();
+bool exportCustomerLoanPortfolioCsv();
 
 #endif
