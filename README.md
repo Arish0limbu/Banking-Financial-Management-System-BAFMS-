@@ -32,6 +32,8 @@ The account register export is saved as `data/account_register.csv` and includes
 
 Administrators can filter that export to active or closed accounts at `data/filtered_account_register.csv`. The generated file is ignored by Git.
 
+Administrators can export only one customer's accounts by ID; the file is saved as `data/customer_<id>_account_register.csv` and is ignored by Git.
+
 The transaction ledger can be exported to `data/transaction_ledger.csv`, sorted by transaction ID. Exported ledger files are ignored by Git.
 
 The export menu can create a filtered transaction ledger by type and inclusive month range at `data/filtered_transaction_ledger.csv`. Leave the start or end month blank to make that side of the range open. This generated file is ignored by Git.

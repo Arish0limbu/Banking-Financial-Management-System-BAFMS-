@@ -11,3 +11,4 @@ data/filtered_transaction_ledger.csv
 data/filtered_loan_portfolio.csv
 data/filtered_account_register.csv
 data/filtered_employee_register.csv
+data/customer_*_account_register.csv
