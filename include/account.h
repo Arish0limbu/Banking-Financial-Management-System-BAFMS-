@@ -19,6 +19,7 @@ bool findAccount(int accountNumber, AccountRecord &account);
 bool updateAccountBalance(int accountNumber, double newBalance);
 bool exportAccountsCsv();
 bool exportFilteredAccountsCsv();
+bool exportCustomerAccountsCsv();
 void accountmanagement();
 
 #endif

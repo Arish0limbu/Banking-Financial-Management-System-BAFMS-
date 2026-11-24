@@ -183,6 +183,21 @@ bool exportFilteredAccountsCsv()
     return writeAccountsCsv(filtered, "data/filtered_account_register.csv");
 }
 
+bool exportCustomerAccountsCsv()
+{
+    int customerSerial;
+    if (!readint("Customer ID: ", customerSerial, 1, 2147483647))
+        return false;
+
+    vector<AccountRecord> customerAccounts;
+    for (const AccountRecord &account : readAccounts())
+        if (account.customerSerial == customerSerial)
+            customerAccounts.push_back(account);
+
+    const string path = "data/customer_" + to_string(customerSerial) + "_account_register.csv";
+    return writeAccountsCsv(customerAccounts, path);
+}
+
 static bool customerSerialExists(int serial)
 {
     ifstream file("data/customer.txt");
