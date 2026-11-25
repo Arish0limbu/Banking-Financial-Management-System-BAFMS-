@@ -368,7 +368,7 @@ static void showAccountHistory()
     cout << "1. All activity\n2. Deposits\n3. Withdrawals\n4. Transfers\n5. Loan payments\n";
     if (!readint("Transaction type: ", typeFilter, 1, 5))
         return;
-    cout << "Start date (YYYY-MM, blank for any): ";
+    cout << "Start month (YYYY-MM, blank for any): ";
     string startMonth;
     if (!getline(cin, startMonth))
         return;
