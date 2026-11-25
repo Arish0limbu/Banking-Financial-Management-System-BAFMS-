@@ -34,7 +34,7 @@ Administrators can filter that export to active or closed accounts at `data/filt
 
 Administrators can export only one customer's accounts by ID; the customer ID is checked before the export is written. The file is saved as `data/customer_<id>_account_register.csv`, and the application reports the row count and path. These files are ignored by Git.
 
-The transaction ledger can be exported to `data/transaction_ledger.csv`, sorted by transaction ID. Exported ledger files are ignored by Git.
+The transaction ledger can be exported to `data/transaction_ledger.csv`, sorted by transaction ID. Each ledger export reports its row count and output path. Exported ledger files are ignored by Git.
 
 Administrators can export transactions involving one account to `data/account_<number>_transaction_ledger.csv`. The export can be filtered by transaction type and inclusive month range (`YYYY-MM`); leave either month blank for an open-ended range. It is sorted by transaction ID, reports how many rows were written, and produces a header-only CSV when no transactions match. A later export for the same account replaces that account's previous file. These files are ignored by Git to keep account activity local.
 
