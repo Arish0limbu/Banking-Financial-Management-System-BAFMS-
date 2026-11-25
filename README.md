@@ -48,7 +48,7 @@ The loan portfolio export is saved to `data/loan_portfolio.csv` and contains eac
 
 Administrators can export loans belonging to one customer ID to `data/customer_<id>_loan_portfolio.csv`. Unknown customer IDs are rejected, while customers with no loans receive a header-only export. The application reports the row count and path; these files are ignored by Git.
 
-The employee register export includes employee contact and salary details. Administrators can filter it to active or inactive staff; the filtered file is saved as `data/filtered_employee_register.csv`. Keep these files private; generated exports are ignored by Git.
+The employee register export includes employee contact and salary details. Administrators can filter it to active or inactive staff; the filtered file is saved as `data/filtered_employee_register.csv`. Each export reports its row count and output path. Keep these files private; generated exports are ignored by Git.
 
 Administrators can also export employees for one job role to `data/role_filtered_employee_register.csv`; this file is also ignored by Git.
 
