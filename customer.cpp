@@ -592,6 +592,14 @@ bool exportFilteredCustomerStatement(int customerSerial)
         return false;
     }
 
+    const string accountScope = selectedAccount == 0
+                                    ? "all your accounts"
+                                    : "account " + to_string(selectedAccount);
+    const string typeNames[] = {"all activity", "deposits", "withdrawals", "transfers", "loan payments"};
+    cout << "Exporting " << typeNames[typeFilter - 1] << " for " << accountScope
+         << " from " << (startMonth.empty() ? "any month" : startMonth)
+         << " through " << (endMonth.empty() ? "any month" : endMonth) << ".\n";
+
     vector<TransactionRecord> transactions = readTransactions();
     sort(transactions.begin(), transactions.end(),
          [](const TransactionRecord &left, const TransactionRecord &right)
