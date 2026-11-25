@@ -602,6 +602,7 @@ bool exportFilteredCustomerStatement(int customerSerial)
         return false;
     file << "transaction_id,timestamp,type,account_number,account_type,direction,amount,balance_after\n";
     file << fixed << setprecision(2);
+    size_t exportedRows = 0;
 
     for (const TransactionRecord &transaction : transactions)
     {
@@ -629,6 +630,7 @@ bool exportFilteredCustomerStatement(int customerSerial)
                  << csvCell(transaction.type) << ',' << accountNumber << ','
                  << csvCell(accountTypes.at(accountNumber)) << ',' << direction << ','
                  << amount << ',' << runningBalances[accountNumber] << '\n';
+            ++exportedRows;
         };
 
         if (customerAccounts.count(transaction.fromAccount) != 0)
@@ -641,7 +643,12 @@ bool exportFilteredCustomerStatement(int customerSerial)
     if (!file.good())
         return false;
     file.close();
-    return !file.fail();
+    if (file.fail())
+        return false;
+    if (exportedRows == 0)
+        cout << "No transactions matched the selected account, type, and month filters.\n";
+    cout << "Exported " << exportedRows << " statement row(s) to " << path << ".\n";
+    return true;
 }
 
 bool exportCustomerRecordsCsv()
