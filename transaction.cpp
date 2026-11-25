@@ -133,6 +133,7 @@ vector<TransactionRecord> readTransactions()
 
 static bool writeTransactionsCsv(vector<TransactionRecord> transactions, const string &path)
 {
+    const size_t rowCount = transactions.size();
     sort(transactions.begin(), transactions.end(),
          [](const TransactionRecord &left, const TransactionRecord &right)
          { return left.transactionId < right.transactionId; });
@@ -150,7 +151,10 @@ static bool writeTransactionsCsv(vector<TransactionRecord> transactions, const s
     if (!file.good())
         return false;
     file.close();
-    return !file.fail();
+    if (file.fail())
+        return false;
+    cout << "Exported " << rowCount << " transaction(s) to " << path << ".\n";
+    return true;
 }
 
 bool exportTransactionsCsv()
@@ -285,10 +289,7 @@ bool exportAccountTransactionsCsv()
         accountTransactions.push_back(transaction);
     }
     const string path = "data/account_" + to_string(accountNumber) + "_transaction_ledger.csv";
-    if (!writeTransactionsCsv(accountTransactions, path))
-        return false;
-    cout << "Exported " << accountTransactions.size() << " transaction(s) to " << path << ".\n";
-    return true;
+    return writeTransactionsCsv(accountTransactions, path);
 }
 
 bool saveTransaction(const string &type, int fromAccount, int toAccount, double amount)
