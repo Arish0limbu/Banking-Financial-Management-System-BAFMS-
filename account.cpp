@@ -142,6 +142,7 @@ bool updateAccountBalance(int accountNumber, double newBalance)
 
 static bool writeAccountsCsv(vector<AccountRecord> accounts, const string &path)
 {
+    const size_t rowCount = accounts.size();
     sort(accounts.begin(), accounts.end(),
          [](const AccountRecord &left, const AccountRecord &right)
          { return left.accountNumber < right.accountNumber; });
@@ -160,7 +161,10 @@ static bool writeAccountsCsv(vector<AccountRecord> accounts, const string &path)
     if (!file.good())
         return false;
     file.close();
-    return !file.fail();
+    if (file.fail())
+        return false;
+    cout << "Exported " << rowCount << " account(s) to " << path << ".\n";
+    return true;
 }
 
 bool exportAccountsCsv()
