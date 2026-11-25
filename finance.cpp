@@ -7,6 +7,7 @@
 #include <set>
 #include <string>
 #include "include/account.h"
+#include "include/customer.h"
 #include "include/design.h"
 #include "include/employee.h"
 #include "include/finance.h"
@@ -373,6 +374,11 @@ bool exportCustomerLoanPortfolioCsv()
     int customerSerial;
     if (!readint("Customer ID: ", customerSerial, 1, 2147483647))
         return false;
+    if (!customerExists(customerSerial))
+    {
+        cout << "Customer ID was not found.\n";
+        return false;
+    }
 
     vector<LoanRecord> customerLoans;
     for (const LoanRecord &loan : readLoans())
