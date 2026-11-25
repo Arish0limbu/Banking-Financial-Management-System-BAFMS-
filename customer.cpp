@@ -406,8 +406,10 @@ static bool removeCustomerPassword(int customerSerial, string &removedPassword, 
     return writeCustomerCredentials(credentials);
 }
 
-static bool customerSerialExists(int customerSerial)
+bool customerExists(int customerSerial)
 {
+    if (customerSerial <= 0)
+        return false;
     ifstream file("data/customer.txt");
     string row;
     while (getline(file, row))
@@ -445,7 +447,7 @@ CustomerAuthentication authenticateCustomer(const string &id,
     if (!readCustomerCredentials(credentials))
         return CustomerAuthentication::StorageError;
 
-    if (!customerSerialExists(enteredSerial))
+    if (!customerExists(enteredSerial))
         return CustomerAuthentication::InvalidCredentials;
 
     const auto credential = find_if(credentials.begin(), credentials.end(),
@@ -477,7 +479,7 @@ static bool validYearMonth(const string &value);
 
 bool exportCustomerStatement(int customerSerial)
 {
-    if (customerSerial <= 0 || !customerSerialExists(customerSerial))
+    if (customerSerial <= 0 || !customerExists(customerSerial))
         return false;
 
     set<int> customerAccounts;
@@ -533,7 +535,7 @@ bool exportCustomerStatement(int customerSerial)
 
 bool exportFilteredCustomerStatement(int customerSerial)
 {
-    if (customerSerial <= 0 || !customerSerialExists(customerSerial))
+    if (customerSerial <= 0 || !customerExists(customerSerial))
         return false;
 
     set<int> customerAccounts;
@@ -675,7 +677,7 @@ bool exportCustomerRecordsCsv()
 
 bool setupCustomerLogin(int customerSerial)
 {
-    if (!customerSerialExists(customerSerial))
+    if (!customerExists(customerSerial))
     {
         cout << "Customer ID was not found.\n";
         return false;
