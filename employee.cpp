@@ -124,6 +124,7 @@ bool saveEmployees(const vector<EmployeeRecord> &employees)
 
 static bool writeEmployeesCsv(vector<EmployeeRecord> employees, const string &path)
 {
+    const size_t rowCount = employees.size();
     sort(employees.begin(), employees.end(),
          [](const EmployeeRecord &left, const EmployeeRecord &right)
          { return left.employeeId < right.employeeId; });
@@ -141,7 +142,10 @@ static bool writeEmployeesCsv(vector<EmployeeRecord> employees, const string &pa
     if (!file.good())
         return false;
     file.close();
-    return !file.fail();
+    if (file.fail())
+        return false;
+    cout << "Exported " << rowCount << " employee(s) to " << path << ".\n";
+    return true;
 }
 
 bool exportEmployeesCsv()
