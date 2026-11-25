@@ -6,6 +6,7 @@
 #include <sstream>
 #include <cmath>
 #include "include/account.h"
+#include "include/customer.h"
 #include "include/design.h"
 
 using namespace std;
@@ -188,6 +189,11 @@ bool exportCustomerAccountsCsv()
     int customerSerial;
     if (!readint("Customer ID: ", customerSerial, 1, 2147483647))
         return false;
+    if (!customerExists(customerSerial))
+    {
+        cout << "Customer ID was not found.\n";
+        return false;
+    }
 
     vector<AccountRecord> customerAccounts;
     for (const AccountRecord &account : readAccounts())
@@ -198,43 +204,13 @@ bool exportCustomerAccountsCsv()
     return writeAccountsCsv(customerAccounts, path);
 }
 
-static bool customerSerialExists(int serial)
-{
-    ifstream file("data/customer.txt");
-    string row;
-    while (getline(file, row))
-    {
-        size_t separator = row.find('|');
-        if (separator == string::npos)
-            continue;
-        try
-        {
-            string serialText = row.substr(0, separator);
-            size_t start = serialText.find_first_not_of(" \t");
-            if (start == string::npos)
-                continue;
-            size_t end = serialText.find_last_not_of(" \t");
-            serialText = serialText.substr(start, end - start + 1);
-            size_t consumed = 0;
-            int storedSerial = stoi(serialText, &consumed);
-            if (consumed == serialText.size() && storedSerial > 0 && storedSerial == serial)
-                return true;
-        }
-        catch (...)
-        {
-            continue;
-        }
-    }
-    return false;
-}
-
 static void openAccount()
 {
     int customerSerial, typeChoice;
     heading("|| OPEN BANK ACCOUNT ||");
     if (!readint("Customer serial number: ", customerSerial, 1, 1000000))
         return;
-    if (!customerSerialExists(customerSerial))
+    if (!customerExists(customerSerial))
     {
         cout << "Customer serial number was not found.\n";
         ps();
