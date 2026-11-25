@@ -656,6 +656,7 @@ bool exportCustomerRecordsCsv()
     if (source.bad())
         return false;
 
+    const size_t rowCount = customers.size();
     sort(customers.begin(), customers.end(),
          [](const Customer &left, const Customer &right)
          { return left.sn < right.sn; });
@@ -672,7 +673,10 @@ bool exportCustomerRecordsCsv()
     if (!file.good())
         return false;
     file.close();
-    return !file.fail();
+    if (file.fail())
+        return false;
+    cout << "Exported " << rowCount << " customer record(s) to data/customer_records.csv.\n";
+    return true;
 }
 
 bool setupCustomerLogin(int customerSerial)
