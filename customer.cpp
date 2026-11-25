@@ -505,6 +505,7 @@ bool exportCustomerStatement(int customerSerial)
 
     file << "transaction_id,timestamp,type,account_number,account_type,direction,amount,balance_after\n";
     file << fixed << setprecision(2);
+    size_t exportedRows = 0;
     for (const TransactionRecord &transaction : transactions)
     {
         auto writeRow = [&](int accountNumber, const string &direction, double balanceAfter)
@@ -513,6 +514,7 @@ bool exportCustomerStatement(int customerSerial)
                  << csvCell(transaction.type) << ',' << accountNumber << ','
                  << csvCell(accountTypes.at(accountNumber)) << ',' << direction << ','
                  << transaction.amount << ',' << balanceAfter << '\n';
+            ++exportedRows;
         };
 
         if (customerAccounts.count(transaction.fromAccount) != 0)
@@ -530,7 +532,10 @@ bool exportCustomerStatement(int customerSerial)
     if (!file.good())
         return false;
     file.close();
-    return !file.fail();
+    if (file.fail())
+        return false;
+    cout << "Exported " << exportedRows << " statement row(s) to " << path << ".\n";
+    return true;
 }
 
 bool exportFilteredCustomerStatement(int customerSerial)
