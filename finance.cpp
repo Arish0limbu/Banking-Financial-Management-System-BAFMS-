@@ -328,6 +328,7 @@ bool exportPayrollByRoleCsv()
 
 static bool writeLoanPortfolioCsv(vector<LoanRecord> loans, const string &path)
 {
+    const size_t rowCount = loans.size();
     sort(loans.begin(), loans.end(),
          [](const LoanRecord &left, const LoanRecord &right)
          { return left.loanId < right.loanId; });
@@ -346,7 +347,10 @@ static bool writeLoanPortfolioCsv(vector<LoanRecord> loans, const string &path)
     if (!file.good())
         return false;
     file.close();
-    return !file.fail();
+    if (file.fail())
+        return false;
+    cout << "Exported " << rowCount << " loan(s) to " << path << ".\n";
+    return true;
 }
 
 bool exportLoanPortfolioCsv()
