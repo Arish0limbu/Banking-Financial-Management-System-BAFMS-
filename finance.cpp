@@ -286,6 +286,7 @@ bool exportMonthlyAnalyticsCsv()
 {
     const map<string, MonthlyVolumes> monthlyVolumes =
         summarizeTransactionsByMonth(readTransactions());
+    const size_t rowCount = monthlyVolumes.size();
     ofstream file("data/monthly_analytics.csv", ios::trunc);
     if (!file.is_open())
         return false;
@@ -303,7 +304,10 @@ bool exportMonthlyAnalyticsCsv()
     if (!file.good())
         return false;
     file.close();
-    return !file.fail();
+    if (file.fail())
+        return false;
+    cout << "Exported " << rowCount << " monthly analytics row(s) to data/monthly_analytics.csv.\n";
+    return true;
 }
 
 bool exportPayrollByRoleCsv()

@@ -24,7 +24,7 @@ Administrators can inspect one account's transaction history and filter it by tr
 
 The analytics report also groups transaction counts and deposit, withdrawal, loan payment, and transfer volumes by month for transactions with valid timestamps. Monthly net flow adds deposits and subtracts withdrawals and loan payments; transfers do not change total cash held by the system.
 
-Administrators can export those monthly metrics to `data/monthly_analytics.csv`. The generated report stays local and is ignored by Git.
+Administrators can export those monthly metrics to `data/monthly_analytics.csv`; the application reports the number of month rows written. The generated report stays local and is ignored by Git.
 
 The export menu can also save customer profile data to `data/customer_records.csv`; login passwords are not included. The application reports the number of exported records. Customer records contain personal information, so keep the generated file private. The file is ignored by Git.
 
