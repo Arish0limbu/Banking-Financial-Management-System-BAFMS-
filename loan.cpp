@@ -281,14 +281,19 @@ static void listLoans()
     else
     {
         cout << left << setw(8) << "ID" << setw(12) << "CUSTOMER" << setw(14) << "PRINCIPAL"
-             << setw(12) << "RATE" << setw(10) << "MONTHS" << setw(14) << "OUTSTANDING" << "STATUS\n";
+             << setw(12) << "RATE" << setw(10) << "MONTHS" << setw(14) << "MONTHLY EST."
+             << setw(14) << "OUTSTANDING" << "STATUS\n";
         line();
         cout << fixed << setprecision(2);
         for (const LoanRecord &loan : loans)
+        {
+            double monthlyPayment = 0.0;
+            estimateLoanMonthlyPayment(loan, monthlyPayment);
             cout << left << setw(8) << loan.loanId << setw(12) << loan.customerSerial
                  << setw(14) << loan.principal << setw(12) << loan.annualRate
-                 << setw(10) << loan.termMonths << setw(14) << loanOutstandingBalance(loan)
-                 << loan.status << '\n';
+                 << setw(10) << loan.termMonths << setw(14) << monthlyPayment
+                 << setw(14) << loanOutstandingBalance(loan) << loan.status << '\n';
+        }
     }
     ps();
 }
