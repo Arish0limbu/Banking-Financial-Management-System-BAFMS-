@@ -517,15 +517,19 @@ bool exportCustomerStatement(int customerSerial)
     if (!file.is_open())
         return false;
 
-    file << "transaction_id,timestamp,type,account_number,account_type,direction,amount,balance_after\n";
+    file << "transaction_id,timestamp,type,account_number,counterparty_account,account_type,direction,amount,balance_after\n";
     file << fixed << setprecision(2);
     size_t exportedRows = 0;
     for (const TransactionRecord &transaction : transactions)
     {
         auto writeRow = [&](int accountNumber, const string &direction, double balanceAfter)
         {
+            const int counterparty = direction == "DEBIT"
+                                         ? transaction.toAccount
+                                         : transaction.fromAccount;
             file << transaction.transactionId << ',' << csvCell(transaction.timestamp) << ','
                  << csvCell(transaction.type) << ',' << accountNumber << ','
+                 << (counterparty == 0 ? "-" : to_string(counterparty)) << ','
                  << csvCell(accountTypes.at(accountNumber)) << ',' << direction << ','
                  << transaction.amount << ',' << balanceAfter << '\n';
             ++exportedRows;
