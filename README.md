@@ -28,7 +28,7 @@ Administrators can export those monthly metrics to `data/monthly_analytics.csv`.
 
 The export menu can also save customer profile data to `data/customer_records.csv`; login passwords are not included. The application reports the number of exported records. Customer records contain personal information, so keep the generated file private. The file is ignored by Git.
 
-The account register export is saved as `data/account_register.csv` and includes each account's customer ID, type, current balance, and status. This local file is also ignored by Git.
+The account register export is saved as `data/account_register.csv` and includes each account's customer ID and name, type, current balance, and status. If an account refers to a missing customer record, the export labels the name `Unknown customer`. This local file is also ignored by Git.
 
 Administrators can filter that export to active or closed accounts at `data/filtered_account_register.csv`. The generated file is ignored by Git.
 
