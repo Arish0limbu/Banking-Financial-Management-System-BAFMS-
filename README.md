@@ -44,7 +44,7 @@ Active employee counts and monthly payroll totals are also grouped by job role i
 
 Administrators can save that summary to `data/payroll_by_role.csv`, which contains active headcount, monthly payroll, and annualized payroll for each role. Generated exports are ignored by Git.
 
-The loan portfolio export is saved to `data/loan_portfolio.csv` and contains each loan's customer ID and name, principal, rate, term, paid amount, outstanding balance, and status. A missing customer record is labeled `Unknown customer`. Generated exports are ignored by Git.
+The loan portfolio export is saved to `data/loan_portfolio.csv` and contains each loan's customer ID and name, principal, rate, term, estimated monthly payment, paid amount, outstanding balance, and status. The estimated monthly amount divides the simple-interest total evenly across the term and rounds to cents; the final installment may differ slightly. A missing customer record is labeled `Unknown customer`. Generated exports are ignored by Git.
 
 Administrators can export loans belonging to one customer ID to `data/customer_<id>_loan_portfolio.csv`. Unknown customer IDs are rejected, while customers with no loans receive a header-only export. The application reports the row count and path; these files are ignored by Git.
 
