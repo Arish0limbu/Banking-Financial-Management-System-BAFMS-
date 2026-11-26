@@ -626,7 +626,7 @@ bool exportFilteredCustomerStatement(int customerSerial)
     ofstream file(path, ios::trunc);
     if (!file.is_open())
         return false;
-    file << "transaction_id,timestamp,type,account_number,account_type,direction,amount,balance_after\n";
+    file << "transaction_id,timestamp,type,account_number,counterparty_account,account_type,direction,amount,balance_after\n";
     file << fixed << setprecision(2);
     size_t exportedRows = 0;
 
@@ -652,8 +652,12 @@ bool exportFilteredCustomerStatement(int customerSerial)
                 return;
             if (!matchesFilters)
                 return;
+            const int counterparty = direction == "DEBIT"
+                                         ? transaction.toAccount
+                                         : transaction.fromAccount;
             file << transaction.transactionId << ',' << csvCell(transaction.timestamp) << ','
                  << csvCell(transaction.type) << ',' << accountNumber << ','
+                 << (counterparty == 0 ? "-" : to_string(counterparty)) << ','
                  << csvCell(accountTypes.at(accountNumber)) << ',' << direction << ','
                  << amount << ',' << runningBalances[accountNumber] << '\n';
             ++exportedRows;
