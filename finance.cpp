@@ -338,14 +338,17 @@ static bool writeLoanPortfolioCsv(vector<LoanRecord> loans, const string &path)
     if (!file.is_open())
         return false;
 
-    file << "loan_id,customer_id,customer_name,principal,annual_rate,term_months,amount_paid,outstanding,status\n";
+    file << "loan_id,customer_id,customer_name,principal,annual_rate,term_months,estimated_monthly_payment,amount_paid,outstanding,status\n";
     file << fixed << setprecision(2);
     for (const LoanRecord &loan : loans)
     {
         const auto customerName = customerNames.find(loan.customerSerial);
+        double monthlyPayment = 0.0;
+        estimateLoanMonthlyPayment(loan, monthlyPayment);
         file << loan.loanId << ',' << loan.customerSerial << ','
              << (customerName == customerNames.end() ? "Unknown customer" : customerName->second) << ','
              << loan.principal << ',' << loan.annualRate << ',' << loan.termMonths << ','
+             << monthlyPayment << ','
              << loan.amountPaid << ',' << loanOutstandingBalance(loan) << ',' << loan.status << '\n';
     }
     file.flush();
