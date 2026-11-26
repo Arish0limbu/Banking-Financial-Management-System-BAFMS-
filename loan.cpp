@@ -163,6 +163,20 @@ double loanOutstandingBalance(const LoanRecord &loan)
     return max(0.0, totalDue(loan) - loan.amountPaid);
 }
 
+bool estimateLoanMonthlyPayment(const LoanRecord &loan, double &monthlyPayment)
+{
+    if (loan.termMonths <= 0)
+        return false;
+    const double totalRepayment = totalDue(loan);
+    if (!isfinite(totalRepayment) || totalRepayment <= 0)
+        return false;
+    const double estimate = round(totalRepayment / loan.termMonths * 100.0) / 100.0;
+    if (!isfinite(estimate))
+        return false;
+    monthlyPayment = estimate;
+    return true;
+}
+
 bool estimateSimpleInterestLoan(double principal, int termMonths, LoanEstimate &estimate)
 {
     if (!hasCentPrecision(principal) || principal <= 0 || termMonths < 1 || termMonths > 360)
