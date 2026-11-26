@@ -421,6 +421,20 @@ bool customerExists(int customerSerial)
     return false;
 }
 
+map<int, string> customerNamesBySerial()
+{
+    map<int, string> names;
+    ifstream file("data/customer.txt");
+    string row;
+    while (getline(file, row))
+    {
+        Customer customer{};
+        if (readCustomerLine(row, customer))
+            names.emplace(customer.sn, customer.name);
+    }
+    return names;
+}
+
 CustomerAuthentication authenticateCustomer(const string &id,
                                             const string &password,
                                             int &customerSerial)
