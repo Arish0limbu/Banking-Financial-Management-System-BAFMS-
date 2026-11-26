@@ -132,11 +132,12 @@ static bool writeEmployeesCsv(vector<EmployeeRecord> employees, const string &pa
     ofstream file(path, ios::trunc);
     if (!file.is_open())
         return false;
-    file << "employee_id,name,age,phone,job_title,monthly_salary,status\n";
+    file << "employee_id,name,age,phone,job_title,monthly_salary,annual_salary,status\n";
     file << fixed << setprecision(2);
     for (const EmployeeRecord &employee : employees)
         file << employee.employeeId << ",\"" << employee.name << "\"," << employee.age << ','
              << employee.phone << ",\"" << employee.role << "\"," << employee.salary << ','
+             << employee.salary * 12.0 << ','
              << (employee.active ? "Active" : "Inactive") << '\n';
     file.flush();
     if (!file.good())
