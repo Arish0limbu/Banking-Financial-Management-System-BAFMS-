@@ -28,6 +28,7 @@ struct LoanEstimate
 std::vector<LoanRecord> readLoans();
 bool saveLoans(const std::vector<LoanRecord> &loans);
 double loanOutstandingBalance(const LoanRecord &loan);
+bool estimateLoanMonthlyPayment(const LoanRecord &loan, double &monthlyPayment);
 bool estimateSimpleInterestLoan(double principal, int termMonths, LoanEstimate &estimate);
 void estimateCustomerLoan();
 void applyForCustomerLoan(int customerSerial);
