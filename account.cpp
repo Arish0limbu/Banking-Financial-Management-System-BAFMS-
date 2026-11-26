@@ -143,6 +143,7 @@ bool updateAccountBalance(int accountNumber, double newBalance)
 static bool writeAccountsCsv(vector<AccountRecord> accounts, const string &path)
 {
     const size_t rowCount = accounts.size();
+    const map<int, string> customerNames = customerNamesBySerial();
     sort(accounts.begin(), accounts.end(),
          [](const AccountRecord &left, const AccountRecord &right)
          { return left.accountNumber < right.accountNumber; });
@@ -151,12 +152,16 @@ static bool writeAccountsCsv(vector<AccountRecord> accounts, const string &path)
     if (!file.is_open())
         return false;
 
-    file << "account_number,customer_id,account_type,balance,status\n";
+    file << "account_number,customer_id,customer_name,account_type,balance,status\n";
     file << fixed << setprecision(2);
     for (const AccountRecord &account : accounts)
+    {
+        const auto customerName = customerNames.find(account.customerSerial);
         file << account.accountNumber << ',' << account.customerSerial << ','
+             << (customerName == customerNames.end() ? "Unknown customer" : customerName->second) << ','
              << account.accountType << ',' << account.balance << ','
              << (account.active ? "Active" : "Closed") << '\n';
+    }
     file.flush();
     if (!file.good())
         return false;
